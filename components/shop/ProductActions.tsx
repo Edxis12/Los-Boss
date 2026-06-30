@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/cart-store";
+import { useCartStore, useCartUserKey } from "@/store/cart-store";
+import { useSession } from "next-auth/react";
 
 type Variant = {
     id: string;
@@ -29,6 +30,8 @@ export default function ProductActions({
     variants,
 }: ProductActionsProps) {
     const router = useRouter();
+    const { data: session } = useSession();
+    const userKey = useCartUserKey(session?.user?.id);
     const addItem = useCartStore((state) => state.addItem);
 
     // Tallas y colores únicos disponibles
@@ -58,7 +61,7 @@ export default function ProductActions({
     function handleAgregar() {
         if (!varianteActual || sinStock || faltaSeleccionar) return;
 
-        addItem({
+        addItem(userKey, {
             productId,
             variantId: varianteActual.id,
             slug,

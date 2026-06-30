@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/shop/ProductCard";
 import FilterSidebar from "@/components/shop/FilterSidebar";
+import { getFavoriteIds } from "@/lib/actions/favorite-actions";
 
 type PageProps = {
     searchParams: Promise<{
@@ -40,7 +41,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                 ? { price: "desc" as const }
                 : { createdAt: "desc" as const }; // "nuevo" o sin parámetro: lo más reciente primero
 
-    const [productos, categorias] = await Promise.all([
+    const [productos, categorias, favoritosIds] = await Promise.all([
         prisma.product.findMany({
             where,
             orderBy,
@@ -49,6 +50,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             },
         }),
         prisma.category.findMany({ orderBy: { name: "asc" } }),
+        getFavoriteIds(),
     ]);
 
     return (
@@ -77,11 +79,13 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                             {productos.map((producto) => (
                                 <ProductCard
                                     key={producto.id}
+                                    id={producto.id}
                                     slug={producto.slug}
                                     name={producto.name}
                                     price={Number(producto.price)}
                                     brand={producto.brand}
                                     imageUrl={producto.images[0]?.url}
+                                    esFavorito={favoritosIds.includes(producto.id)}
                                 />
                             ))}
                         </div>

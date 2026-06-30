@@ -1,11 +1,11 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingBag, Heart, User, Search, Menu, X, LogOut } from "lucide-react";
-import { useCartStore } from "@/store/cart-store";
+import { useCartStore, useCartUserKey } from "@/store/cart-store";
+import { useFavoritesCountStore } from "@/store/favorites-count-store";
 
 const NAV_LINKS = [
   { label: "Nuevo", href: "/productos?ordenar=nuevo" },
@@ -19,7 +19,12 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const totalItems = useCartStore((state) => state.totalItems());
+  const userKey = useCartUserKey(session?.user?.id);
+  const totalItems = useCartStore((state) => state.getTotalItems(userKey));
+  const favoritesCount = useFavoritesCountStore((state) => state.count);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <header className="sticky top-0 z-50 bg-black border-b border-zinc-800">
@@ -55,9 +60,14 @@ export default function Navbar() {
             <Link
               href="/favoritos"
               aria-label="Favoritos"
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white transition relative"
             >
               <Heart size={20} />
+              {mounted && favoritesCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-white text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {favoritesCount}
+                </span>
+              )}
             </Link>
 
             <Link
@@ -66,7 +76,7 @@ export default function Navbar() {
               className="text-zinc-300 hover:text-white transition relative"
             >
               <ShoppingBag size={20} />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-white text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {totalItems}
                 </span>

@@ -1,12 +1,37 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { useCartStore } from "@/store/cart-store";
+import { useSession } from "next-auth/react";
+import { useCartStore, useCartUserKey } from "@/store/cart-store";
 
 export default function CarritoPage() {
-    const { items, updateQuantity, removeItem, totalPrice } = useCartStore();
+    const { data: session } = useSession();
+    const userKey = useCartUserKey(session?.user?.id);
+
+    const items = useCartStore((state) => state.getItems(userKey));
+    const totalPrice = useCartStore((state) => state.getTotalPrice(userKey));
+    const updateQuantity = useCartStore((state) => state.updateQuantity);
+    const removeItem = useCartStore((state) => state.removeItem);
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
+    // Mientras no esté montado en el cliente, no sabemos qué hay en localStorage,
+    // así que mostramos un estado neutro para evitar el mismatch de hidratación.
+    if (!mounted) {
+        return (
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="h-8 w-48 bg-zinc-900 rounded animate-pulse mb-8" />
+                <div className="space-y-4">
+                    <div className="h-28 bg-zinc-900 rounded-xl animate-pulse" />
+                    <div className="h-28 bg-zinc-900 rounded-xl animate-pulse" />
+                </div>
+            </div>
+        );
+    }
 
     if (items.length === 0) {
         return (
@@ -76,7 +101,11 @@ export default function CarritoPage() {
                                     <div className="flex items-center border border-zinc-700 rounded-lg">
                                         <button
                                             onClick={() =>
-                                                updateQuantity(item.variantId, item.quantity - 1)
+                                                updateQuantity(
+                                                    userKey,
+                                                    item.variantId,
+                                                    item.quantity - 1
+                                                )
                                             }
                                             className="px-2.5 py-1.5 text-zinc-300 hover:text-white"
                                             aria-label="Disminuir cantidad"
@@ -88,7 +117,11 @@ export default function CarritoPage() {
                                         </span>
                                         <button
                                             onClick={() =>
-                                                updateQuantity(item.variantId, item.quantity + 1)
+                                                updateQuantity(
+                                                    userKey,
+                                                    item.variantId,
+                                                    item.quantity + 1
+                                                )
                                             }
                                             className="px-2.5 py-1.5 text-zinc-300 hover:text-white"
                                             aria-label="Aumentar cantidad"
@@ -98,7 +131,7 @@ export default function CarritoPage() {
                                     </div>
 
                                     <button
-                                        onClick={() => removeItem(item.variantId)}
+                                        onClick={() => removeItem(userKey, item.variantId)}
                                         className="text-zinc-500 hover:text-red-400 transition"
                                         aria-label="Eliminar producto"
                                     >
@@ -120,7 +153,7 @@ export default function CarritoPage() {
 
                     <div className="flex justify-between text-sm text-zinc-300 mb-2">
                         <span>Subtotal</span>
-                        <span>${totalPrice().toLocaleString("es-MX")}</span>
+                        <span>${totalPrice.toLocaleString("es-MX")}</span>
                     </div>
                     <div className="flex justify-between text-sm text-zinc-400 mb-4">
                         <span>Envío</span>
@@ -129,7 +162,7 @@ export default function CarritoPage() {
 
                     <div className="border-t border-zinc-800 pt-4 flex justify-between font-semibold text-white mb-6">
                         <span>Total</span>
-                        <span>${totalPrice().toLocaleString("es-MX")}</span>
+                        <span>${totalPrice.toLocaleString("es-MX")}</span>
                     </div>
 
                     <Link
