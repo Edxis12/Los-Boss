@@ -15,7 +15,7 @@ export default async function AdminDashboardPage() {
         { label: "Pedidos totales", value: totalPedidos, icon: ShoppingCart },
         { label: "Usuarios registrados", value: totalUsuarios, icon: Users },
         {
-            label: "Variantes con poco sotck",
+            label: "Variantes con poco stock",
             value: productosBajoStock,
             icon: AlertTriangle,
             alerta: productosBajoStock > 0,

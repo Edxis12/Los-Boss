@@ -8,17 +8,24 @@ type PageProps = {
         categoria?: string;
         buscar?: string;
         ordenar?: string;
+        precioMin?: string;
+        precioMax?: string;
     }>;
 };
 
 export default async function ProductosPage({ searchParams }: PageProps) {
-    const { categoria, buscar, ordenar } = await searchParams;
+    const { categoria, buscar, ordenar, precioMin, precioMax } =
+        await searchParams;
 
     // Construimos el filtro de Prisma dinámicamente según los query params
     const where: {
         isActive: boolean;
         category?: { slug: string };
-        OR?: { name?: { contains: string; mode: "insensitive" }; description?: { contains: string; mode: "insensitive" } }[];
+        OR?: {
+            name?: { contains: string; mode: "insensitive" };
+            description?: { contains: string; mode: "insensitive" };
+        }[];
+        price?: { gte?: number; lte?: number };
     } = {
         isActive: true,
     };
@@ -32,6 +39,12 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             { name: { contains: buscar, mode: "insensitive" } },
             { description: { contains: buscar, mode: "insensitive" } },
         ];
+    }
+
+    if (precioMin || precioMax) {
+        where.price = {};
+        if (precioMin) where.price.gte = Number(precioMin);
+        if (precioMax) where.price.lte = Number(precioMax);
     }
 
     const orderBy =
@@ -57,9 +70,11 @@ export default async function ProductosPage({ searchParams }: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-white">
-                    {categoria
-                        ? categorias.find((c) => c.slug === categoria)?.name ?? "Productos"
-                        : "Todos los productos"}
+                    {buscar
+                        ? `Resultados para "${buscar}"`
+                        : categoria
+                            ? categorias.find((c) => c.slug === categoria)?.name ?? "Productos"
+                            : "Todos los productos"}
                 </h1>
                 <p className="text-zinc-400 text-sm mt-1">
                     {productos.length} {productos.length === 1 ? "producto" : "productos"}

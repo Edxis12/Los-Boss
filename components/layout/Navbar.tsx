@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingBag, Heart, User, Search, Menu, X, LogOut } from "lucide-react";
 import { useCartStore, useCartUserKey } from "@/store/cart-store";
 import { useFavoritesCountStore } from "@/store/favorites-count-store";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 const NAV_LINKS = [
   { label: "Nuevo", href: "/productos?ordenar=nuevo" },
@@ -17,14 +20,27 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const userKey = useCartUserKey(session?.user?.id);
   const totalItems = useCartStore((state) => state.getTotalItems(userKey));
   const favoritesCount = useFavoritesCountStore((state) => state.count);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/productos?buscar=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-black border-b border-zinc-800">
@@ -52,9 +68,10 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <button
               aria-label="Buscar"
+              onClick={() => setSearchOpen((v) => !v)}
               className="text-zinc-300 hover:text-white transition"
             >
-              <Search size={20} />
+              {searchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
 
             <Link
@@ -146,6 +163,20 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+
+        {/* Barra de búsqueda desplegable */}
+        {searchOpen && (
+          <form onSubmit={handleSearch} className="pb-4">
+            <input
+              type="text"
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar productos..."
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white"
+            />
+          </form>
+        )}
 
         {/* Nav móvil */}
         {menuOpen && (
