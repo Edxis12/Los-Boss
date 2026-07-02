@@ -1,65 +1,157 @@
-import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { getFavoriteIds } from "@/lib/actions/favorite-actions";
+import ProductCard from "@/components/shop/ProductCard";
+import { ShieldCheck, Truck, RefreshCw, Star } from "lucide-react";
 
-export default function Home() {
+const BENEFICIOS = [
+  { icon: Truck, label: "Envíos a todo México" },
+  { icon: ShieldCheck, label: "100% Original" },
+  { icon: RefreshCw, label: "Cambios fáciles" },
+  { icon: Star, label: "Marcas premium" },
+];
+
+export default async function HomePage() {
+  const session = await auth();
+  const [destacados, favoritosIds] = await Promise.all([
+    prisma.product.findMany({
+      where: { isActive: true, isFeatured: true },
+      take: 4,
+      include: { images: { take: 1, orderBy: { position: "asc" } } },
+    }),
+    getFavoriteIds(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      {/* HERO */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+        {/* Fondo con gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-black to-zinc-900" />
+
+        {/* Textura decorativa */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)",
+            backgroundSize: "30px 30px",
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-3xl animate-fade-in">
+            <p className="text-xs tracking-[0.4em] uppercase text-zinc-400 mb-4">
+              Tuxtla Gutiérrez · Chiapas
+            </p>
+
+            <h1 className="font-display text-[clamp(4rem,12vw,9rem)] leading-none text-white mb-6">
+              HYPE &<br />
+              LUXURY
+            </h1>
+
+            <p className="text-zinc-300 text-lg mb-10 max-w-xl leading-relaxed">
+              Ropa y accesorios 100% originales. Encuentra las piezas que
+              definen tu estilo — entregas personales en Tuxtla o envíos a
+              cualquier parte de México.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/productos"
+                className="bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-zinc-100 transition text-sm tracking-wide uppercase"
+              >
+                Ver catálogo
+              </Link>
+              <Link
+                href="/productos?isFeatured=true"
+                className="border border-zinc-700 text-white px-8 py-3.5 rounded-lg hover:border-white transition text-sm tracking-wide uppercase"
+              >
+                Destacados
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFICIOS */}
+      <section className="border-y border-zinc-900 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-zinc-200">
+            {BENEFICIOS.map((b) => {
+              const Icon = b.icon;
+              return (
+                <div
+                  key={b.label}
+                  className="flex flex-col items-center gap-2 py-6 px-4 text-center"
+                >
+                  <Icon size={22} className="text-black" />
+                  <span className="text-xs text-zinc-600 tracking-wider uppercase font-medium">
+                    {b.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* PRODUCTOS DESTACADOS */}
+      {destacados.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-xs tracking-[0.3em] uppercase text-zinc-500 mb-2">
+                Selección
+              </p>
+              <h2 className="section-title text-white">Destacados</h2>
+            </div>
+            <Link
+              href="/productos"
+              className="text-sm text-zinc-400 hover:text-white transition tracking-wide"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              Ver todo →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            {destacados.map((producto) => (
+              <ProductCard
+                key={producto.id}
+                id={producto.id}
+                slug={producto.slug}
+                name={producto.name}
+                price={Number(producto.price)}
+                brand={producto.brand}
+                imageUrl={producto.images[0]?.url}
+                esFavorito={favoritosIds.includes(producto.id)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* CTA FINAL */}
+      <section className="bg-white text-black py-20">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h2
+            className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-none mb-4"
+            style={{ fontFamily: "var(--font-bebas)" }}
+          >
+            CONSIGUE TU PIEZA
+          </h2>
+          <p className="text-zinc-600 mb-8 text-lg">
+            Colecciones limitadas. Entregas personales o envío a todo México.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/productos"
+            className="inline-block bg-black text-white font-semibold px-10 py-4 rounded-lg hover:bg-zinc-900 transition text-sm tracking-widest uppercase"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Explorar catálogo
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

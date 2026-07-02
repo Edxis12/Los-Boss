@@ -1,5 +1,3 @@
-// LOS BOSS - E-COMMERCE SCHEMA
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,49 +6,39 @@ datasource db {
   provider = "postgresql"
 }
 
-// AUTH (compatible con Auth.js / NextAuth v5)
-
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  password      String? // null si el usuario solo usa OAuth (Google, etc.)
-  role          Role      @default(USER)
-
-  accounts  Account[]
-  sessions  Session[]
-  orders    Order[]
-  cartItems CartItem[]
-  favorites Favorite[]
-  addresses Address[]
-  reviews   Review[]
-
-  createdAt DateTime @default(now())
-  uptadeAt  DateTime @updatedAt
+  password      String?
+  role          Role       @default(USER)
+  createdAt     DateTime   @default(now())
+  uptadeAt      DateTime   @updatedAt
+  accounts      Account[]
+  addresses     Address[]
+  cartItems     CartItem[]
+  favorites     Favorite[]
+  orders        Order[]
+  reviews       Review[]
+  sessions      Session[]
 }
 
 model Account {
-  id               String  @id @default(cuid())
-  userId           String
-  type             String
-  provider         String // "google", "credentials", etc.
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
   providerAccountId String
-  refresh_token    String?
-  access_token     String?
-  expires_at       Int?
-  token_type       String?
-  scope            String?
-  id_token         String?
-  session_state    String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -60,8 +48,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -72,121 +59,103 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// CATALOGO
 model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique // Tops, Bottoms, Hoodies, Tenis, Accesorios...
-  slug     String    @unique
-  imageUrl String?
-  products Product[]
-
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+  products  Product[]
 }
 
 model Product {
-  id           String   @id @default(cuid())
+  id           String           @id @default(cuid())
   name         String
-  slug         String   @unique
+  slug         String           @unique
   description  String
-  price        Decimal  @db.Decimal(10, 2)
-  comparePrice Decimal? @db.Decimal(10, 2) //precio antes de descuento
-  brand        String? // ej. "Los Boss Originals", o marca revendida
-  isFeatured   Boolean  @default(false)
-  isActive     Boolean  @default(true)
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  variants   ProductVariant[] // combinaciones talla/color con su propio stock
-  images     ProductImage[]
-  reviews    Review[]
-  favorites  Favorite[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  price        Decimal          @db.Decimal(10, 2)
+  comparePrice Decimal?         @db.Decimal(10, 2)
+  brand        String?
+  isFeatured   Boolean          @default(false)
+  isActive     Boolean          @default(true)
+  categoryId   String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  gender       Gender           @default(UNISEX)
+  cartItems    CartItem[]
+  favorites    Favorite[]
+  orderItems   OrderItem[]
+  category     Category         @relation(fields: [categoryId], references: [id])
+  images       ProductImage[]
+  variants     ProductVariant[]
+  reviews      Review[]
 
   @@index([categoryId])
   @@index([name])
 }
 
 model ProductImage {
-  id       String  @id @default(cuid())
-  url      String
-  altText  String?
-  position Int     @default(0)
-
+  id        String  @id @default(cuid())
+  url       String
+  altText   String?
+  position  Int     @default(0)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
-// Cada variante = una combinacion unica de talla/color con su propio stock y SKU
 model ProductVariant {
-  id        String  @id @default(cuid())
-  sku       String  @unique
-  size      String? // S, M, L, XL...
-  color     String?
-  stock     Int     @default(0)
-  priceDiff Decimal @default(0) @db.Decimal(10, 2) // ajuste sobre precio base, sin aplica
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
+  id         String      @id @default(cuid())
+  sku        String      @unique
+  size       String?
+  color      String?
+  stock      Int         @default(0)
+  priceDiff  Decimal     @default(0) @db.Decimal(10, 2)
+  productId  String
   cartItems  CartItem[]
   orderItems OrderItem[]
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, size, color])
 }
 
 model Review {
-  id      String  @id @default(cuid())
-  rating  Int //1-5
-  comment String?
-
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
   userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
 }
 
-// CARRITO Y FAVORITOS
 model CartItem {
-  id       String @id @default(cuid())
-  quantity Int    @default(1)
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id        String          @id @default(cuid())
+  quantity  Int             @default(1)
+  userId    String
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   variantId String?
+  createdAt DateTime        @default(now())
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
-
-  createdAt DateTime @default(now())
 
   @@unique([userId, productId, variantId])
 }
 
 model Favorite {
-  id String @id @default(cuid())
-
+  id        String   @id @default(cuid())
   userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
 }
 
-// DIRECCIONES Y PEDIDOS
 model Address {
   id         String  @id @default(cuid())
   fullName   String
@@ -197,11 +166,47 @@ model Address {
   postalCode String
   country    String  @default("México")
   isDefault  Boolean @default(false)
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders     Order[]
+}
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  status          OrderStatus @default(PENDING)
+  total           Decimal     @db.Decimal(10, 2)
+  userId          String
+  addressId       String
+  stripeSessionId String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  address         Address     @relation(fields: [addressId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+}
 
-  orders Order[]
+model OrderItem {
+  id        String          @id @default(cuid())
+  quantity  Int
+  price     Decimal         @db.Decimal(10, 2)
+  orderId   String
+  productId String
+  variantId String?
+  order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product         @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+}
+
+enum Gender {
+  HOMBRE
+  MUJER
+  UNISEX
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 enum OrderStatus {
@@ -211,39 +216,4 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
-}
-
-model Order {
-  id          String      @id @default(cuid())
-  orderNumber String      @unique // ej: LB-00001
-  status      OrderStatus @default(PENDING)
-  total       Decimal     @db.Decimal(10, 2)
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  addressId String
-  address   Address @relation(fields: [addressId], references: [id])
-
-  items OrderItem[]
-
-  stripeSessionId String? // si usas Stripe para pagos
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model OrderItem {
-  id       String  @id @default(cuid())
-  quantity Int
-  price    Decimal @db.Decimal(10, 2) // precio al momento de la compra (no cambia si el producto sube de precio despues)
-
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-
-  variantId String?
-  variant   ProductVariant? @relation(fields: [variantId], references: [id])
 }

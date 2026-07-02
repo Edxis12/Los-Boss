@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import { Bebas_Neue } from "next/font/google";
 import Providers from "@/providers";
 import Navbar from "@/components/layout/Navbar";
 import FavoritesSync from "@/components/layout/FavoritesSync";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bebasNeue = Bebas_Neue({
+  variable: "--font-bebas",
+  weight: "400",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,13 +32,16 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${bebasNeue.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-black">
+      <body className="min-h-full flex flex-col bg-black text-white">
         <Providers>
           <FavoritesSync />
           <Navbar />
           <main className="flex-1">{children}</main>
+          <footer className="border-t border-zinc-900 py-8 text-center text-xs text-zinc-600">
+            © {new Date().getFullYear()} Los Boss · Tuxtla Gutiérrez, Chiapas · Hype y Luxury · Todos los derechos reservados
+          </footer>
         </Providers>
       </body>
     </html>

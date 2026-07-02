@@ -3,8 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { prisma } from "../prisma";
-import { success } from "zod";
-import { error } from "console";
 
 // Helper: confirma que quien llama es admin. Lanza error si no.
 async function requireAdmin() {
@@ -30,6 +28,7 @@ export async function crearProducto(data: {
     categoryId: string;
     imageUrl: string;
     isFeatured: boolean;
+    gender: "HOMBRE" | "MUJER" | "UNISEX";
     variantes: VarianteInput[];
 }) {
     await requireAdmin();
@@ -53,6 +52,7 @@ export async function crearProducto(data: {
             price: data.price,
             brand: data.brand || null,
             isFeatured: data.isFeatured,
+            gender: data.gender,
             category: { connect: { id: data.categoryId } },
             images: data.imageUrl
                 ? { create: [{ url: data.imageUrl, position: 0 }] }

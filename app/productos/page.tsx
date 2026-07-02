@@ -10,17 +10,24 @@ type PageProps = {
         ordenar?: string;
         precioMin?: string;
         precioMax?: string;
+        genero?: string;
     }>;
 };
 
+const GENERO_LABELS: Record<string, string> = {
+    HOMBRE: "Hombres",
+    MUJER: "Mujeres",
+    UNISEX: "Unisex",
+};
+
 export default async function ProductosPage({ searchParams }: PageProps) {
-    const { categoria, buscar, ordenar, precioMin, precioMax } =
+    const { categoria, buscar, ordenar, precioMin, precioMax, genero } =
         await searchParams;
 
-    // Construimos el filtro de Prisma dinámicamente según los query params
     const where: {
         isActive: boolean;
         category?: { slug: string };
+        gender?: "HOMBRE" | "MUJER" | "UNISEX";
         OR?: {
             name?: { contains: string; mode: "insensitive" };
             description?: { contains: string; mode: "insensitive" };
@@ -30,8 +37,10 @@ export default async function ProductosPage({ searchParams }: PageProps) {
         isActive: true,
     };
 
-    if (categoria) {
-        where.category = { slug: categoria };
+    if (categoria) where.category = { slug: categoria };
+
+    if (genero && ["HOMBRE", "MUJER", "UNISEX"].includes(genero)) {
+        where.gender = genero as "HOMBRE" | "MUJER" | "UNISEX";
     }
 
     if (buscar) {
@@ -52,7 +61,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             ? { price: "asc" as const }
             : ordenar === "precio-desc"
                 ? { price: "desc" as const }
-                : { createdAt: "desc" as const }; // "nuevo" o sin parámetro: lo más reciente primero
+                : { createdAt: "desc" as const };
 
     const [productos, categorias, favoritosIds] = await Promise.all([
         prisma.product.findMany({
@@ -66,18 +75,22 @@ export default async function ProductosPage({ searchParams }: PageProps) {
         getFavoriteIds(),
     ]);
 
+    // Título dinámico según los filtros activos
+    const titulo = buscar
+        ? `Resultados para "${buscar}"`
+        : genero
+            ? GENERO_LABELS[genero] ?? "Productos"
+            : categoria
+                ? categorias.find((c) => c.slug === categoria)?.name ?? "Productos"
+                : "Todos los productos";
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-white">
-                    {buscar
-                        ? `Resultados para "${buscar}"`
-                        : categoria
-                            ? categorias.find((c) => c.slug === categoria)?.name ?? "Productos"
-                            : "Todos los productos"}
-                </h1>
+                <h1 className="text-2xl font-bold text-white">{titulo}</h1>
                 <p className="text-zinc-400 text-sm mt-1">
-                    {productos.length} {productos.length === 1 ? "producto" : "productos"}
+                    {productos.length}{" "}
+                    {productos.length === 1 ? "producto" : "productos"}
                 </p>
             </div>
 

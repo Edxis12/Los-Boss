@@ -35,6 +35,7 @@ export default function NuevoProductoForm({
     const [categoryId, setCategoryId] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [isFeatured, setIsFeatured] = useState(false);
+    const [gender, setGender] = useState<"HOMBRE" | "MUJER" | "UNISEX">("UNISEX");
     const [variantes, setVariantes] = useState<VarianteForm[]>([
         { size: "", color: "", stock: 1 },
     ]);
@@ -77,6 +78,7 @@ export default function NuevoProductoForm({
             categoryId,
             imageUrl,
             isFeatured,
+            gender,
             variantes: variantes.map((v) => ({
                 size: v.size || undefined,
                 color: v.color || undefined,
@@ -199,6 +201,21 @@ export default function NuevoProductoForm({
                 />
                 Marcar como producto destacado
             </label>
+
+            <div>
+                <label className="text-sm text-zinc-300">Género</label>
+                <select
+                    value={gender}
+                    onChange={(e) =>
+                        setGender(e.target.value as "HOMBRE" | "MUJER" | "UNISEX")
+                    }
+                    className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                >
+                    <option value="UNISEX">Unisex</option>
+                    <option value="HOMBRE">Hombre</option>
+                    <option value="MUJER">Mujer</option>
+                </select>
+            </div>
 
             {/* Variantes */}
             <div>
