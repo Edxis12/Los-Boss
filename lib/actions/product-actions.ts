@@ -1,10 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "../auth";
-import { prisma } from "../prisma";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-// Helper: confirma que quien llama es admin. Lanza error si no.
 async function requireAdmin() {
     const session = await auth();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,6 +92,33 @@ export async function actualizarStock(variantId: string, nuevoStock: number) {
 export async function eliminarProducto(productId: string) {
     await requireAdmin();
 
+    // Verificar si tiene pedidos asociados y en qué estado están
+    const pedidos = await prisma.orderItem.findMany({
+        where: { productId },
+        include: { order: { select: { status: true, orderNumber: true } } },
+    });
+
+    if (pedidos.length > 0) {
+        // Revisar si TODOS los pedidos están entregados
+        const pedidosActivos = pedidos.filter(
+            (item) => item.order.status !== "DELIVERED"
+        );
+
+        if (pedidosActivos.length > 0) {
+            const numeros = pedidosActivos
+                .map((item) => item.order.orderNumber)
+                .join(", ");
+            return {
+                error: `Este producto tiene ${pedidosActivos.length} pedido(s) activo(s) sin entregar: ${numeros}. Márcalos como "Entregado" primero para poder eliminar el producto.`,
+                bloqueado: true,
+            };
+        }
+
+        // Todos los pedidos están entregados — se puede eliminar
+        // El SetNull en el schema hace que OrderItem.productId quede en null
+        // pero el historial (precio, cantidad, orderNumber) se conserva
+    }
+
     await prisma.product.delete({ where: { id: productId } });
 
     revalidatePath("/admin/productos");
@@ -105,7 +131,7 @@ export async function cambiarEstadoProducto(
     isActive: boolean
 ) {
     await requireAdmin();
-    
+
     await prisma.product.update({
         where: { id: productId },
         data: { isActive },

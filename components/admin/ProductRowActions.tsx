@@ -41,19 +41,17 @@ export default function ProductRowActions({
         Object.fromEntries(variants.map((v) => [v.id, v.stock]))
     );
 
-    // Calcula la posicion del menu segun donde este el boton en pantalla
     function abrirMenu() {
         if (buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
             setCoords({
                 top: rect.bottom + window.scrollY + 4,
-                left: rect.right + window.scrollX - 192, // 192px = ancho del menu (w-48)
+                left: rect.right + window.scrollX - 192,
             });
         }
         setOpenId(menuOpen ? null : productId);
     }
 
-    // Cierra el menu si haces clic afuera
     useEffect(() => {
         function handleClickFuera(e: MouseEvent) {
             if (
@@ -83,10 +81,16 @@ export default function ProductRowActions({
     }
 
     async function handleEliminar() {
-        if (!confirm("¿Seguro que quieres eliminar este producto? Esta acción no se puede deshacer.")) {
+        if (!confirm("¿Seguro que quieres eliminar este producto?")) return;
+
+        const resultado = await eliminarProducto(productId);
+
+        if (resultado.error) {
+            // Si está bloqueado por pedidos activos, mostramos el mensaje claro
+            alert(resultado.error);
             return;
         }
-        await eliminarProducto(productId);
+
         router.refresh();
     }
 
@@ -106,8 +110,6 @@ export default function ProductRowActions({
                 <MoreVertical size={18} />
             </button>
 
-            {/* Porta: el menu se renderiza directo en <body>, asi que nunca se corta
-            por el overflow-hidden de la tabla, y siempre queda arriba de todo */}
             {menuOpen &&
                 typeof document !== "undefined" &&
                 createPortal(
@@ -149,12 +151,12 @@ export default function ProductRowActions({
                     </div>,
                     document.body
                 )}
-            {/* Modal de edicion de stock (tambien via portal, por la misma razon) */}
+
             {stockOpen &&
                 typeof document !== "undefined" &&
                 createPortal(
                     <div
-                        className="fixed inset-0 bg-black/70 flex items-center justify-center z[200]"
+                        className="fixed inset-0 bg-black/70 flex items-center justify-center z-[200]"
                         onClick={() => setStockOpen(false)}
                     >
                         <div
@@ -178,12 +180,13 @@ export default function ProductRowActions({
                                             type="number"
                                             min={0}
                                             value={stocks[v.id]}
-                                            onChange={(e) => setStocks((prev) => ({
-                                                ...prev,
-                                                [v.id]: Number(e.target.value),
-                                            }))
+                                            onChange={(e) =>
+                                                setStocks((prev) => ({
+                                                    ...prev,
+                                                    [v.id]: Number(e.target.value),
+                                                }))
                                             }
-                                            className="w-20 bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1 text-white  text-sm text-right"
+                                            className="w-20 bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1 text-white text-sm text-right"
                                         />
                                     </div>
                                 ))}

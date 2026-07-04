@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { crearProducto } from "@/lib/actions/product-actions";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 type Categoria = { id: string; name: string };
 
@@ -178,18 +179,13 @@ export default function NuevoProductoForm({
             </div>
 
             <div>
-                <label className="text-sm text-zinc-300">URL de imagen</label>
-                <input
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
-                    placeholder="https://..."
-                />
-                <p className="text-xs text-zinc-500 mt-1">
-                    Si el dominio de la imagen no está autorizado, recuerda agregarlo en{" "}
-                    <code className="text-zinc-400">next.config.ts</code>.
-                </p>
+                <label className="text-sm text-zinc-300">Imagen del producto</label>
+                <div className="mt-1">
+                    <ImageUploader
+                        value={imageUrl}
+                        onChange={(url) => setImageUrl(url)}
+                    />
+                </div>
             </div>
 
             <label className="flex items-center gap-2 text-sm text-zinc-300">
