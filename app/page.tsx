@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { getFavoriteIds } from "@/lib/actions/favorite-actions";
 import ProductCard from "@/components/shop/ProductCard";
 import { ShieldCheck, Truck, RefreshCw, Star } from "lucide-react";
+import Image from "next/image";
 
 const BENEFICIOS = [
   { icon: Truck, label: "Envíos a todo México" },
@@ -41,35 +42,64 @@ export default async function HomePage() {
         />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-3xl animate-fade-in">
-            <p className="text-xs tracking-[0.4em] uppercase text-zinc-400 mb-4">
-              Tuxtla Gutiérrez · Chiapas
-            </p>
-
-            <h1 className="font-display text-[clamp(4rem,12vw,9rem)] leading-none text-white mb-6">
-              HYPE &<br />
-              LUXURY
-            </h1>
-
-            <p className="text-zinc-300 text-lg mb-10 max-w-xl leading-relaxed">
-              Ropa y accesorios 100% originales. Encuentra las piezas que
-              definen tu estilo — entregas personales en Tuxtla o envíos a
-              cualquier parte de México.
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/productos"
-                className="bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-zinc-100 transition text-sm tracking-wide uppercase"
-              >
-                Ver catálogo
+          <div className="grid lg:grid-cols-2 items-center gap-16">
+            {/* Columna izquierda */}
+            <div className="animate-fade-in">
+              <Link href="/" className="inline-block mb-8">
+                <Image
+                  src="/images/losBoss.jpg"
+                  alt="Los Boss Boutique"
+                  width={240}
+                  height={240}
+                  priority
+                  className="w-[220px] h-auto"
+                />
               </Link>
-              <Link
-                href="/productos?isFeatured=true"
-                className="border border-zinc-700 text-white px-8 py-3.5 rounded-lg hover:border-white transition text-sm tracking-wide uppercase"
-              >
-                Destacados
-              </Link>
+
+              <p className="text-xs tracking-[0.4em] uppercase text-zinc-400 mb-4">
+                Boutique premium
+              </p>
+
+              <h1 className="font-display text-[clamp(4rem,12vw,9rem)] leading-none text-white mb-6">
+                HYPE &<br />
+                LUXURY
+              </h1>
+
+              <p className="text-zinc-300 text-lg mb-10 max-w-xl leading-relaxed">
+                Ropa y accesorios 100% originales. Encuentra las piezas que
+                definen tu estilo — entregas personales en Tuxtla o envíos a
+                cualquier parte de México.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/productos"
+                  className="bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-zinc-100 transition text-sm tracking-wide uppercase"
+                >
+                  Ver catálogo
+                </Link>
+
+                <Link
+                  href="/productos?isFeatured=true"
+                  className="border border-zinc-700 text-white px-8 py-3.5 rounded-lg hover:border-white transition text-sm tracking-wide uppercase"
+                >
+                  Destacados
+                </Link>
+              </div>
+            </div>
+
+            {/* Columna derecha */}
+            <div className="hidden lg:flex justify-end">
+              <div className="relative w-full max-w-[560px] aspect-[4/5] rounded-3xl border border-white/10 bg-white/5 overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,.45)]">
+                <Image
+                  src="/images/losBoss.jpg"
+                  alt="Los Boss Boutique"
+                  fill
+                  priority
+                  className="object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-l from-black/10 via-black/20 to-black/60" />
+              </div>
             </div>
           </div>
         </div>

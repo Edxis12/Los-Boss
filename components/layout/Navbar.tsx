@@ -23,9 +23,10 @@ const NAV_LINKS = [
   { label: "Nuevo", href: "/productos?ordenar=nuevo" },
   { label: "Hombres", href: "/productos?genero=HOMBRE" },
   { label: "Mujeres", href: "/productos?genero=MUJER" },
-  { label: "Tenis", href: "/productos?categoria=tenis" },
-  { label: "Accesorios", href: "/productos?categoria=accesorios" },
+  { label: "Ofertas", href: "/productos?ofertas=true", highlight: true },
 ];
+
+const ANUNCIO = "ENVÍOS A TODO MÉXICO 🇲🇽   ·   ROPA 100% ORIGINAL";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -66,9 +67,22 @@ export default function Navbar() {
           : "bg-black border-b border-zinc-800"
       }`}
     >
-      {/* Barra superior */}
-      <div className="bg-white text-black text-center text-xs py-1.5 font-medium tracking-widest uppercase">
-        Envíos a todo México 🇲🇽 · Ropa 100% Original
+      {/* Barra superior - marquee animado */}
+      <div className="group bg-white text-black py-1.5 overflow-hidden">
+        <div className="flex whitespace-nowrap w-max animate-marquee group-hover:[animation-play-state:paused]">
+          {[0, 1].map((bloque) => (
+            <div key={bloque} className="flex shrink-0" aria-hidden={bloque === 1}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="mx-6 text-[11px] font-medium tracking-widest uppercase"
+                >
+                  {ANUNCIO}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,7 +101,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-xs font-semibold text-zinc-300 hover:text-white transition tracking-widest uppercase"
+                className={`text-xs font-semibold transition tracking-widest uppercase ${
+                  link.highlight
+                    ? "text-red-400 hover:text-red-300"
+                    : "text-zinc-300 hover:text-white"
+                }`}
               >
                 {link.label}
               </Link>
@@ -99,7 +117,7 @@ export default function Navbar() {
             <button
               aria-label="Buscar"
               onClick={() => setSearchOpen((v) => !v)}
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300"
             >
               {searchOpen ? <X size={19} /> : <Search size={19} />}
             </button>
@@ -107,11 +125,28 @@ export default function Navbar() {
             <Link
               href="/favoritos"
               aria-label="Favoritos"
-              className="text-zinc-300 hover:text-white transition relative"
+              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 relative"
             >
               <Heart size={19} />
               {mounted && favoritesCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-white text-black text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="
+                    absolute  
+                    -top-2 
+                    -right-2
+                    min-w-[18px]
+                    h-[18px] 
+                    px-1
+                    rounded-full
+                    bg-white
+                    text-black
+                    text-[10px]
+                    font-bold
+                    flex
+                    items-center
+                    justify-center
+                    shadow-lg
+                    animate-scale-in  
+                  ">
                   {favoritesCount}
                 </span>
               )}
@@ -120,7 +155,7 @@ export default function Navbar() {
             <Link
               href="/carrito"
               aria-label="Carrito"
-              className="text-zinc-300 hover:text-white transition relative"
+              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration- relative"
             >
               <ShoppingBag size={19} />
               {mounted && totalItems > 0 && (
@@ -137,7 +172,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-1 text-zinc-300 hover:text-white transition"
+                  className="flex items-center gap-1 text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 transition"
                   aria-label="Mi cuenta"
                 >
                   <User size={19} />
@@ -145,7 +180,7 @@ export default function Navbar() {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-3 w-52 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
+                  <div className="absolute right-0 mt-3 w-52 bg-[#101010] border border-zinc-800 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,.45)] overflow-hidden">
                     <div className="px-4 py-3 border-b border-zinc-800">
                       <p className="text-xs text-zinc-500 truncate">
                         {session.user?.email}
@@ -234,7 +269,11 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="px-2 py-3 text-sm font-semibold uppercase tracking-widest text-zinc-300 hover:text-white border-b border-zinc-900"
+                className={`px-2 py-3 text-sm font-semibold uppercase tracking-widest border-b border-zinc-900 ${
+                    link.highlight
+                      ? "text-red-400 hover:text-red-300"
+                      : "text-zinc-300 hover:text-white"
+                }`}
               >
                 {link.label}
               </Link>

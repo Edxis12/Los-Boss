@@ -3,42 +3,82 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
-import { crearProducto } from "@/lib/actions/product-actions";
+import {
+    crearProducto,
+    actualizarProducto,
+} from "@/lib/actions/product-actions";
 
-type Categoria = { id: string; name: string };
+type Categoria = {
+    id: string;
+    name: string;
+};
 
-type VarianteForm = { size: string; color: string; stock: number };
+type VarianteForm = {
+    id?: string;
+    size: string;
+    color: string;
+    stock: number;
+};
+
+type ProductoFormData = {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    price: number;
+    comparePrice: number | null;
+    brand: string | null;
+    categoryId: string;
+    imageUrls: string[];
+    isFeatured: boolean;
+    gender: "HOMBRE" | "MUJER" | "UNISEX";
+    variantes: VarianteForm[];
+};
 
 function slugify(texto: string) {
     return texto
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // quita acentos
+        .replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9\s-]/g, "")
         .trim()
         .replace(/\s+/g, "-");
 }
 
-export default function NuevoProductoForm({
+export default function ProductForm({
     categorias,
+    producto,
 }: {
     categorias: Categoria[];
+    producto?: ProductoFormData;
 }) {
     const router = useRouter();
+    const esEdicion = Boolean(producto);
+
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [brand, setBrand] = useState("");
-    const [categoryId, setCategoryId] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
-    const [isFeatured, setIsFeatured] = useState(false);
-    const [gender, setGender] = useState<"HOMBRE" | "MUJER" | "UNISEX">("UNISEX");
-    const [variantes, setVariantes] = useState<VarianteForm[]>([
-        { size: "", color: "", stock: 1 },
-    ]);
+    const [name, setName] = useState(producto?.name ?? "");
+    const [description, setDescription] = useState(producto?.description ?? "");
+    const [price, setPrice] = useState(producto ? String(producto.price) : "");
+    const [comparePrice, setComparePrice] = useState(
+        producto?.comparePrice ? String(producto.comparePrice) : ""
+    );
+    const [brand, setBrand] = useState(producto?.brand ?? "");
+    const [categoryId, setCategoryId] = useState(producto?.categoryId ?? "");
+    const [imageUrls, setImageUrls] = useState<string[]>(
+        producto?.imageUrls?.length ? producto.imageUrls : [""]
+    );
+    const [isFeatured, setIsFeatured] = useState(producto?.isFeatured ?? false);
+    const [gender, setGender] = useState<"HOMBRE" | "MUJER" | "UNISEX">(
+        producto?.gender ?? "UNISEX"
+    );
+
+    const [variantes, setVariantes] = useState<VarianteForm[]>(
+        producto?.variantes?.length
+            ? producto.variantes
+            : [{ size: "", color: "", stock: 1 }]
+    );
 
     function actualizarVariante(
         index: number,
@@ -58,6 +98,40 @@ export default function NuevoProductoForm({
         setVariantes((prev) => prev.filter((_, i) => i !== index));
     }
 
+    async function subirImagenesCloudinary(files: FileList | null) {
+        if (!files || files.length === 0) return;
+
+        setLoading(true);
+
+        const urls: string[] = [];
+
+        for (const file of Array.from(files)) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append(
+                "upload_preset",
+                process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+            );
+
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await res.json();
+
+            if (data.secure_url) {
+                urls.push(data.secure_url);
+            }
+        }
+
+        setImageUrls((prev) => [...prev.filter(Boolean), ...urls]);
+        setLoading(false);
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
@@ -69,22 +143,31 @@ export default function NuevoProductoForm({
 
         setLoading(true);
 
-        const resultado = await crearProducto({
+        const payload = {
             name,
             slug: slugify(name),
             description,
             price: Number(price),
+            comparePrice: comparePrice ? Number(comparePrice) : null,
             brand,
             categoryId,
-            imageUrl,
+            imageUrls: imageUrls.filter((url) => url.trim() !== ""),
             isFeatured,
             gender,
             variantes: variantes.map((v) => ({
+                id: v.id,
                 size: v.size || undefined,
                 color: v.color || undefined,
-                stock: v.stock,
+                stock: Number(v.stock),
             })),
-        });
+        };
+
+        const resultado = esEdicion
+            ? await actualizarProducto({
+                productId: producto!.id,
+                ...payload,
+            })
+            : await crearProducto(payload);
 
         setLoading(false);
 
@@ -133,9 +216,9 @@ export default function NuevoProductoForm({
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label className="text-sm text-zinc-300">Precio (MXN)</label>
+                    <label className="text-sm text-zinc-300">Precio actual (MXN)</label>
                     <input
                         type="number"
                         required
@@ -144,18 +227,34 @@ export default function NuevoProductoForm({
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
-                        placeholder="1500"
+                        placeholder="1200"
                     />
                 </div>
 
                 <div>
-                    <label className="text-sm text-zinc-300">Marca (opcional)</label>
+                    <label className="text-sm text-zinc-300">Precio antes / oferta</label>
+                    <input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        value={comparePrice}
+                        onChange={(e) => setComparePrice(e.target.value)}
+                        className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                        placeholder="1600"
+                    />
+                    <p className="text-xs text-zinc-500 mt-1">
+                        Déjalo vacío si no está en oferta.
+                    </p>
+                </div>
+
+                <div>
+                    <label className="text-sm text-zinc-300">Marca</label>
                     <input
                         type="text"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
-                        placeholder="Los Boss Originals"
+                        placeholder="Hugo Boss"
                     />
                 </div>
             </div>
@@ -178,17 +277,67 @@ export default function NuevoProductoForm({
             </div>
 
             <div>
-                <label className="text-sm text-zinc-300">URL de imagen</label>
-                <input
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
-                    placeholder="https://..."
+                <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-zinc-300">Imágenes del producto</label>
+
+                    <button
+                        type="button"
+                        onClick={() => setImageUrls((prev) => [...prev, ""])}
+                        className="flex items-center gap-1 text-xs text-zinc-300 hover:text-white border border-zinc-700 rounded-lg px-2.5 py-1"
+                    >
+                        <Plus size={13} />
+                        Agregar imagen
+                    </button>
+                </div>
+
+                <input 
+                    type="file" 
+                    accept="image/"
+                    multiple
+                    onChange={(e) => subirImagenesCloudinary(e.target.files)}
+                    className="mb-3 block w-full text-sm text-zinc-400
+                    file:mr-4 file:rounded-lg file:border-0
+                    file:bg-white file:px-4 file:py-2
+                    file:text-sm file:font-semibold file:text-black
+                    hover:file:bg-zinc-200"
                 />
-                <p className="text-xs text-zinc-500 mt-1">
-                    Si el dominio de la imagen no está autorizado, recuerda agregarlo en{" "}
-                    <code className="text-zinc-400">next.config.ts</code>.
+
+                <div className="space-y-2">
+                    {imageUrls.map((url, index) => (
+                        <div key={index} className="flex gap-2">
+                            <input
+                                type="url"
+                                value={url}
+                                onChange={(e) =>
+                                    setImageUrls((prev) =>
+                                        prev.map((item, i) =>
+                                            i === index ? e.target.value : item
+                                        )
+                                    )
+                                }
+                                className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                                placeholder={`URL de imagen ${index + 1}`}
+                            />
+
+                            {imageUrls.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setImageUrls((prev) =>
+                                            prev.filter((_, i) => i !== index)
+                                        )
+                                    }
+                                    className="text-zinc-500 hover:text-red-400 p-2"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                <p className="text-xs text-zinc-500 mt-2">
+                    La primera imagen será la imagen principal del producto.
                 </p>
             </div>
 
@@ -217,7 +366,6 @@ export default function NuevoProductoForm({
                 </select>
             </div>
 
-            {/* Variantes */}
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="text-sm text-zinc-300">
@@ -238,20 +386,16 @@ export default function NuevoProductoForm({
                         <div key={i} className="flex gap-2 items-center">
                             <input
                                 type="text"
-                                placeholder="Talla (opcional)"
+                                placeholder="Talla"
                                 value={v.size}
-                                onChange={(e) =>
-                                    actualizarVariante(i, "size", e.target.value)
-                                }
+                                onChange={(e) => actualizarVariante(i, "size", e.target.value)}
                                 className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white text-sm outline-none focus:border-white"
                             />
                             <input
                                 type="text"
-                                placeholder="Color (opcional)"
+                                placeholder="Color"
                                 value={v.color}
-                                onChange={(e) =>
-                                    actualizarVariante(i, "color", e.target.value)
-                                }
+                                onChange={(e) => actualizarVariante(i, "color", e.target.value)}
                                 className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white text-sm outline-none focus:border-white"
                             />
                             <input
@@ -276,10 +420,6 @@ export default function NuevoProductoForm({
                         </div>
                     ))}
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">
-                    Si tu producto no tiene tallas ni colores (ej. perfumes, accesorios
-                    únicos), deja esos campos vacíos y solo pon el stock.
-                </p>
             </div>
 
             <button
@@ -287,7 +427,11 @@ export default function NuevoProductoForm({
                 disabled={loading}
                 className="w-full bg-white text-black font-semibold rounded-lg py-3 hover:bg-zinc-200 transition disabled:opacity-50"
             >
-                {loading ? "Guardando..." : "Crear producto"}
+                {loading
+                    ? "Guardando..."
+                    : esEdicion
+                        ? "Guardar cambios"
+                        : "Crear producto"}
             </button>
         </form>
     );

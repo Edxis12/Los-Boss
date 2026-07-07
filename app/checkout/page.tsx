@@ -108,12 +108,26 @@ export default function CheckoutPage() {
 
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <h1 className="text-2xl font-bold text-white mb-8">Checkout</h1>
+            <div className="mb-10">
 
-            <div className="grid md:grid-cols-3 gap-10">
+                <p className="text-xs uppercase tracking-[0.35em] text-zinc-500">
+                    FINALIZAR COMPRA
+                </p>
+
+                <h1 className="mt-2 text-5xl font-black tracking-tight text-white">
+                    Checkout
+                </h1>
+
+                <p className="mt-3 text-zinc-400">
+                    Completa tu información para finalizar tu pedido.
+                </p>
+
+            </div>
+
+            <div className="grid lg:grid-cols-[1.8fr_420px] gap-12 items-start">
                 {/* Formulario de dirección */}
-                <form onSubmit={handleSubmit} className="md:col-span-2 space-y-4">
-                    <h2 className="text-lg font-semibold text-white">
+                <form onSubmit={handleSubmit} className="md:col-span-2 rounded-3xl border border-white/10 bg-[#0d0d0d] p-8 shadow-[0_30px_80px_rgba(0,0,0,.35)] space-y-8">
+                    <h2 className="text-2xl font-bold text-white">
                         Dirección de envío
                     </h2>
 
@@ -130,7 +144,23 @@ export default function CheckoutPage() {
                             required
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                            className="
+                                mt-2
+                                w-full
+                                rounded-xl
+                                border
+                                border-white/10
+                                bg-black/20
+                                px-4
+                                py-3
+                                text-white
+                                outline-none
+                                transition-all
+                                duration-300
+                                focus:border-white
+                                focus:ring-4
+                                focus:ring-white/10
+                            "
                         />
                     </div>
 
@@ -141,7 +171,23 @@ export default function CheckoutPage() {
                             required
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                            className="
+                                mt-2
+                                w-full
+                                rounded-xl
+                                border
+                                border-white/10
+                                bg-black/20
+                                px-4
+                                py-3
+                                text-white
+                                outline-none
+                                transition-all
+                                duration-300
+                                focus:border-white
+                                focus:ring-4
+                                focus:ring-white/10
+                            "
                             placeholder="961 123 4567"
                         />
                     </div>
@@ -153,7 +199,22 @@ export default function CheckoutPage() {
                             required
                             value={street}
                             onChange={(e) => setStreet(e.target.value)}
-                            className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                            className="
+                                w-full
+                                rounded-xl
+                                border
+                                border-white/10
+                                bg-black/20
+                                px-4
+                                py-3
+                                text-white
+                                outline-none
+                                transition-all
+                                duration-300
+                                ocus:border-white
+                                focus:ring-4
+                                focus:ring-white/10
+                            "
                         />
                     </div>
 
@@ -165,7 +226,22 @@ export default function CheckoutPage() {
                                 required
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
-                                className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                                className="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-white/10
+                                    bg-black/20
+                                    px-4
+                                    py-3
+                                    text-white
+                                    outline-none
+                                    transition-all
+                                    duration-300
+                                    focus:border-white
+                                    focus:ring-4
+                                    focus:ring-white/10
+                                "
                             />
                         </div>
                         <div>
@@ -175,7 +251,22 @@ export default function CheckoutPage() {
                                 required
                                 value={stateValue}
                                 onChange={(e) => setStateValue(e.target.value)}
-                                className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                                className="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-white/10
+                                    bg-black/20
+                                    px-4
+                                    py-3
+                                    text-white
+                                    outline-none
+                                    transition-all
+                                    duration-300
+                                    focus:border-white
+                                    focus:ring-4
+                                    focus:ring-white/10
+                                "
                             />
                         </div>
                     </div>
@@ -187,14 +278,43 @@ export default function CheckoutPage() {
                             required
                             value={postalCode}
                             onChange={(e) => setPostalCode(e.target.value)}
-                            className="mt-1 w-full rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
+                            className="
+                                w-full
+                                rounded-xl
+                                border
+                                border-white/10
+                                bg-black/20
+                                px-4
+                                py-3
+                                text-white
+                                outline-none
+                                transition-all
+                                duration-300
+                                focus:border-white
+                                focus:ring-4
+                                focus:ring-white/10
+                            "
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-white text-black font-semibold rounded-lg py-3.5 hover:bg-zinc-200 transition disabled:opacity-50 mt-4"
+                        className="
+                        w-full
+                        h-14
+                        rounded-2xl
+                        bg-white
+                        text-black
+                        font-bold
+                        text-base
+                        transition-all
+                        duration-300
+                        hover:scale-[1.02]
+                        hover:bg-zinc-200
+                        shadow-[0_18px_40px_rgba(255,255,255,.15)]
+                        disabled:opacity-50
+                    "
                     >
                         {loading ? "Procesando..." : "Confirmar pedido"}
                     </button>
@@ -206,8 +326,12 @@ export default function CheckoutPage() {
                 </form>
 
                 {/* Resumen */}
-                <div className="bg-zinc-900 rounded-xl p-6 h-fit">
-                    <h2 className="text-lg font-semibold text-white mb-4">
+                <div className="sitcky top-28 h-fit rounded-3xl border border-white/10 bg-[#0d0d0d] p-8 shadow-[0_30px_80px_rgba(0,0,0,.35)]">
+                    <p className="text-xs uppercase tracking-[0.35em] text-zinc-500 mb-2">
+                        TU PEDIDO
+                    </p>
+                    
+                    <h2 className="text-2xl font-bold text-white mb-4">
                         Resumen del pedido
                     </h2>
 

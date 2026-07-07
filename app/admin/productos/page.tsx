@@ -18,7 +18,7 @@ export default async function AdminProductosPage() {
         <div>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2x1 font-bold text-white">Productos</h1>
+                    <h1 className="text-2xl font-bold text-white">Productos</h1>
                     <p className="text-zinc-400 text-sm mt-1">
                         {productos.length} productos en total
                     </p>
@@ -76,8 +76,18 @@ export default async function AdminProductosPage() {
                                     <td className="px-4 py-3 text-zinc-300">
                                         {producto.category.name}
                                     </td>
-                                    <td className="px-4 py-3 text-zinc-300">
-                                        ${Number(producto.price).toLocaleString("es-MX")}
+                                    <td className="px-4 py-3">
+                                        <div>
+                                            <p className="text-zinc-300">
+                                                ${Number(producto.price).toLocaleString("es-MX")}
+                                            </p>
+
+                                            {producto.comparePrice && (
+                                                <p className="text-xs text-red-400 line-through">
+                                                    ${Number(producto.comparePrice).toLocaleString("es-MX")}
+                                                </p>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span
@@ -101,12 +111,6 @@ export default async function AdminProductosPage() {
                                         <ProductRowActions
                                             productId={producto.id}
                                             isActive={producto.isActive}
-                                            variants={producto.variants.map((v) => ({
-                                                id: v.id,
-                                                size: v.size,
-                                                color: v.color,
-                                                stock: v.stock,
-                                            }))}
                                         />
                                     </td>
                                 </tr>

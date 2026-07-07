@@ -11,6 +11,7 @@ type PageProps = {
         precioMin?: string;
         precioMax?: string;
         genero?: string;
+        ofertas?: string;
     }>;
 };
 
@@ -21,7 +22,7 @@ const GENERO_LABELS: Record<string, string> = {
 };
 
 export default async function ProductosPage({ searchParams }: PageProps) {
-    const { categoria, buscar, ordenar, precioMin, precioMax, genero } =
+    const { categoria, buscar, ordenar, precioMin, precioMax, genero, ofertas } =
         await searchParams;
 
     const where: {
@@ -33,6 +34,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             description?: { contains: string; mode: "insensitive" };
         }[];
         price?: { gte?: number; lte?: number };
+        comparePrice?: { not?: null };
     } = {
         isActive: true,
     };
@@ -56,6 +58,12 @@ export default async function ProductosPage({ searchParams }: PageProps) {
         if (precioMax) where.price.lte = Number(precioMax);
     }
 
+    if (ofertas === "true") {
+        where.comparePrice = {
+            not: null,
+        };
+    }
+
     const orderBy =
         ordenar === "precio-asc"
             ? { price: "asc" as const }
@@ -76,7 +84,9 @@ export default async function ProductosPage({ searchParams }: PageProps) {
     ]);
 
     // Título dinámico según los filtros activos
-    const titulo = buscar
+    const titulo = ofertas === "true"
+    ? "Ofertas"
+    : buscar
         ? `Resultados para "${buscar}"`
         : genero
             ? GENERO_LABELS[genero] ?? "Productos"
@@ -85,10 +95,10 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                 : "Todos los productos";
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-10 py-12">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-white">{titulo}</h1>
-                <p className="text-zinc-400 text-sm mt-1">
+                <h1 className="text-4xl font-black tracking-tight text-white">{titulo}</h1>
+                <p className="text-zinc-500 mt-2">
                     {productos.length}{" "}
                     {productos.length === 1 ? "producto" : "productos"}
                 </p>
@@ -103,7 +113,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                             No encontramos productos con esos filtros.
                         </p>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-16">
                             {productos.map((producto) => (
                                 <ProductCard
                                     key={producto.id}
@@ -111,6 +121,9 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                                     slug={producto.slug}
                                     name={producto.name}
                                     price={Number(producto.price)}
+                                    comparePrice={
+                                        producto.comparePrice ? Number(producto.comparePrice) : null
+                                    }
                                     brand={producto.brand}
                                     imageUrl={producto.images[0]?.url}
                                     esFavorito={favoritosIds.includes(producto.id)}

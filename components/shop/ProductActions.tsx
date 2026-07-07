@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore, useCartUserKey } from "@/store/cart-store";
 import { useSession } from "next-auth/react";
+import { AlertTriangle } from "lucide-react";
 
 type Variant = {
     id: string;
@@ -77,20 +78,44 @@ export default function ProductActions({
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Selector de color */}
             {colores.length > 0 && (
-                <div>
-                    <p className="text-sm text-zinc-300 mb-2">Color</p>
-                    <div className="flex gap-2">
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+
+                        <p className="text-sm font-semibold uppercase tracking-[0.15em] text-zinc-400">
+                            Color
+                        </p>
+
+                        {colorSeleccionado && (
+                            <span className="text-sm text-zinc-500">
+                                {colorSeleccionado}
+                            </span>
+                        )}
+
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
                         {colores.map((color) => (
                             <button
                                 key={color}
                                 onClick={() => setColorSeleccionado(color)}
-                                className={`px-4 py-2 rounded-lg text-sm border transition ${colorSeleccionado === color
-                                        ? "border-white bg-white text-black"
-                                        : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
-                                    }`}
+                                className={`
+                                        px-5
+                                        h-11
+                                        rounded-lg
+                                        border
+                                        text-sm
+                                        transition-all
+                                        duration-300
+                                        ease-out
+
+                                        ${colorSeleccionado === color
+                                        ? "bg-white text-black border-white shadow-[0_8px_30px_rgba(255,255,255,0.18)]"
+                                        : "bg-[#0d0d0d] border-zinc-700 text-zinc-300 hover:border-white hover:bg-[#181818] active:scale-95"
+                                    }
+                                    `}
                             >
                                 {color}
                             </button>
@@ -101,9 +126,23 @@ export default function ProductActions({
 
             {/* Selector de talla */}
             {tallas.length > 0 && (
-                <div>
-                    <p className="text-sm text-zinc-300 mb-2">Talla</p>
-                    <div className="flex gap-2 flex-wrap">
+                <div className="space-y-3">
+
+                    <div className="flex items-center justify-between">
+
+                        <p className="text-sm font-semibold uppercase tracking-[0.15em] text-zinc-400">
+                            Talla
+                        </p>
+
+                        {tallaSeleccionada && (
+                            <span className="text-sm text-zinc-500">
+                                {tallaSeleccionada}
+                            </span>
+                        )}
+
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                         {tallas.map((talla) => {
                             const disponible = variants.some(
                                 (v) =>
@@ -116,16 +155,26 @@ export default function ProductActions({
                                     key={talla}
                                     disabled={!disponible}
                                     onClick={() => setTallaSeleccionada(talla)}
-                                    className={`px-4 py-2 rounded-lg text-sm border transition ${tallaSeleccionada === talla
-                                            ? "border-white bg-white text-black"
+                                    className={`
+                                            h-14
+                                            rounded-lg
+                                            border
+                                            font-medium
+                                            transition-all
+                                            duration-300
+                                            ease-out
+
+                                            ${tallaSeleccionada === talla
+                                            ? "bg-white text-black border-white scale-105 shadow-[0_8px_30px_rgba(255,255,255,0.18)]"
                                             : disponible
-                                                ? "border-zinc-700 text-zinc-300 hover:border-zinc-500"
-                                                : "border-zinc-800 text-zinc-600 line-through cursor-not-allowed"
-                                        }`}
+                                                ? "bg-[#0d0d0d] border-zinc-700 text-zinc-300 hover:border-white hover:bg-[#181818] active:scale-95"
+                                                : "bg-[#090909] border-zinc-800 text-zinc-700 cursor-not-allowed"
+                                        }
+                                        `}
                                 >
                                     {talla}
                                 </button>
-                            );
+                            )
                         })}
                     </div>
                 </div>
@@ -133,15 +182,45 @@ export default function ProductActions({
 
             {/* Stock disponible */}
             {varianteActual && varianteActual.stock > 0 && varianteActual.stock <= 3 && (
-                <p className="text-sm text-amber-400">
-                    ¡Solo quedan {varianteActual.stock} disponibles!
-                </p>
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-sm text-amber-300 w-fit">
+                    <AlertTriangle size={16} />
+                    <span>
+                        Solo quedan {varianteActual.stock} piezas disponibles
+                    </span>
+                </div>
+            )}
+
+            {sinStock && !faltaSeleccionar && (
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3">
+                    <p className="text-sm text-red-300">
+                        Este producto no tiene existencias en la variante seleccionada
+                    </p>
+                </div>
             )}
 
             <button
                 onClick={handleAgregar}
                 disabled={sinStock || faltaSeleccionar}
-                className="w-full bg-white text-black font-semibold rounded-lg py-3.5 hover:bg-zinc-200 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                className={`
+                    h-14
+                    w-full
+                    rounded-xl
+                    font-semibold
+                    text-base
+                    transition-all
+                    duration-300
+                    ease-out
+                    hover:scale-[1.01]
+                    active:scale-[0.99]
+                    disabled:opacity-40
+                    disabled:hover:scale-100
+                    disabled:cursor-not-allowed
+
+                    ${agregado
+                        ? "bg-emerald-500 text-white shadow-[0_20px_45px_rgba(34,197,94,.35)] hover:bg-emerald-400"
+                        : "bg-white text-black shadow-[0_20px_45px_rgba(255,255,255,.15)] hover:bg-zinc-200 hover:shadow-[0_20px_55px_rgba(255,255,255,.22)]"
+                    }
+                `}
             >
                 {agregado
                     ? "✓ Agregado al carrito"
@@ -149,13 +228,27 @@ export default function ProductActions({
                         ? "Sin stock"
                         : faltaSeleccionar
                             ? "Selecciona una opción"
-                            : "Agregar al carrito"}
+                            : `Agregar al carrito • $${price.toLocaleString("es-MX")}`}
             </button>
 
             {agregado && (
                 <button
                     onClick={() => router.push("/carrito")}
-                    className="w-full border border-zinc-700 text-white rounded-lg py-3 hover:bg-zinc-900 transition"
+                    className="
+                        h-14
+                        w-full
+                        rounded-xl
+                        border
+                        border-zinc-700
+                        bg-transparent
+                        hover:border-white
+                        hover:bg-[#1a1a1a]
+                        transition-all
+                        duration-300
+                        ease-out
+                        text-white
+                        font-medium
+                    "
                 >
                     Ver carrito
                 </button>

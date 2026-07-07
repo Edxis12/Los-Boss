@@ -8,7 +8,7 @@
 /* Tipografia base */
 body  {
   font-family: var(--font-inter);
-  background-color: #000;
+  background-color: #090909;
   color: #fff;
 }
 
@@ -48,6 +48,15 @@ body  {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease forwards;
+}
+
+/* Animacion para la linea blanca en navbar */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 22s linear infinite;
 }
 
 /* Linea decorativa blanca - usada en titulos de seccion */

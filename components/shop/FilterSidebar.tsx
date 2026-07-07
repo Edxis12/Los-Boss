@@ -42,17 +42,47 @@ export default function FilterSidebar({
     const ordenActual = searchParams.get("ordenar") ?? "";
 
     return (
-        <aside className="w-full md:w-56 shrink-0 space-y-8">
+        <aside className="
+                w-full 
+                md:w-72 
+                shrink-0
+                h-fit
+                rounded-3xl
+                border
+                border-white/10
+                bg-[#111111]
+                p-7
+                shadow-[0_20px_60px_rgba(0,0,0,.35)] 
+                space-y-8">
+            
+            <div>
+                <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-500 font-semibold">
+                    Filtros
+                </p>
+
+                <div className="mt-4 border-t border-white/10"/>
+            </div>
+
             {/* Categorías */}
             <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Categorías</h3>
+                <h3 className="text-sm uppercase tracking-[0.18em] font-semibold text-zinc-400 mb-4">Categorías</h3>
                 <nav className="flex flex-col gap-1">
                     <Link
                         href="/productos"
-                        className={`text-sm px-3 py-2 rounded-lg transition ${!categoriaActiva
-                                ? "bg-white text-black font-medium"
-                                : "text-zinc-400 hover:text-white hover:bg-zinc-900"
-                            }`}
+                        className={`
+                                px-4
+                                py-3
+                                rounded-xl
+                                text-sm
+                                transiton-all
+                                duration-300
+
+                                ${
+                                    !categoriaActiva
+                                        ? "bg-white text-black font-semibold shadow-md"
+                                        : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                                }
+                            `}
                     >
                         Todas
                     </Link>
@@ -61,7 +91,7 @@ export default function FilterSidebar({
                             key={cat.slug}
                             href={`/productos?categoria=${cat.slug}`}
                             className={`text-sm px-3 py-2 rounded-lg transition ${categoriaActiva === cat.slug
-                                    ? "bg-white text-black font-medium"
+                                    ? "bg-white text-black font-semibold shadow-md"
                                     : "text-zinc-400 hover:text-white hover:bg-zinc-900"
                                 }`}
                         >
@@ -71,13 +101,29 @@ export default function FilterSidebar({
                 </nav>
             </div>
 
+            <div className="border-t border-white/10"/>
+
             {/* Ordenar */}
             <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Ordenar por</h3>
+                <h3 className="text-sm uppercase tracking-[0.18em] font-semibold text-zinc-400 mb-4">Ordenar por</h3>
                 <select
                     value={ordenActual}
                     onChange={(e) => cambiarOrden(e.target.value)}
-                    className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-white"
+                    className="
+                        w-full
+                        h-12
+                        rounded-xl 
+                        bg-[#0d0d0d]
+                        border
+                        border-zinc-700
+                        px-4
+                        text-sm
+                        text-white
+                        outline-none
+                        transition-all
+                        focus:border-white
+
+                    "
                 >
                     <option value="">Más recientes</option>
                     <option value="precio-asc">Precio: menor a mayor</option>
@@ -85,9 +131,11 @@ export default function FilterSidebar({
                 </select>
             </div>
 
+            <div className="border-t border-white/10"/>
+
             {/* Precio */}
             <div>
-                <h3 className="text-sm font-semibold text-white mb-3">Precio</h3>
+                <h3 className="text-sm uppercase tracking-[0.18em] font-semibold text-zinc-400 mb-4">Precio</h3>
                 <div className="flex items-center gap-2">
                     <input
                         type="number"
@@ -95,7 +143,7 @@ export default function FilterSidebar({
                         placeholder="Mín"
                         value={precioMin}
                         onChange={(e) => setPrecioMin(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-white outline-none focus:border-white"
+                        className="w-full h-12 rounded-xl bg-[#0d0d0d] border border-zinc-700 px-4 text-sm text-white outline-none transition-all focus:border-white"
                     />
                     <span className="text-zinc-500 text-sm">-</span>
                     <input
@@ -104,12 +152,25 @@ export default function FilterSidebar({
                         placeholder="Máx"
                         value={precioMax}
                         onChange={(e) => setPrecioMax(e.target.value)}
-                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-white outline-none focus:border-white"
+                        className="w-full h-12 rounded-xl bg-[#0d0d0d] border border-zinc-700 px-4 text-sm text-white outline-none transition-all focus:border-white"
                     />
                 </div>
                 <button
                     onClick={aplicarFiltrosPrecio}
-                    className="w-full mt-2 text-sm bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg py-1.5 transition"
+                    className="
+                        w-full
+                        h-12
+                        mt-4
+                        rounded-xl
+                        bg-white
+                        text-black
+                        font-semibold
+                        transition-all
+                        duration-300
+                        hover:scale-[1.02]
+                        hover:bg-zinc-200
+                        shadow-[0_10px_30px_rgba(255,255,255,.12)]
+                    "
                 >
                     Aplicar
                 </button>

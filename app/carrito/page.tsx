@@ -64,18 +64,38 @@ export default function CarritoPage() {
                     {items.map((item) => (
                         <div
                             key={item.variantId}
-                            className="flex gap-4 bg-zinc-900 rounded-xl p-4"
+                            className="
+                                flex 
+                                gap-6 
+                                rounded-3xl 
+                                border
+                                border-white/10
+                                bg-[#0d0d0d]
+                                p-6
+                                transition-all
+                                duration-300
+                                hover:border-white/20
+                                hover:shadow-[0_20px_50px_rgba(0,0,0,.35)]    
+                            "
                         >
                             <Link
                                 href={`/productos/${item.slug}`}
-                                className="relative w-24 h-24 bg-zinc-800 rounded-lg overflow-hidden shrink-0"
+                                className="
+                                    relative 
+                                    w-32 
+                                    h-32 
+                                    rounded-2xl
+                                    bg-[linear-gradient(180deg,#fafafa,#f2f2f2)]  
+                                    border
+                                    border-zinc-200
+                                    shrink-0"
                             >
                                 {item.imageUrl && (
                                     <Image
                                         src={item.imageUrl}
                                         alt={item.name}
                                         fill
-                                        className="object-cover"
+                                        className="object-contain p-3"
                                         sizes="96px"
                                     />
                                 )}
@@ -84,7 +104,7 @@ export default function CarritoPage() {
                             <div className="flex-1 min-w-0">
                                 <Link
                                     href={`/productos/${item.slug}`}
-                                    className="font-medium text-white hover:underline line-clamp-1"
+                                    className="text-xl font-bold tracking-tight text-white hover:text-zinc-300 transition line-clamp-2"
                                 >
                                     {item.name}
                                 </Link>
@@ -93,12 +113,12 @@ export default function CarritoPage() {
                                         {[item.color, item.size].filter(Boolean).join(" / ")}
                                     </p>
                                 )}
-                                <p className="text-sm font-semibold text-zinc-200 mt-1">
+                                <p className="mt-2 text-xl font-black tracking-tight text-white">
                                     ${item.price.toLocaleString("es-MX")}
                                 </p>
 
                                 <div className="flex items-center gap-3 mt-3">
-                                    <div className="flex items-center border border-zinc-700 rounded-lg">
+                                    <div className="flex items-center rounded-full border border-white/15 bg-black/20 overflow-hidden">
                                         <button
                                             onClick={() =>
                                                 updateQuantity(
@@ -107,12 +127,12 @@ export default function CarritoPage() {
                                                     item.quantity - 1
                                                 )
                                             }
-                                            className="px-2.5 py-1.5 text-zinc-300 hover:text-white"
+                                            className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:bg-white hover:text-black transition"
                                             aria-label="Disminuir cantidad"
                                         >
                                             <Minus size={14} />
                                         </button>
-                                        <span className="px-3 text-sm text-white">
+                                        <span className="w-10 text-center font-semibold text-white">
                                             {item.quantity}
                                         </span>
                                         <button
@@ -123,7 +143,7 @@ export default function CarritoPage() {
                                                     item.quantity + 1
                                                 )
                                             }
-                                            className="px-2.5 py-1.5 text-zinc-300 hover:text-white"
+                                            className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:bg-white hover:text-black transition"
                                             aria-label="Aumentar cantidad"
                                         >
                                             <Plus size={14} />
@@ -132,7 +152,7 @@ export default function CarritoPage() {
 
                                     <button
                                         onClick={() => removeItem(userKey, item.variantId)}
-                                        className="text-zinc-500 hover:text-red-400 transition"
+                                        className="h-10 w-10 flex items-center justify-center hover:text-red-400 transition"
                                         aria-label="Eliminar producto"
                                     >
                                         <Trash2 size={16} />
@@ -140,7 +160,7 @@ export default function CarritoPage() {
                                 </div>
                             </div>
 
-                            <p className="text-white font-semibold whitespace-nowrap">
+                            <p className="text-2xl font-black tracking-tight text-white whitespace-nowrap">
                                 ${(item.price * item.quantity).toLocaleString("es-MX")}
                             </p>
                         </div>
@@ -148,7 +168,7 @@ export default function CarritoPage() {
                 </div>
 
                 {/* Resumen */}
-                <div className="bg-zinc-900 rounded-xl p-6 h-fit">
+                <div className="sticky top-28 h-fit rounded-3xl border border-white/10 bg-[#0d0d0d] p-8 shadow-[0_30px_80px_rgba(0,0,0,.3)]">
                     <h2 className="text-lg font-semibold text-white mb-4">Resumen</h2>
 
                     <div className="flex justify-between text-sm text-zinc-300 mb-2">
@@ -167,7 +187,7 @@ export default function CarritoPage() {
 
                     <Link
                         href="/checkout"
-                        className="block w-full bg-white text-black text-center font-semibold rounded-lg py-3 hover:bg-zinc-200 transition"
+                        className="block w-full rounded-2xl bg-white py-4 text-center text-lg font-bold text-black shadow-[0_15px_35px_rgba(255,255,255,.18)] hover:scale-[1.02] hover:bg-zinc-100 transition-all duration-300"
                     >
                         Continuar al checkout
                     </Link>
