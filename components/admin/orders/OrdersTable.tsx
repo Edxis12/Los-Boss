@@ -127,94 +127,88 @@ export default function OrdersTable({ pedidos }: Props) {
                 </select>
             </div>
 
-            <table className="w-full">
-                <thead className="border-b border-zinc-800 bg-zinc-950">
-                    <tr className="text-left text-xs uppercase tracking-wider text-zinc-500">
-                        <th className="px-6 py-4">Pedido</th>
-                        <th className="px-6 py-4">Cliente</th>
-                        <th className="px-6 py-4">Artículos</th>
-                        <th className="px-6 py-4">Fecha</th>
-                        <th className="px-6 py-4">Total</th>
-                        <th className="px-6 py-4">Estado</th>
-                        <th className="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                </thead>
+            <div className="divide-y divide-zinc-800">
+                {pedidosFiltrados.map((pedido) => {
+                    const totalArticulos = pedido.items.reduce(
+                        (total: number, item: any) => total + item.quantity,
+                        0
+                    );
 
-                <tbody>
-                    {pedidosFiltrados.map((pedido) => (
-                        <tr
+                    return (
+                        <div
                             key={pedido.id}
-                            className="border-b border-zinc-800 hover:bg-zinc-800/40 transition-colors"
+                            className="grid gap-4 p-5 transition hover:bg-zinc-800/40 lg:grid-cols-[1fr_1.4fr_.8fr_.8fr_1fr_auto]"
                         >
-                            <td className="px-6 py-5 font-semibold text-white">
-                                {pedido.orderNumber}
-                            </td>
+                            <div>
+                                <p className="text-xs text-zinc-500">Pedido</p>
+                                <p className="font-semibold text-white">{pedido.orderNumber}</p>
+                            </div>
 
-                            <td className="px-6 py-5">
-                                <div>
-                                    <p className="text-white">
-                                        {pedido.user.name || "Sin nombre"}
-                                    </p>
+                            <div>
+                                <p className="text-xs text-zinc-500">Cliente</p>
+                                <p className="text-white">{pedido.user.name || "Sin nombre"}</p>
+                                <p className="text-xs text-zinc-500">{pedido.user.email}</p>
+                            </div>
 
-                                    <p className="text-xs text-zinc-500">
-                                        {pedido.user.email}
+                            <div>
+                                <p className="text-xs text-zinc-500">Artículos</p>
+                                <p className="text-zinc-300">{totalArticulos} piezas</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-zinc-500">Fecha</p>
+                                <p className="text-zinc-400">
+                                    {new Date(pedido.createdAt).toLocaleDateString("es-MX")}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-zinc-500">Estado</p>
+                                <div className="mt-1">
+                                    <OrderStatusBadge status={pedido.status} />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-3 lg:justify-end">
+                                <div className="lg:hidden">
+                                    <p className="text-xs text-zinc-500">Total</p>
+                                    <p className="font-semibold text-white">
+                                        ${Number(pedido.total).toLocaleString("es-MX")}
                                     </p>
                                 </div>
-                            </td>
 
-                            <td className="px-6 py-5 text-zinc-300">
-                                {pedido.items.reduce(
-                                    (total: number, item: any) => total + item.quantity,
-                                    0
-                                )}{" "}
-                                piezas
-                            </td>
+                                <button
+                                    onClick={() => setPedidoSeleccionado(pedido)}
+                                    className="
+                            h-10
+                            w-10
+                            rounded-lg
+                            border
+                            border-zinc-700
+                            flex
+                            items-center
+                            justify-center
+                            text-zinc-400
+                            hover:bg-zinc-800
+                            hover:text-white
+                            transition
+                        "
+                                >
+                                    <Eye size={18} />
+                                </button>
+                            </div>
 
-                            <td className="px-6 py-5 text-zinc-400">
-                                {new Date(pedido.createdAt).toLocaleDateString("es-MX")}
-                            </td>
+                            <div className="hidden lg:block lg:col-start-6 lg:row-start-1">
+                                <p className="text-xs text-zinc-500">Total</p>
+                                <p className="font-semibold text-white">
+                                    ${Number(pedido.total).toLocaleString("es-MX")}
+                                </p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
 
-                            <td className="px-6 py-5 font-semibold text-white">
-                                ${Number(pedido.total).toLocaleString("es-MX")}
-                            </td>
-
-                            <td className="px-6 py-5">
-                                <OrderStatusBadge status={pedido.status} />
-                            </td>
-
-                            <td className="px-6 py-5">
-                                <div className="flex items-center justify-end gap-3">
-
-                                    <button
-                                        onClick={() => setPedidoSeleccionado(pedido)}
-                                        className="
-                                            h-10
-                                            w-10
-                                            rounded-lg
-                                            border
-                                            border-zinc-700
-                                            flex
-                                            items-center
-                                            justify-center
-                                            text-zinc-400
-                                            hover:bg-zinc-800
-                                            hover:text-white
-                                            transition
-                                        "
-                                    >
-                                        <Eye size={18} />
-                                    </button>
-
-                                    <OrderStatusSelect
-                                        orderId={pedido.id}
-                                        estadoActual={pedido.status}
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
             <OrderDetailsModal
                 pedido={pedidoSeleccionado}
                 open={!!pedidoSeleccionado}
