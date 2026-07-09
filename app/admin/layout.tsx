@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { LayoutDashboard, Package, ShoppingCart, Tag } from "lucide-react";
 
 const ADMIN_LINKS = [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { label: "Productos", href: "/admin/productos", icon: Package },
     { label: "Pedidos", href: "/admin/pedidos", icon: ShoppingCart },
     { label: "Categorías", href: "/admin/categorias", icon: Tag },

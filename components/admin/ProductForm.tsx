@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
-import {
-    crearProducto,
-    actualizarProducto,
-} from "@/lib/actions/product-actions";
+import { Plus, Trash2, Star, GripVertical } from "lucide-react";
+import { crearProducto, actualizarProducto } from "@/lib/actions/product-actions";
+import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragEndEvent } from "@dnd-kit/core"
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import SortableImageCard from "@/components/admin/SortableImageCard";
+
+
 
 type Categoria = {
     id: string;
@@ -80,6 +82,10 @@ export default function ProductForm({
             : [{ size: "", color: "", stock: 1 }]
     );
 
+    const sensors = useSensors(
+        useSensor(PointerSensor)
+    );
+
     function actualizarVariante(
         index: number,
         campo: keyof VarianteForm,
@@ -130,6 +136,19 @@ export default function ProductForm({
 
         setImageUrls((prev) => [...prev.filter(Boolean), ...urls]);
         setLoading(false);
+    }
+
+    function handleDragEnd(event: DragEndEvent) {
+        const { active, over } = event;
+
+        if (!over || active.id === over.id) return;
+
+        setImageUrls((items) => {
+            const oldIndex = items.indexOf(String(active.id));
+            const newIndex = items.indexOf(String(over.id));
+
+            return arrayMove(items, oldIndex, newIndex);
+        });
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -279,20 +298,11 @@ export default function ProductForm({
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <label className="text-sm text-zinc-300">Imágenes del producto</label>
-
-                    <button
-                        type="button"
-                        onClick={() => setImageUrls((prev) => [...prev, ""])}
-                        className="flex items-center gap-1 text-xs text-zinc-300 hover:text-white border border-zinc-700 rounded-lg px-2.5 py-1"
-                    >
-                        <Plus size={13} />
-                        Agregar imagen
-                    </button>
                 </div>
 
-                <input 
-                    type="file" 
-                    accept="image/"
+                <input
+                    type="file"
+                    accept="image/*"
                     multiple
                     onChange={(e) => subirImagenesCloudinary(e.target.files)}
                     className="mb-3 block w-full text-sm text-zinc-400
@@ -302,39 +312,31 @@ export default function ProductForm({
                     hover:file:bg-zinc-200"
                 />
 
-                <div className="space-y-2">
-                    {imageUrls.map((url, index) => (
-                        <div key={index} className="flex gap-2">
-                            <input
-                                type="url"
-                                value={url}
-                                onChange={(e) =>
-                                    setImageUrls((prev) =>
-                                        prev.map((item, i) =>
-                                            i === index ? e.target.value : item
-                                        )
-                                    )
-                                }
-                                className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white outline-none focus:border-white"
-                                placeholder={`URL de imagen ${index + 1}`}
-                            />
-
-                            {imageUrls.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() =>
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext
+                        items={imageUrls}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {imageUrls.map((url, index) => (
+                                <SortableImageCard
+                                    key={url}
+                                    url={url}
+                                    isPrincipal={index === 0}
+                                    onDelete={() =>
                                         setImageUrls((prev) =>
                                             prev.filter((_, i) => i !== index)
                                         )
                                     }
-                                    className="text-zinc-500 hover:text-red-400 p-2"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            )}
+                                />
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </SortableContext>
+                </DndContext>
 
                 <p className="text-xs text-zinc-500 mt-2">
                     La primera imagen será la imagen principal del producto.

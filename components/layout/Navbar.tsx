@@ -205,7 +205,7 @@ export default function Navbar() {
                     </Link>
                     {(session.user as any)?.role === "ADMIN" && (
                       <Link
-                        href="/admin"
+                        href="/admin/dashboard"
                         onClick={() => setUserMenuOpen(false)}
                         className="block px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-zinc-900 transition border-t border-zinc-800"
                       >

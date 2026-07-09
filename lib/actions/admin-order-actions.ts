@@ -29,3 +29,22 @@ export async function actualizarEstadoPedido(
     revalidatePath("/cuenta/pedidos");
     return { success: true }
 }
+
+export async function actualizarNotasPedido(
+    orderId: string,
+    adminNotes: string
+) {
+    await requireAdmin();
+
+    await prisma.order.update({
+        where: { id: orderId },
+        data: {
+            adminNotes: adminNotes.trim() || null,
+        },
+    });
+
+    revalidatePath("/admin/pedidos");
+    revalidatePath("/admin/dashboard");
+
+    return { success: true };
+}

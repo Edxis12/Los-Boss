@@ -6,8 +6,9 @@ import { actualizarEstadoPedido } from "@/lib/actions/admin-order-actions";
 
 const ESTADOS = [
     { value: "PENDING", label: "Pendiente" },
-    { value: "PAID", label: "Pagado" },
-    { value: "PROCESSING", label: "En proceso" },
+    { value: "CONTACTED", label: "Contactado" },
+    { value: "PAYMENT_CONFIRMED", label: "Pago confirmado" },
+    { value: "PREPARING", label: "Preparando" },
     { value: "SHIPPED", label: "Enviado" },
     { value: "DELIVERED", label: "Entregado" },
     { value: "CANCELLED", label: "Cancelado" },
