@@ -162,7 +162,15 @@ export default async function AdminDashboardPage() {
                                 No hay productos con poco stock.
                             </p>
                         ) : (
-                            productosBajoStock.map((variant) => (
+                            productosBajoStock.map((variant: {
+                                id: string;
+                                stock: number;
+                                size: string | null;
+                                color: string | null;
+                                product: {
+                                    name: string;
+                                };
+                            }) => (
                                 <div
                                     key={variant.id}
                                     className="flex items-center justify-between border-b border-zinc-800 pb-3 last:border-0"
