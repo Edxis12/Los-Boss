@@ -48,12 +48,8 @@ export default async function AdminPedidosPage() {
 
   return (
     <div className="space-y-8">
-
       <div>
-        <h1 className="text-3xl font-black text-white">
-          Pedidos
-        </h1>
-
+        <h1 className="text-3xl font-black text-white">Pedidos</h1>
         <p className="text-zinc-500">
           {pedidos.length} pedidos registrados
         </p>
@@ -66,7 +62,6 @@ export default async function AdminPedidosPage() {
       ) : (
         <OrdersTable pedidos={pedidosPlano} />
       )}
-
     </div>
   );
 }
