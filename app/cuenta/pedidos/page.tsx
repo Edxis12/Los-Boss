@@ -94,10 +94,10 @@ export default async function MisPedidosPage() {
                                             key={item.id}
                                             className="relative w-12 h-12 bg-zinc-800 rounded-lg overflow-hidden shrink-0"
                                         >
-                                            {item.product.images[0]?.url && (
+                                            {item.product?.images[0]?.url && (
                                                 <Image
                                                     src={item.product.images[0].url}
-                                                    alt={item.product.name}
+                                                    alt={item.product.name ?? "Producto eliminado"}
                                                     fill
                                                     className="object-cover"
                                                     sizes="48px"
