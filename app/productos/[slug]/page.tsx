@@ -180,12 +180,14 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 name={producto.name}
                 price={Number(producto.price)}
                 imageUrl={imagenPrincipal}
-                variants={producto.variants.map((v) => ({
-                  id: v.id,
-                  size: v.size,
-                  color: v.color,
-                  stock: v.stock,
-                }))}
+                variants={producto.variants.map(
+                  (v: typeof producto.variants[number]) => ({
+                    id: v.id,
+                    size: v.size,
+                    color: v.color,
+                    stock: v.stock,
+                  })
+                )}
               />
             </div>
 
