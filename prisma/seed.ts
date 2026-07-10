@@ -1,7 +1,14 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import "dotenv/config";
+import { PrismaClient, Prisma } from "../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error("DATABASE_URL no está definida");
+}
+
+const adapter = new PrismaPg({ connectionString, });
 const prisma = new PrismaClient({ adapter });
 
 // Crea el producto solo si no existe ya (evita el bug de upsert + nested writes en Prisma 7)
