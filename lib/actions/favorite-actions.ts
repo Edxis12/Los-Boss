@@ -37,12 +37,19 @@ export async function toggleFavorite(productId: string) {
 // Devuelve el set de IDs de productos que el usuario actual tiene en favoritos
 export async function getFavoriteIds(): Promise<string[]> {
     const session = await auth();
+
     if (!session?.user?.id) return [];
 
     const favoritos = await prisma.favorite.findMany({
-        where: { userId: session.user.id },
-        select: { productId: true },
+        where: {
+            userId: session.user.id,
+        },
+        select: {
+            productId: true,
+        },
     });
 
-    return favoritos.map((f) => f.productId);
+    return favoritos.map(
+        (f: typeof favoritos[number]) => f.productId
+    );
 }
