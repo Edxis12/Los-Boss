@@ -4,12 +4,34 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const ESTADOS_LABEL: Record<string, { label: string; color: string }> = {
-    PENDING: { label: "Pendiente", color: "bg-amber-500/10 text-amber-400" },
-    PAID: { label: "Pagado", color: "bg-blue-500/10 text-blue-400" },
-    PROCESSING: { label: "En proceso", color: "bg-blue-500/10 text-blue-400" },
-    SHIPPED: { label: "Enviado", color: "bg-purple-500/10 text-purple-400" },
-    DELIVERED: { label: "Entregado", color: "bg-green-500/10 text-green-400" },
-    CANCELLED: { label: "Cancelado", color: "bg-red-500/10 text-red-400" },
+    PENDING: {
+        label: "Pendiente",
+        color: "bg-amber-500/10 text-amber-400",
+    },
+    CONTACTED: {
+        label: "Contactado",
+        color: "bg-sky-500/10 text-sky-400",
+    },
+    PAYMENT_CONFIRMED: {
+        label: "Pago confirmado",
+        color: "bg-emerald-500/10 text-emerald-400",
+    },
+    PREPARING: {
+        label: "Preparando",
+        color: "bg-orange-500/10 text-orange-400",
+    },
+    SHIPPED: {
+        label: "Enviado",
+        color: "bg-indigo-500/10 text-indigo-400",
+    },
+    DELIVERED: {
+        label: "Entregado",
+        color: "bg-green-500/10 text-green-400",
+    },
+    CANCELLED: {
+        label: "Cancelado",
+        color: "bg-red-500/10 text-red-400",
+    },
 };
 
 export default async function MisPedidosPage() {
@@ -18,7 +40,7 @@ export default async function MisPedidosPage() {
     if (!session?.user?.id) {
         return (
             <div className="max-w-md mx-auto px-4 py-24 text-center">
-                <h1 className="text-2x1 font-bold text-white mb-2">
+                <h1 className="text-2xl font-bold text-white mb-2">
                     Inicia sesión para ver tus pedidos
                 </h1>
                 <Link
@@ -46,8 +68,8 @@ export default async function MisPedidosPage() {
     });
 
     return (
-        <div className="max-w-4x1 mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <h1 className="text-2x1 font-bold text-white mb-8">Mis pedidos</h1>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <h1 className="text-2xl font-bold text-white mb-8">Mis pedidos</h1>
 
             {pedidos.length === 0 ? (
                 <div className="text-center py-20">
@@ -61,8 +83,11 @@ export default async function MisPedidosPage() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {pedidos.map((pedido) => {
-                        const estado = ESTADOS_LABEL[pedido.status];
+                    {pedidos.map((pedido: typeof pedidos[number]) => {
+                        const estado = ESTADOS_LABEL[pedido.status] ?? {
+                            label: pedido.status,
+                            color: "bg-zinc-700/40 text-zinc-400"
+                        };
                         return (
                             <div
                                 key={pedido.id}
@@ -89,19 +114,23 @@ export default async function MisPedidosPage() {
                                 </div>
 
                                 <div className="flex gap-2 mb-4">
-                                    {pedido.items.slice(0, 5).map((item) => (
+                                    {pedido.items.slice(0, 5).map((item: typeof pedido.items[number]) => (
                                         <div
                                             key={item.id}
                                             className="relative w-12 h-12 bg-zinc-800 rounded-lg overflow-hidden shrink-0"
                                         >
-                                            {item.product?.images[0]?.url && (
+                                            {item.product?.images?.[0]?.url ? (
                                                 <Image
                                                     src={item.product.images[0].url}
-                                                    alt={item.product.name ?? "Producto eliminado"}
+                                                    alt={item.product.name}
                                                     fill
                                                     className="object-cover"
                                                     sizes="48px"
                                                 />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center text-[9px] text-zinc-600">
+                                                    Sin imagen
+                                                </div>
                                             )}
                                         </div>
                                     ))}
