@@ -62,10 +62,12 @@ export default async function EditarProductoPage({
                         : null,
                     brand: producto.brand,
                     categoryId: producto.categoryId,
-                    imageUrls: producto.images.map((img) => img.url),
+                    imageUrls: producto.images.map(
+                        (img: typeof producto.images[number]) => img.url),
                     isFeatured: producto.isFeatured,
                     gender: producto.gender,
-                    variantes: producto.variants.map((v) => ({
+                    variantes: producto.variants.map(
+                        (v: typeof producto.variants[number]) => ({
                         id: v.id,
                         size: v.size ?? "",
                         color: v.color ?? "",
