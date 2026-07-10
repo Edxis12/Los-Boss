@@ -135,6 +135,7 @@ export default function OrdersTable({ pedidos }: Props) {
                     );
 
                     return (
+                        
                         <div
                             key={pedido.id}
                             className="grid gap-4 p-5 transition hover:bg-zinc-800/40 lg:grid-cols-[1fr_1.4fr_.8fr_.8fr_1fr_auto]"
