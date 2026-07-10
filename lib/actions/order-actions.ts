@@ -1,9 +1,13 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+type TransactionClient = Omit<
+  typeof prisma,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+>;
 
 type ItemPedido = {
   productId: string;
@@ -44,7 +48,7 @@ export async function crearPedido(
     // Usamos una transacción: si algo falla a la mitad (ej. no hay stock),
     // se revierte TODO (no se crea el pedido a medias ni se descuenta stock de más).
     const pedido = await prisma.$transaction(
-      async (tx: Prisma.TransactionClient) => {
+      async (tx: TransactionClient) => {
         // 1. Verificar stock disponible de cada variante
         for (const item of items) {
           const variante = await tx.productVariant.findUnique({
