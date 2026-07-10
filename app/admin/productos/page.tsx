@@ -45,9 +45,12 @@ export default async function AdminProductosPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {productos.map((producto) => {
+                        {productos.map((producto: typeof productos[number]) => {
                             const stockTotal = producto.variants.reduce(
-                                (acc, v) => acc + v.stock,
+                                (
+                                    acc: number,
+                                    v: typeof producto.variants[number]
+                                ) => acc + v.stock,
                                 0
                             );
                             return (
