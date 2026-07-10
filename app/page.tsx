@@ -146,7 +146,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-            {destacados.map((producto) => (
+            {destacados.map((producto: typeof destacados[number]) => (
               <ProductCard
                 key={producto.id}
                 id={producto.id}
