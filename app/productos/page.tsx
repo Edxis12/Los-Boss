@@ -84,15 +84,18 @@ export default async function ProductosPage({ searchParams }: PageProps) {
     ]);
 
     // Título dinámico según los filtros activos
-    const titulo = ofertas === "true"
-    ? "Ofertas"
-    : buscar
-        ? `Resultados para "${buscar}"`
-        : genero
-            ? GENERO_LABELS[genero] ?? "Productos"
-            : categoria
-                ? categorias.find((c) => c.slug === categoria)?.name ?? "Productos"
-                : "Todos los productos";
+    const titulo =
+        ofertas === "true"
+            ? "Ofertas"
+            : buscar
+                ? `Resultados para "${buscar}"`
+                : genero
+                    ? GENERO_LABELS[genero] ?? "Productos"
+                    : categoria
+                        ? categorias.find(
+                            (c: typeof categorias[number]) => c.slug === categoria
+                        )?.name ?? "Productos"
+                        : "Todos los productos";
 
     return (
         <div className="max-w-[1600px] mx-auto px-6 lg:px-10 py-12">
@@ -114,7 +117,7 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                         </p>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-16">
-                            {productos.map((producto) => (
+                            {productos.map((producto: typeof productos[number]) => (
                                 <ProductCard
                                     key={producto.id}
                                     id={producto.id}
