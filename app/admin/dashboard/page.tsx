@@ -213,7 +213,16 @@ export default async function AdminDashboardPage() {
                                 Todavía no hay pedidos.
                             </p>
                         ) : (
-                            pedidosRecientes.map((pedido) => (
+                            pedidosRecientes.map((pedido: {
+                                id: string;
+                                orderNumber: string;
+                                total: unknown;
+                                status: string;
+                                user: {
+                                    name: string | null;
+                                    email: string | null;
+                                }
+                            }) => (
                                 <div
                                     key={pedido.id}
                                     className="flex items-center justify-between border-b border-zinc-800 pb-3 last:border-0"
