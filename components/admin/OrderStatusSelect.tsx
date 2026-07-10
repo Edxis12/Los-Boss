@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { actualizarEstadoPedido } from "@/lib/actions/admin-order-actions";
+import {
+    actualizarEstadoPedido,
+    type EstadoPedido,
+} from "@/lib/actions/admin-order-actions";
 
 const ESTADOS = [
     { value: "PENDING", label: "Pendiente" },
@@ -22,14 +25,19 @@ export default function OrderStatusSelect({
     estadoActual: string;
 }) {
     const router = useRouter();
-    const [estado, setEstado] = useState(estadoActual);
+
+    const [estado, setEstado] = useState<EstadoPedido>(
+        estadoActual as EstadoPedido
+    );
+
     const [guardando, setGuardando] = useState(false);
 
-    async function handleChange(nuevoEstado: string) {
+    async function handleChange(nuevoEstado: EstadoPedido) {
         setEstado(nuevoEstado);
         setGuardando(true);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await actualizarEstadoPedido(orderId, nuevoEstado as any);
+
+        await actualizarEstadoPedido(orderId, nuevoEstado);
+
         setGuardando(false);
         router.refresh();
     }
@@ -39,7 +47,9 @@ export default function OrderStatusSelect({
             value={estado}
             disabled={guardando}
             onClick={(e) => e.stopPropagation()}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={(e) =>
+                handleChange(e.target.value as EstadoPedido)
+            }
             className="bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-white outline-none focus:border-white disabled:opacity-50"
         >
             {ESTADOS.map((e) => (

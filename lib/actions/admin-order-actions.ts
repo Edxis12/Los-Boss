@@ -3,11 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { OrderStatus } from "@prisma/client";
-import { success } from "zod";
 
-async function requireAdmin () {
+const ESTADOS_PEDIDO = [
+    "PENDING",
+    "CONTACTED",
+    "PAYMENT_CONFIRMED",
+    "PREPARING",
+    "SHIPPED",
+    "DELIVERED",
+    "CANCELLED",
+] as const;
+
+export type EstadoPedido = (typeof ESTADOS_PEDIDO)[number];
+
+async function requireAdmin() {
     const session = await auth();
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!session?.user || (session.user as any).role !== "ADMIN") {
         throw new Error("No autorizado");
@@ -16,18 +27,32 @@ async function requireAdmin () {
 
 export async function actualizarEstadoPedido(
     orderId: string,
-    nuevoEstado: OrderStatus
+    nuevoEstado: EstadoPedido
 ) {
     await requireAdmin();
 
+    if (!ESTADOS_PEDIDO.includes(nuevoEstado)) {
+        return {
+            error: "Estado de pedido no válido",
+        };
+    }
+
     await prisma.order.update({
-        where: { id: orderId },
-        data: { status: nuevoEstado },
+        where: {
+            id: orderId,
+        },
+        data: {
+            status: nuevoEstado,
+        },
     });
 
     revalidatePath("/admin/pedidos");
+    revalidatePath("/admin/dashboard");
     revalidatePath("/cuenta/pedidos");
-    return { success: true }
+
+    return {
+        success: true,
+    };
 }
 
 export async function actualizarNotasPedido(
@@ -37,7 +62,9 @@ export async function actualizarNotasPedido(
     await requireAdmin();
 
     await prisma.order.update({
-        where: { id: orderId },
+        where: {
+            id: orderId,
+        },
         data: {
             adminNotes: adminNotes.trim() || null,
         },
@@ -46,5 +73,7 @@ export async function actualizarNotasPedido(
     revalidatePath("/admin/pedidos");
     revalidatePath("/admin/dashboard");
 
-    return { success: true };
+    return {
+        success: true,
+    };
 }
