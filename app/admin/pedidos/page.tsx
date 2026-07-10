@@ -22,13 +22,13 @@ export default async function AdminPedidosPage() {
     },
   });
 
-  const pedidosPlano = pedidos.map((pedido) => ({
+  const pedidosPlano = pedidos.map((pedido: typeof pedidos[number]) => ({
     ...pedido,
     total: Number(pedido.total),
     adminNotes: pedido.adminNotes,
     createdAt: pedido.createdAt.toISOString(),
     updatedAt: pedido.updatedAt.toISOString(),
-    items: pedido.items.map((item) => ({
+    items: pedido.items.map((item: typeof pedido.items[number]) => ({
       ...item,
       price: Number(item.price),
       product: item.product
