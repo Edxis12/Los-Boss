@@ -279,7 +279,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-              {relacionados.map((p) => (
+              {relacionados.map((p: typeof relacionados[number]) => (
                 <ProductCard
                   key={p.id}
                   id={p.id}
