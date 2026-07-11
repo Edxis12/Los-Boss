@@ -41,6 +41,18 @@ export default function FilterSidebar({
 
     const ordenActual = searchParams.get("ordenar") ?? "";
 
+    function crearHrefCategoria(slug?: string) {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (slug) {
+            params.set("categoria", slug);
+        } else {
+            params.delete("categoria");
+        }
+
+        return `/productos?${params.toString()}`;
+    }
+
     return (
         <aside className="
                 w-full 
@@ -68,13 +80,13 @@ export default function FilterSidebar({
                 <h3 className="text-sm uppercase tracking-[0.18em] font-semibold text-zinc-400 mb-4">Categorías</h3>
                 <nav className="flex flex-col gap-1">
                     <Link
-                        href="/productos"
+                        href={crearHrefCategoria()}
                         className={`
                                 px-4
                                 py-3
                                 rounded-xl
                                 text-sm
-                                transiton-all
+                                transition-all
                                 duration-300
 
                                 ${
@@ -89,7 +101,7 @@ export default function FilterSidebar({
                     {categorias.map((cat) => (
                         <Link
                             key={cat.slug}
-                            href={`/productos?categoria=${cat.slug}`}
+                            href={crearHrefCategoria(cat.slug)}
                             className={`text-sm px-3 py-2 rounded-lg transition ${categoriaActiva === cat.slug
                                     ? "bg-white text-black font-semibold shadow-md"
                                     : "text-zinc-400 hover:text-white hover:bg-zinc-900"
