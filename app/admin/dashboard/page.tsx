@@ -1,3 +1,9 @@
+import DashboardStats from "@/components/admin/dashboard/DashboardStats";
+import TopProducts from "@/components/admin/dashboard/TopProducts";
+import LowStock from "@/components/admin/dashboard/LowStock";
+import RecentOrders from "@/components/admin/dashboard/RecentOrders";
+import type { EstadoPedido } from "@/lib/actions/admin-order-actions";
+
 import { prisma } from "@/lib/prisma";
 import { Package, ShoppingCart, Users, AlertTriangle, BadgePercent, Heart, DollarSign } from "lucide-react";
 import SalesChart, { type SalesChartPoint } from "@/components/admin/dashboard/SalesChart";
@@ -104,18 +110,18 @@ export default async function AdminDashboardPage() {
     const rankingProductos = productosMasVendidos.map(
         (venta: typeof productosMasVendidos[number], index: number) => {
             const producto = productosVendidos.find(
-                (p: typeof productosVendidos[number]) => 
+                (p: typeof productosVendidos[number]) =>
                     p.id === venta.productId
-        );
+            );
 
-        return {
-            id: producto?.id ?? `producto-eliminado-${index}`,
-            nombre: producto?.name ?? "Producto eliminado",
-            imagen: producto?.images[0]?.url ?? null,
-            vendidos: venta._sum.quantity ?? 0,
-            posicion: index + 1,
-        };
-    });
+            return {
+                id: producto?.id ?? `producto-eliminado-${index}`,
+                nombre: producto?.name ?? "Producto eliminado",
+                imagen: producto?.images[0]?.url ?? null,
+                vendidos: venta._sum.quantity ?? 0,
+                posicion: index + 1,
+            };
+        });
 
     const hoy = new Date();
     hoy.setHours(23, 59, 59, 999);
@@ -312,6 +318,19 @@ export default async function AdminDashboardPage() {
         },
     ];
 
+    const pedidosRecientesPlano = pedidosRecientes.map(
+        (pedido: typeof pedidosRecientes[number]) => ({
+            id: pedido.id,
+            orderNumber: pedido.orderNumber,
+            total: Number(pedido.total),
+            status: pedido.status as EstadoPedido,
+            user: {
+                name: pedido.user.name,
+                email: pedido.user.email,
+            },
+        })
+    );
+
     return (
         <div className="space-y-10">
             <div>
@@ -323,200 +342,30 @@ export default async function AdminDashboardPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                {stats.map((stat) => {
-                    const Icon = stat.icon;
+            <DashboardStats stats={stats} />
 
-                    return (
-                        <div
-                            key={stat.label}
-                            className={`rounded-2xl border bg-zinc-950 p-5 ${stat.alerta
-                                ? "border-amber-500/40"
-                                : "border-zinc-800"
-                                }`}
-                        >
-                            <div className="flex items-center justify-between mb-5">
-                                <div
-                                    className={`h-10 w-10 rounded-xl flex items-center justify-center ${stat.alerta
-                                        ? "bg-amber-500/10 text-amber-400"
-                                        : "bg-white/5 text-zinc-300"
-                                        }`}
-                                >
-                                    <Icon size={20} />
-                                </div>
-                            </div>
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold text-white">
+                            Ventas de los últimos 7 días
+                        </h2>
 
-                            <p className="text-3xl font-black text-white">
-                                {stat.value}
-                            </p>
-                            <p className="text-sm text-zinc-400 mt-1">
-                                {stat.label}
-                            </p>
-                            <p className="text-xs text-zinc-600 mt-2">
-                                {stat.detail}
-                            </p>
-                        </div>
-                    );
-                })}
+                        <p className="mt-1 text-sm text-zinc-500">
+                            Total de pedidos registrados, excepto cancelados
+                        </p>
+                    </div>
+
+                    <SalesChart data={ventasPorDia} />
+                </div>
+
+                <TopProducts productos={rankingProductos} />
             </div>
 
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold text-white">
-                        Ventas de los últimos 7 días
-                    </h2>
-                    <p className="text-sm text-zinc-500">
-                        Total de pedidos registrados, excepto cancelados
-                    </p>
-                </div>
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                <LowStock variantes={productosBajoStock} />
 
-                <SalesChart data={ventasPorDia} />
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold text-white">
-                        🏆 Productos más vendidos
-                    </h2>
-                    <div>
-                        {rankingProductos.length === 0 ? (
-                            <p className="text-sm text-zinc-500">
-                                Aún no hay ventas registradas.
-                            </p>
-                        ) : (
-                            rankingProductos.map((producto) => (
-                                <div
-                                    key={producto.id}
-                                    className="flex items-center justify-between border-b border-zinc-800 py-3 last:border-0"
-                                >
-                                    <div>
-                                        <p className="text-sm font-medium text-white">
-                                            {producto.nombre}
-                                        </p>
-
-                                        <p className="text-xs text-zinc-500">
-                                            {producto.vendidos} vendidos
-                                        </p>
-                                    </div>
-
-                                    <span className="text-sm font-bold text-white">
-                                        #{producto.posicion}
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-                    <div className="flex items-center justify-between mb-5">
-                        <div>
-                            <h2 className="text-lg font-bold text-white">
-                                Productos con poco stock
-                            </h2>
-                            <p className="text-sm text-zinc-500">
-                                Variantes con 3 piezas o menos
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        {productosBajoStock.length === 0 ? (
-                            <p className="text-sm text-zinc-500">
-                                No hay productos con poco stock.
-                            </p>
-                        ) : (
-                            productosBajoStock.map((variant: {
-                                id: string;
-                                stock: number;
-                                size: string | null;
-                                color: string | null;
-                                product: {
-                                    name: string;
-                                };
-                            }) => (
-                                <div
-                                    key={variant.id}
-                                    className="flex items-center justify-between border-b border-zinc-800 pb-3 last:border-0"
-                                >
-                                    <div>
-                                        <p className="text-sm font-medium text-white">
-                                            {variant.product.name}
-                                        </p>
-                                        <p className="text-xs text-zinc-500">
-                                            {[variant.color, variant.size]
-                                                .filter(Boolean)
-                                                .join(" / ") || "General"}
-                                        </p>
-                                    </div>
-
-                                    <span className="text-sm font-bold text-amber-400">
-                                        {variant.stock}
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-                    <div className="flex items-center justify-between mb-5">
-                        <div>
-                            <h2 className="text-lg font-bold text-white">
-                                Pedidos recientes
-                            </h2>
-                            <p className="text-sm text-zinc-500">
-                                Últimos pedidos registrados
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        {pedidosRecientes.length === 0 ? (
-                            <p className="text-sm text-zinc-500">
-                                Todavía no hay pedidos.
-                            </p>
-                        ) : (
-                            pedidosRecientes.map((pedido: {
-                                id: string;
-                                orderNumber: string;
-                                total: unknown;
-                                status: string;
-                                user: {
-                                    name: string | null;
-                                    email: string | null;
-                                }
-                            }) => (
-                                <div
-                                    key={pedido.id}
-                                    className="flex items-center justify-between border-b border-zinc-800 pb-3 last:border-0"
-                                >
-                                    <div>
-                                        <p className="text-xs text-zinc-500">
-                                            #{pedido.orderNumber}
-                                        </p>
-                                        <p className="text-xs text-zinc-500">
-                                            {pedido.user.name ??
-                                                pedido.user.email ??
-                                                "cliente"}
-                                        </p>
-                                    </div>
-
-                                    <div className="text-right">
-                                        <p className="text-sm font-bold text-white">
-                                            ${Number(pedido.total).toLocaleString("es-MX")}
-                                        </p>
-                                        <p className="text-xs text-zinc-500">
-                                            {pedido.status}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
+                <RecentOrders pedidos={pedidosRecientesPlano} />
             </div>
         </div>
     )
