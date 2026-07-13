@@ -76,7 +76,15 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             where,
             orderBy,
             include: {
-                images: { orderBy: { position: "asc" }, take: 1 },
+                images: { 
+                    orderBy: { position: "asc" }, 
+                    take: 1 
+                },
+                variants: {
+                    select: {
+                        stock: true,
+                    },
+                },
             },
         }),
         prisma.category.findMany({ orderBy: { name: "asc" } }),
@@ -117,8 +125,17 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                         </p>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-16">
-                            {productos.map((producto: typeof productos[number]) => (
-                                <ProductCard
+                            {productos.map((producto: typeof productos[number]) => {
+                                const stockTotal = producto.variants.reduce(
+                                    (
+                                        total: number,
+                                        variante: typeof producto.variants[number]
+                                    ) => total + variante.stock,
+                                    0
+                                );
+
+                                return (
+                                    <ProductCard
                                     key={producto.id}
                                     id={producto.id}
                                     slug={producto.slug}
@@ -130,8 +147,10 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                                     brand={producto.brand}
                                     imageUrl={producto.images[0]?.url}
                                     esFavorito={favoritosIds.includes(producto.id)}
+                                    stockTotal={stockTotal}
                                 />
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
                 </div>

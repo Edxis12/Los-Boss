@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import ProductActions from "@/components/shop/ProductActions";
 import ProductCard from "@/components/shop/ProductCard";
@@ -31,15 +30,40 @@ export default async function ProductoDetallePage({ params }: PageProps) {
       where: {
         categoryId: producto.categoryId,
         isActive: true,
-        NOT: { id: producto.id },
+        NOT: {
+          id: producto.id,
+        },
       },
       take: 4,
-      include: { images: { take: 1, orderBy: { position: "asc" } } },
+      include: {
+        images: {
+          take: 1,
+          orderBy: {
+            position: "asc",
+          },
+        },
+        variants: {
+          select: {
+            stock: true,
+          },
+        },
+      },
     }),
     getFavoriteIds(),
   ]);
 
   const imagenPrincipal = producto.images[0]?.url;
+
+  const stockTotal = producto.variants.reduce(
+    (
+      total: number,
+      variante: typeof producto.variants[number]
+    ) => total + variante.stock,
+    0
+  );
+
+  const agotado = stockTotal <= 0;
+  const pocoStock = stockTotal > 0 && stockTotal <= 3;
 
   return (
     <div className="min-h-screen">
@@ -147,9 +171,28 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             </div>
 
             <div className="mt-4 flex items-center gap-2">
-              <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              <span className="text-sm text-emerald-400 font-medium">
-                Disponible para entrega
+              <div
+                className={`h-2.5 w-2.5 rounded-full ${agotado
+                  ? "bg-red-400"
+                  : pocoStock
+                    ? "bg-amber-400"
+                    : "bg-emerald-400"
+                  }`}
+              />
+
+              <span
+                className={`text-sm font-medium ${agotado
+                  ? "text-red-400"
+                  : pocoStock
+                    ? "text-amber-400"
+                    : "text-emerald-400"
+                  }`}
+              >
+                {agotado
+                  ? "Producto agotado"
+                  : pocoStock
+                    ? `Últimas ${stockTotal} piezas disponibles`
+                    : "Disponible para entrega"}
               </span>
             </div>
 
@@ -279,18 +322,34 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-              {relacionados.map((p: typeof relacionados[number]) => (
-                <ProductCard
-                  key={p.id}
-                  id={p.id}
-                  slug={p.slug}
-                  name={p.name}
-                  price={Number(p.price)}
-                  brand={p.brand}
-                  imageUrl={p.images[0]?.url}
-                  esFavorito={favoritosIds.includes(p.id)}
-                />
-              ))}
+              {relacionados.map((p: typeof relacionados[number]) => {
+                const stockRelacionado = p.variants.reduce(
+                  (
+                    total: number,
+                    variante: typeof p.variants[number]
+                  ) => total + variante.stock,
+                  0
+                );
+
+                return (
+                  <ProductCard
+                    key={p.id}
+                    id={p.id}
+                    slug={p.slug}
+                    name={p.name}
+                    price={Number(p.price)}
+                    comparePrice={
+                      p.comparePrice
+                        ? Number(p.comparePrice)
+                        : null
+                    }
+                    brand={p.brand}
+                    imageUrl={p.images[0]?.url}
+                    esFavorito={favoritosIds.includes(p.id)}
+                    stockTotal={stockRelacionado}
+                  />
+                );
+              })}
             </div>
           </div>
         )}

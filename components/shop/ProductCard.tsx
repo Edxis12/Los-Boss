@@ -18,6 +18,7 @@ type ProductCardProps = {
     imageUrl?: string;
     brand?: string | null;
     esFavorito?: boolean;
+    stockTotal: number;
 };
 
 export default function ProductCard({
@@ -29,12 +30,16 @@ export default function ProductCard({
     brand,
     esFavorito = false,
     comparePrice,
+    stockTotal,
 }: ProductCardProps) {
     const { data: session } = useSession();
     const router = useRouter();
     const [favorito, setFavorito] = useState(esFavorito);
     const [cargando, setCargando] = useState(false);
     const { increment, decrement } = useFavoritesCountStore();
+
+    const agotado = stockTotal <= 0;
+    const pocoStock = stockTotal > 0 && stockTotal <= 3;
 
     async function handleToggleFavorite(e: React.MouseEvent) {
         e.preventDefault();
@@ -87,7 +92,7 @@ export default function ProductCard({
                         src={imageUrl}
                         alt={name}
                         fill
-                        className="
+                        className={`
                             object-contain
                             p-5
                             transition-all
@@ -95,7 +100,8 @@ export default function ProductCard({
                             ease-out 
                             group-hover:scale-110
                             group-hover:-translate-y-1
-                        "
+                            ${agotado ? "opacity-55 grayscale" : ""}                            
+                        `}
                         sizes="(max-width: 768px) 50vw, 25vw"
                     />
                 ) : (
@@ -116,6 +122,18 @@ export default function ProductCard({
                         duration-500
                     "
                 />
+
+                {agotado && (
+                    <div className="absolute left-4 top-4 z-10 rounded-full border border-red-500/30 bg-red-500/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-lg">
+                        Agotado
+                    </div>
+                )}
+
+                {pocoStock && (
+                    <div className="absolute left-4 top-4 z-10 rounded-full border border-amber-500/30 bg-amber-500/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-black shadow-lg">
+                        Últimas piezas
+                    </div>
+                )}
 
                 <button
                     type="button"
@@ -146,11 +164,10 @@ export default function ProductCard({
                         className={`
                                 transition-all
                                 duration-300
-                                ${
-                                    favorito
-                                        ? "fill-red-500 text-red-500 scale-110"
-                                        : "text-black"
-                                }
+                                ${favorito
+                                ? "fill-red-500 text-red-500 scale-110"
+                                : "text-black"
+                            }
                             `}
                     />
                 </button>
@@ -181,7 +198,7 @@ export default function ProductCard({
                             group-hover:tracking-wide
                         "
                     >
-                        Ver detalles →
+                        {agotado ? "Ver producto agotado" : "Ver detalles →"}
                     </div>
 
                 </div>

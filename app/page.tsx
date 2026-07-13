@@ -19,7 +19,17 @@ export default async function HomePage() {
     prisma.product.findMany({
       where: { isActive: true, isFeatured: true },
       take: 4,
-      include: { images: { take: 1, orderBy: { position: "asc" } } },
+      include: {
+        images: {
+          take: 1,
+          orderBy: { position: "asc" }
+        },
+        variants: {
+            select: {
+            stock: true,
+          },
+        },
+      },
     }),
     getFavoriteIds(),
   ]);
@@ -146,8 +156,17 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-            {destacados.map((producto: typeof destacados[number]) => (
-              <ProductCard
+            {destacados.map((producto: typeof destacados[number]) => {
+              const stockTotal = producto.variants.reduce(
+                (
+                  total: number,
+                  variante: typeof producto.variants[number]
+                ) => total + variante.stock,
+                0
+              );
+
+              return (
+                <ProductCard
                 key={producto.id}
                 id={producto.id}
                 slug={producto.slug}
@@ -156,8 +175,10 @@ export default async function HomePage() {
                 brand={producto.brand}
                 imageUrl={producto.images[0]?.url}
                 esFavorito={favoritosIds.includes(producto.id)}
+                stockTotal={stockTotal}
               />
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
