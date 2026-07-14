@@ -347,6 +347,8 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                     imageUrl={p.images[0]?.url}
                     esFavorito={favoritosIds.includes(p.id)}
                     stockTotal={stockRelacionado}
+                    isFeatured={p.isFeatured}
+                    createdAt={p.createdAt.toISOString()}
                   />
                 );
               })}

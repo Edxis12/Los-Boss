@@ -148,6 +148,8 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                                     imageUrl={producto.images[0]?.url}
                                     esFavorito={favoritosIds.includes(producto.id)}
                                     stockTotal={stockTotal}
+                                    isFeatured={producto.isFeatured}
+                                    createdAt={producto.createdAt.toISOString()}
                                 />
                                 )
                             })}

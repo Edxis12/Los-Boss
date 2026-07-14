@@ -112,6 +112,8 @@ export default async function FavoritosPage() {
                                     }
                                     esFavorito={true}
                                     stockTotal={stockTotal}
+                                    isFeatured={fav.product.isFeatured}
+                                    createdAt={fav.createdAt.toISOString()}
                                 />
                             );
                         }
