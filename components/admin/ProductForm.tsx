@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Star, GripVertical } from "lucide-react";
+import { Plus, Trash2, } from "lucide-react";
 import { crearProducto, actualizarProducto } from "@/lib/actions/product-actions";
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragEndEvent } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
@@ -151,6 +151,14 @@ export default function ProductForm({
         });
     }
 
+    function normalizarMarca(valor: string) {
+        return valor
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, " ")
+            .replace(/\b\w/g, (letra) => letra.toUpperCase());
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
@@ -168,7 +176,7 @@ export default function ProductForm({
             description,
             price: Number(price),
             comparePrice: comparePrice ? Number(comparePrice) : null,
-            brand,
+            brand: brand.trim() ? normalizarMarca(brand) : undefined,
             categoryId,
             imageUrls: imageUrls.filter((url) => url.trim() !== ""),
             isFeatured,
