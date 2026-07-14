@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { prisma } from "../prisma";
-import { size, success } from "zod";
 
 // Helper: confirma que quien llama es admin. Lanza error si no.
 async function requireAdmin() {
@@ -15,6 +14,7 @@ async function requireAdmin() {
 }
 
 type VarianteInput = {
+    id?: string;
     size?: string;
     color?: string;
     stock: number;
@@ -142,13 +142,6 @@ export async function actualizarOfertaProducto(
     return { succes: true };
 }
 
-type VarianteUpdate = {
-    id?: string;
-    size?: string;
-    color?: string;
-    stock: number;
-}
-
 export async function actualizarProducto(data: {
     productId: string;
     name: string;
@@ -165,82 +158,264 @@ export async function actualizarProducto(data: {
 }) {
     await requireAdmin();
 
-    if (!data.productId || !data.name || !data.slug || !data.categoryId) {
-        return { error: "Faltan campos requeridos" };
+    if (
+        !data.productId ||
+        !data.name ||
+        !data.slug ||
+        !data.categoryId ||
+        data.variantes.length === 0
+    ) {
+        return {
+            error: "Faltan campos requeridos",
+        };
     }
 
-    const existente = await prisma.product.findFirst({
-        where: {
-            slug: data.slug,
-            NOT: {
-                id: data.productId,
-            },
-        },
-    });
-
-    if (existente) {
-        return { error: "Ya existe otro producto con ese slug" };
+    if (
+        data.variantes.some(
+            (variante) =>
+                !Number.isInteger(variante.stock) ||
+                variante.stock < 0
+        )
+    ) {
+        return {
+            error: "El stock de las variantes no es válido",
+        };
     }
 
-    await prisma.productImage.deleteMany({
-        where: {
-            productId: data.productId,
-        },
-    });
-
-    if (data.imageUrls.length > 0) {
-        await prisma.productImage.createMany({
-            data: data.imageUrls.map((url, index) => ({
-                productId: data.productId,
-                url: url.trim(),
-                position: index,
-            })),
-        });
-    }
-
-    await prisma.product.update({
-        where: {
-            id: data.productId,
-        },
-        data: {
-            name: data.name,
-            slug: data.slug,
-            description: data.description,
-            price: data.price,
-            comparePrice: data.comparePrice ?? null,
-            brand: data.brand || null,
-            isFeatured: data.isFeatured,
-            gender: data.gender,
-            category: {
-                connect: {
-                    id: data.categoryId,
+    const productoConMismoSlug =
+        await prisma.product.findFirst({
+            where: {
+                slug: data.slug,
+                NOT: {
+                    id: data.productId,
                 },
             },
-        },
-    });
+            select: {
+                id: true,
+            },
+        });
 
-    await prisma.productVariant.deleteMany({
-        where: {
-            productId: data.productId,
-        },
-    });
+    if (productoConMismoSlug) {
+        return {
+            error: "Ya existe otro producto con ese slug",
+        };
+    }
 
-    await prisma.productVariant.createMany({
-        data: data.variantes.map((v, i) => ({
-            productId: data.productId,
-            sku: `${data.slug.toUpperCase()}-${i}-${Date.now()}-${Math.random()
-                .toString(36)
-                .slice(2, 7)}`,
-            size: v.size || null,
-            color: v.color || null,
-            stock: v.stock,
-        })),
-    });
+    try {
+        await prisma.$transaction(async (tx) => {
+            const variantesExistentes =
+                await tx.productVariant.findMany({
+                    where: {
+                        productId: data.productId,
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
 
-    revalidatePath("/admin/productos");
-    revalidatePath(`/admin/productos/${data.productId}/editar`);
-    revalidatePath("/productos");
-    revalidatePath(`/productos/${data.slug}`);
+            const idsExistentes = new Set(
+                variantesExistentes.map(
+                    (variante) => variante.id
+                )
+            );
 
-    return { success: true };
+            const idsRecibidos = new Set(
+                data.variantes
+                    .map((variante) => variante.id)
+                    .filter(
+                        (id): id is string =>
+                            typeof id === "string"
+                    )
+            );
+
+            // Evita modificar una variante que pertenezca
+            // a otro producto.
+            const contieneIdInvalido = Array.from(
+                idsRecibidos
+            ).some((id) => !idsExistentes.has(id));
+
+            if (contieneIdInvalido) {
+                throw new Error(
+                    "Una de las variantes no pertenece a este producto"
+                );
+            }
+
+            await tx.product.update({
+                where: {
+                    id: data.productId,
+                },
+                data: {
+                    name: data.name.trim(),
+                    slug: data.slug,
+                    description: data.description.trim(),
+                    price: data.price,
+                    comparePrice:
+                        data.comparePrice ?? null,
+                    brand: data.brand?.trim() || null,
+                    isFeatured: data.isFeatured,
+                    gender: data.gender,
+                    category: {
+                        connect: {
+                            id: data.categoryId,
+                        },
+                    },
+                },
+            });
+
+            /*
+             * Imágenes:
+             * pueden recrearse porque el carrito no depende
+             * del ID de ProductImage.
+             */
+            await tx.productImage.deleteMany({
+                where: {
+                    productId: data.productId,
+                },
+            });
+
+            if (data.imageUrls.length > 0) {
+                await tx.productImage.createMany({
+                    data: data.imageUrls
+                        .map((url) => url.trim())
+                        .filter(Boolean)
+                        .map((url, index) => ({
+                            productId: data.productId,
+                            url,
+                            position: index,
+                        })),
+                });
+            }
+
+            /*
+             * Variantes existentes:
+             * se actualizan y conservan su mismo ID.
+             */
+            const variantesParaActualizar =
+                data.variantes.filter(
+                    (
+                        variante
+                    ): variante is VarianteInput & {
+                        id: string;
+                    } => Boolean(variante.id)
+                );
+
+            for (const variante of variantesParaActualizar) {
+                await tx.productVariant.update({
+                    where: {
+                        id: variante.id,
+                    },
+                    data: {
+                        size: variante.size?.trim() || null,
+                        color:
+                            variante.color?.trim() || null,
+                        stock: variante.stock,
+                    },
+                });
+            }
+
+            /*
+             * Variantes nuevas:
+             * solo se crean las que todavía no tienen ID.
+             */
+            const variantesNuevas =
+                data.variantes.filter(
+                    (variante) => !variante.id
+                );
+
+            if (variantesNuevas.length > 0) {
+                const marcaTiempo = Date.now();
+
+                await tx.productVariant.createMany({
+                    data: variantesNuevas.map(
+                        (variante, index) => ({
+                            productId: data.productId,
+                            sku: `${data.slug.toUpperCase()}-${marcaTiempo}-${index}-${Math.random()
+                                .toString(36)
+                                .slice(2, 8)}`,
+                            size:
+                                variante.size?.trim() ||
+                                null,
+                            color:
+                                variante.color?.trim() ||
+                                null,
+                            stock: variante.stock,
+                        })
+                    ),
+                });
+            }
+
+            /*
+             * Variantes retiradas del formulario:
+             * si ya fueron utilizadas en carritos o pedidos,
+             * conservamos su ID y las dejamos en stock 0.
+             * Si nunca fueron utilizadas, se eliminan.
+             */
+            const variantesRetiradas =
+                variantesExistentes.filter(
+                    (variante) =>
+                        !idsRecibidos.has(variante.id)
+                );
+
+            for (const variante of variantesRetiradas) {
+                const [usosEnPedidos, usosEnCarritos] =
+                    await Promise.all([
+                        tx.orderItem.count({
+                            where: {
+                                variantId: variante.id,
+                            },
+                        }),
+                        tx.cartItem.count({
+                            where: {
+                                variantId: variante.id,
+                            },
+                        }),
+                    ]);
+
+                if (
+                    usosEnPedidos > 0 ||
+                    usosEnCarritos > 0
+                ) {
+                    await tx.productVariant.update({
+                        where: {
+                            id: variante.id,
+                        },
+                        data: {
+                            stock: 0,
+                        },
+                    });
+                } else {
+                    await tx.productVariant.delete({
+                        where: {
+                            id: variante.id,
+                        },
+                    });
+                }
+            }
+        });
+
+        revalidatePath("/admin/productos");
+        revalidatePath(
+            `/admin/productos/${data.productId}/editar`
+        );
+        revalidatePath("/productos");
+        revalidatePath(`/productos/${data.slug}`);
+        revalidatePath("/carrito");
+        revalidatePath("/checkout");
+
+        return {
+            success: true,
+        };
+    } catch (error) {
+        console.error(
+            "Error al actualizar producto:",
+            error
+        );
+
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo actualizar el producto",
+        };
+    }
 }

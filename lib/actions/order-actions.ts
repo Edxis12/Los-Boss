@@ -21,6 +21,91 @@ type DireccionInput = {
   postalCode: string;
 };
 
+export type ItemValidacionStock = {
+  variantId: string;
+  quantity: number;
+};
+
+export type ResultadoStockCarrito = {
+  variantId: string;
+  stockActual: number;
+  cantidadSolicitada: number;
+  disponible: boolean;
+  existe: boolean;
+  productoActivo: boolean;
+  nombreProducto: string;
+};
+
+export async function validarStockCarrito(
+  items: ItemValidacionStock[]
+): Promise<ResultadoStockCarrito[]> {
+  if (items.length === 0) {
+    return [];
+  }
+
+  const variantIds = Array.from(
+    new Set(items.map((item) => item.variantId))
+  );
+
+  const variantes = await prisma.productVariant.findMany({
+    where: {
+      id: {
+        in: variantIds,
+      },
+    },
+    select: {
+      id: true,
+      stock: true,
+      product: {
+        select: {
+          name: true,
+          isActive: true,
+        },
+      },
+    },
+  });
+
+  const variantesPorId = new Map(
+    variantes.map(
+      (variante: typeof variantes[number]) => [
+        variante.id,
+        variante,
+      ]
+    )
+  );
+
+  return items.map((item: ItemValidacionStock) => {
+    const variante = variantesPorId.get(item.variantId);
+
+    if (!variante) {
+      return {
+        variantId: item.variantId,
+        stockActual: 0,
+        cantidadSolicitada: item.quantity,
+        disponible: false,
+        existe: false,
+        productoActivo: false,
+        nombreProducto: "Producto no disponible",
+      };
+    }
+
+    const productoActivo = variante.product.isActive;
+
+    return {
+      variantId: item.variantId,
+      stockActual: variante.stock,
+      cantidadSolicitada: item.quantity,
+      disponible:
+        productoActivo &&
+        variante.stock > 0 &&
+        variante.stock >= item.quantity,
+      existe: true,
+      productoActivo,
+      nombreProducto: variante.product.name,
+    };
+  });
+}
+
 export async function crearPedido(
   items: ItemPedido[],
   direccion: DireccionInput
@@ -50,11 +135,24 @@ export async function crearPedido(
             where: {
               id: item.variantId,
             },
+            include: {
+              product: {
+                select: {
+                  isActive: true,
+                }
+              }
+            }
           });
 
           if (!variante) {
             throw new Error(
               "Una de las variantes seleccionadas ya no existe"
+            );
+          }
+
+          if (!variante.product.isActive) {
+            throw new Error(
+              "Uno de los productos ya no está disponible"
             );
           }
 
