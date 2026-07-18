@@ -378,32 +378,25 @@ export default function CarritoPage() {
                     </div>
 
                     <Link
-                        href={validandoStock ? "#" : "/checkout"}
-                        aria-disabled={validandoStock}
-                        onClick={(event) => {
-                            if (validandoStock) {
-                                event.preventDefault();
-                            }
-                        }}
-                        className={`
+                        href="/checkout"
+                        className="
                             block
                             w-full
                             rounded-2xl
+                            bg-white
                             py-4
                             text-center
                             text-lg
                             font-bold
+                            text-black
+                            shadow-[0_15px_35px_rgba(255,255,255,.18)]
+                            hover:scale-[1.02]
+                            hover:bg-zinc-100
                             transition-all
                             duration-300
-                            ${validandoStock
-                                ? "pointer-events-none cursor-not-allowed bg-zinc-700 text-zinc-400"
-                                : "bg-white text-black shadow-[0_15px_35px_rgba(255,255,255,.18)] hover:scale-[1.02] hover:bg-zinc-100"
-                            }
-                        `}
+                        "
                     >
-                        {validandoStock
-                            ? "Verificando existencias..."
-                            : "Continuar al checkout"}
+                        Continuar al checkout
                     </Link>
                 </div>
             </div>

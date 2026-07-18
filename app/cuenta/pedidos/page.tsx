@@ -69,7 +69,20 @@ export default async function MisPedidosPage() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <h1 className="text-2xl font-bold text-white mb-8">Mis pedidos</h1>
+            <div className="mb-10">
+                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
+                    Tu cuenta
+                </p>
+
+                <h1 className="mt-2 text-4xl font-black tracking-tight text-white">
+                    Mis pedidos
+                </h1>
+
+
+                <p className="mt-2 text-zinc-500">
+                    Consulta el estado y resumen de tus compras.
+                </p>
+            </div>
 
             {pedidos.length === 0 ? (
                 <div className="text-center py-20">
@@ -91,7 +104,17 @@ export default async function MisPedidosPage() {
                         return (
                             <div
                                 key={pedido.id}
-                                className="bg-zinc-900 rounded-xl p-5 border border-zinc-800"
+                                className="
+                                    rounded-3xl
+                                    border
+                                    border-white/10
+                                    bg-[#0d0d0d]
+                                    p-5
+                                    shadow-[0_20px_60px_rgba(0,0,0,.25)]
+                                    transition
+                                    hover:border-white/20
+                                    sm:p-6
+                                "
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div>
