@@ -164,14 +164,30 @@ export default async function MisPedidosPage() {
                                     )}
                                 </div>
 
-                                <div className="flex items-center justify-between border-t border-zinc-800 pt-3">
-                                    <p className="text-sm text-zinc-400">
-                                        {pedido.items.length}{" "}
-                                        {pedido.items.length === 1 ? "producto" : "productos"}
-                                    </p>
-                                    <p className="text-white font-semibold">
-                                        ${Number(pedido.total).toLocaleString("es-MX")}
-                                    </p>
+                                <div className="flex flex-col gap-4 border-t border-white/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                        <p className="text-sm text-zinc-400">
+                                            {pedido.items.reduce(
+                                                (
+                                                    total: number,
+                                                    item: typeof pedido.items[number]
+                                                ) => total + item.quantity,
+                                                0
+                                            )}{" "}
+                                            piezas
+                                        </p>
+
+                                        <p className="mt-1 text-xl font-black text-white">
+                                            ${Number(pedido.total).toLocaleString("es-MX")}
+                                        </p>
+                                    </div>
+
+                                    <Link
+                                        href={`/cuenta/pedidos/${pedido.id}`}
+                                        className="rounded-xl bg-white px-5 py-3 text-center text-sm font-bold text-black transition hover:bg-zinc-200"
+                                    >
+                                        Ver detalle
+                                    </Link>
                                 </div>
                             </div>
                         );

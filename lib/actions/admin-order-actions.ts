@@ -37,22 +37,64 @@ export async function actualizarEstadoPedido(
         };
     }
 
-    await prisma.order.update({
-        where: {
-            id: orderId,
-        },
-        data: {
-            status: nuevoEstado,
-        },
-    });
+    try {
+        const pedidoActual = await prisma.order.findUnique({
+            where: {
+                id: orderId,
+            },
+            select: {
+                status: true,
+            },
+        });
 
-    revalidatePath("/admin/pedidos");
-    revalidatePath("/admin/dashboard");
-    revalidatePath("/cuenta/pedidos");
+        if (!pedidoActual) {
+            return {
+                error: "No se encontró el pedido",
+            };
+        }
 
-    return {
-        success: true,
-    };
+        // Evita registrar dos veces el mismo estado.
+        if (pedidoActual.status === nuevoEstado) {
+            return {
+                success: true,
+            };
+        }
+
+        await prisma.$transaction(async (tx) => {
+            await tx.order.update({
+                where: {
+                    id: orderId,
+                },
+                data: {
+                    status: nuevoEstado,
+                },
+            });
+
+            await tx.orderStatusHistory.create({
+                data: {
+                    orderId,
+                    status: nuevoEstado,
+                },
+            });
+        });
+
+        revalidatePath("/admin/pedidos");
+        revalidatePath("/admin/dashboard");
+        revalidatePath("/cuenta/pedidos");
+
+        return {
+            success: true,
+        };
+    } catch (error) {
+        console.error("Error al actualizar estado del pedido:", error);
+
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo actualizar el estado del pedido",
+        };
+    }
 }
 
 export async function actualizarNotasPedido(

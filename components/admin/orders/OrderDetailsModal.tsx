@@ -56,7 +56,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
 
     return (
         <div className="fixed inset-0 z-[200] bg-black/70 flex items-center justify-center p-4">
-            <div className="w-full max-w-3xl rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+            <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/10 bg-zinc-950 p-5 shadow-[0_35px_100px_rgba(0,0,0,.55)] sm:p-7">
                 <div className="flex items-center justify-between mb-6" >
                     <div>
                         <h2 className="text-2xl font-black text-white">
@@ -176,47 +176,159 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                     </section>
                 </div>
 
-                <div className="mt-6 border-t border-zinc-800 pt-6">
-                    <h3 className="text-sm font-semibold text-zinc-400 mb-3">Productos</h3>
+                <div className="mt-7 border-t border-white/10 pt-7">
+                    <div className="mb-6 flex items-center justify-between">
+                        <div>
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-600">
+                                Seguimiento
+                            </p>
+
+                            <h3 className="mt-1 text-lg font-bold text-white">
+                                Historial del pedido
+                            </h3>
+                        </div>
+
+                        <OrderStatusBadge status={pedido.status} />
+                    </div>
+
+                    {pedido.history?.length > 0 ? (
+                        <div className="relative">
+                            {pedido.history.map((registro: any, index: number) => {
+                                const esUltimo =
+                                    index === pedido.history.length - 1;
+
+                                return (
+                                    <div
+                                        key={registro.id}
+                                        className="relative flex gap-4 pb-7 last:pb-0"
+                                    >
+                                        {!esUltimo && (
+                                            <div className="absolute left-[7px] top-4 h-full w-px bg-white/10" />
+                                        )}
+
+                                        <div
+                                            className={`
+                                relative
+                                z-10
+                                mt-1
+                                h-[15px]
+                                w-[15px]
+                                shrink-0
+                                rounded-full
+                                border-4
+                                border-zinc-950
+                                ${registro.status === "CANCELLED"
+                                                    ? "bg-red-400"
+                                                    : esUltimo
+                                                        ? "bg-white shadow-[0_0_16px_rgba(255,255,255,.65)]"
+                                                        : "bg-zinc-600"
+                                                }
+                            `}
+                                        />
+
+                                        <div className="min-w-0 flex-1">
+                                            <OrderStatusBadge status={registro.status} />
+
+                                            <p className="mt-2 text-sm capitalize text-zinc-500">
+                                                {new Date(
+                                                    registro.createdAt
+                                                ).toLocaleDateString("es-MX", {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                })}
+                                            </p>
+
+                                            <p className="mt-0.5 text-xs text-zinc-600">
+                                                {new Date(
+                                                    registro.createdAt
+                                                ).toLocaleTimeString("es-MX", {
+                                                    hour: "numeric",
+                                                    minute: "2-digit",
+                                                })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-zinc-500">
+                            Este pedido todavía no tiene historial registrado.
+                        </p>
+                    )}
+                </div>
+
+                <div className="mt-7 border-t border-white/10 pt-7">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-white">
+                            Productos
+                        </h3>
+
+                        <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-zinc-500">
+                            {pedido.items.reduce(
+                                (total: number, item: any) =>
+                                    total + item.quantity,
+                                0
+                            )}{" "}
+                            piezas
+                        </span>
+                    </div>
 
                     <div className="space-y-3">
                         {pedido.items.map((item: any) => {
-                            const imageUrl = item.product?.images?.[0]?.url;
+                            const imageUrl =
+                                item.product?.images?.[0]?.url;
 
                             return (
                                 <div
                                     key={item.id}
-                                    className="flex items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-black/30 p-3"
+                                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/30 p-3"
                                 >
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-zinc-900">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
                                             {imageUrl ? (
                                                 <img
                                                     src={imageUrl}
-                                                    alt={item.product?.name ?? "Producto"}
-                                                    className="h-full w-full object-cover"
+                                                    alt={
+                                                        item.product?.name ??
+                                                        "Producto"
+                                                    }
+                                                    className="h-full w-full object-contain p-1"
                                                 />
                                             ) : (
-                                                <div className="flex h-full w-full items-center justify-center text-xs text-zinc-600">
-                                                    Sin img
+                                                <div className="flex h-full w-full items-center justify-center text-[10px] text-zinc-600">
+                                                    Sin imagen
                                                 </div>
                                             )}
                                         </div>
 
                                         <div className="min-w-0">
-                                            <p className="truncate text-sm font-medium text-white">
-                                                {item.product?.name ?? "Producto eliminado"}
+                                            <p className="truncate text-sm font-semibold text-white">
+                                                {item.product?.name ??
+                                                    "Producto eliminado"}
                                             </p>
 
-                                            <p className="text-xs text-zinc-500">
-                                                {item.quantity} pieza(s) · $
-                                                {Number(item.price).toLocaleString("es-MX")} c/u
+                                            <p className="mt-1 text-xs text-zinc-500">
+                                                {item.quantity}{" "}
+                                                {item.quantity === 1
+                                                    ? "pieza"
+                                                    : "piezas"}{" "}
+                                                · $
+                                                {Number(
+                                                    item.price
+                                                ).toLocaleString("es-MX")}{" "}
+                                                c/u
                                             </p>
                                         </div>
                                     </div>
 
-                                    <p className="shrink-0 text-sm font-semibold text-white">
-                                        ${(Number(item.price) * item.quantity).toLocaleString("es-MX")}
+                                    <p className="shrink-0 text-sm font-bold text-white">
+                                        $
+                                        {(
+                                            Number(item.price) *
+                                            item.quantity
+                                        ).toLocaleString("es-MX")}
                                     </p>
                                 </div>
                             );

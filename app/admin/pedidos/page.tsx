@@ -5,8 +5,18 @@ export default async function AdminPedidosPage() {
   const pedidos = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      user: { select: { name: true, email: true } },
+      user: {
+        select: {
+          name: true,
+          email: true
+        },
+      },
       address: true,
+      history: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
       items: {
         include: {
           product: {
@@ -28,6 +38,14 @@ export default async function AdminPedidosPage() {
     adminNotes: pedido.adminNotes,
     createdAt: pedido.createdAt.toISOString(),
     updatedAt: pedido.updatedAt.toISOString(),
+
+    history: pedido.history.map(
+      (registro: typeof pedido.history[number]) => ({
+        ...registro,
+        createdAt: registro.createdAt.toISOString(),
+      })
+    ),
+
     items: pedido.items.map((item: typeof pedido.items[number]) => ({
       ...item,
       price: Number(item.price),

@@ -267,10 +267,10 @@ export default async function ConfirmacionPedidoPage({
 
                         <div className="mt-8 grid gap-3 sm:grid-cols-2">
                             <Link
-                                href="/cuenta/pedidos"
+                                href={`/cuenta/pedidos/${pedido.id}`}
                                 className="rounded-2xl bg-white py-4 text-center font-bold text-black transition hover:bg-zinc-200"
                             >
-                                Ver mis pedidos
+                                Ver seguimiento del pedido
                             </Link>
 
                             <Link

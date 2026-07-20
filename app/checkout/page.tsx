@@ -201,7 +201,7 @@ export default function CheckoutPage() {
                                     placeholder="Nombre de quien recibe"
                                     className="
                                     mt-2
-                                    h-13
+                                    h-14
                                     w-full
                                     rounded-xl
                                     border
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
                                         focus:ring-4
                                         focus:ring-white/10
                                         disabled:cursor-not-allowed
-                                        disabled-opacity-40
+                                        disabled:opacity-40
                                     "
                                 >
                                     <option value="">

@@ -186,6 +186,7 @@ model Order {
   address         Address     @relation(fields: [addressId], references: [id])
   user            User        @relation(fields: [userId], references: [id])
   items           OrderItem[]
+  history         OrderStatusHistory[]
 }
 
 model OrderItem {
@@ -198,6 +199,16 @@ model OrderItem {
   order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  createdAt DateTime    @default(now())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
 }
 
 enum Gender {

@@ -198,7 +198,11 @@ export async function crearPedido(
             userId,
             addressId: direccionCreada.id,
             total,
-            status: "PENDING",
+            history: {
+                create: {
+                  status: "PENDING",
+                },
+            },
             items: {
               create: items.map((item) => ({
                 productId: item.productId,
