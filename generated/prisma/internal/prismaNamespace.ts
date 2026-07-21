@@ -1709,6 +1709,7 @@ export type FavoriteScalarFieldEnum = (typeof FavoriteScalarFieldEnum)[keyof typ
 
 export const AddressScalarFieldEnum = {
   id: 'id',
+  label: 'label',
   fullName: 'fullName',
   phone: 'phone',
   street: 'street',
@@ -1717,6 +1718,9 @@ export const AddressScalarFieldEnum = {
   postalCode: 'postalCode',
   country: 'country',
   isDefault: 'isDefault',
+  isSaved: 'isSaved',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   userId: 'userId'
 } as const
 

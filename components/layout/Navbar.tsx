@@ -155,7 +155,7 @@ export default function Navbar() {
             <Link
               href="/carrito"
               aria-label="Carrito"
-              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration- relative"
+              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 relative"
             >
               <ShoppingBag size={19} />
               {mounted && totalItems > 0 && (
@@ -172,7 +172,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-1 text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 transition"
+                  className="flex items-center gap-1 text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300"
                   aria-label="Mi cuenta"
                 >
                   <User size={19} />
@@ -189,6 +189,13 @@ export default function Navbar() {
                         {session.user?.name ?? "Mi cuenta"}
                       </p>
                     </div>
+                    <Link
+                      href="/cuenta"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
+                    >
+                      Mi cuenta
+                    </Link>
                     <Link
                       href="/cuenta/pedidos"
                       onClick={() => setUserMenuOpen(false)}

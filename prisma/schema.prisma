@@ -159,17 +159,25 @@ model Favorite {
 
 model Address {
   id         String  @id @default(cuid())
+  label      String?
   fullName   String
   phone      String
   street     String
   city       String
   state      String
   postalCode String
-  country    String  @default("México")
-  isDefault  Boolean @default(false)
+  country    String   @default("México")
+  isDefault  Boolean  @default(false)
+  isSaved    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
   userId     String
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders     Order[]
+
+  @@index([userId, isSaved])
+  @@index([userId, isDefault])
 }
 
 model Order {

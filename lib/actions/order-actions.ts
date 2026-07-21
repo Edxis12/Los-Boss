@@ -12,7 +12,7 @@ type ItemPedido = {
   price: number;
 };
 
-type DireccionInput = {
+type DireccionManualInput = {
   fullName: string;
   phone: string;
   street: string;
@@ -20,6 +20,12 @@ type DireccionInput = {
   state: string;
   postalCode: string;
 };
+
+type DireccionPedidoInput =
+  | {
+    savedAddressId: string;
+  }
+  | DireccionManualInput;
 
 export type ItemValidacionStock = {
   variantId: string;
@@ -108,7 +114,7 @@ export async function validarStockCarrito(
 
 export async function crearPedido(
   items: ItemPedido[],
-  direccion: DireccionInput
+  direccion: DireccionPedidoInput
 ) {
   const session = await auth();
 
@@ -163,18 +169,94 @@ export async function crearPedido(
           }
         }
 
-        // 2. Crear la dirección de envío
+        // 2. Crear una copia de la dirección para conservarla en el pedido
+        let datosDireccion: {
+          label?: string | null;
+          fullName: string;
+          phone: string;
+          street: string;
+          city: string;
+          state: string;
+          postalCode: string;
+          country: string;
+        };
+
+        if ("savedAddressId" in direccion) {
+          const direccionGuardada = await tx.address.findFirst({
+            where: {
+              id: direccion.savedAddressId,
+              userId,
+              isSaved: true,
+            },
+            select: {
+              label: true,
+              fullName: true,
+              phone: true,
+              street: true,
+              city: true,
+              state: true,
+              postalCode: true,
+              country: true,
+            },
+          });
+
+          if (!direccionGuardada) {
+            throw new Error(
+              "La dirección seleccionada ya no está disponible"
+            );
+          }
+
+          datosDireccion = direccionGuardada;
+        } else {
+          if (
+            !direccion.fullName.trim() ||
+            !direccion.phone.trim() ||
+            !direccion.street.trim() ||
+            !direccion.city.trim() ||
+            !direccion.state.trim() ||
+            !direccion.postalCode.trim()
+          ) {
+            throw new Error("Completa todos los campos de dirección");
+          }
+
+          if (!/^\d{10}$/.test(direccion.phone)) {
+            throw new Error("El teléfono debe contener 10 números");
+          }
+
+          if (!/^\d{5}$/.test(direccion.postalCode)) {
+            throw new Error(
+              "El código postal debe contener 5 números"
+            );
+          }
+
+          datosDireccion = {
+            label: null,
+            fullName: direccion.fullName.trim(),
+            phone: direccion.phone.trim(),
+            street: direccion.street.trim(),
+            city: direccion.city.trim(),
+            state: direccion.state.trim(),
+            postalCode: direccion.postalCode.trim(),
+            country: "México",
+          };
+        }
+
         const direccionCreada = await tx.address.create({
           data: {
-            fullName: direccion.fullName,
-            phone: direccion.phone,
-            street: direccion.street,
-            city: direccion.city,
-            state: direccion.state,
-            postalCode: direccion.postalCode,
+            label: datosDireccion.label,
+            fullName: datosDireccion.fullName,
+            phone: datosDireccion.phone,
+            street: datosDireccion.street,
+            city: datosDireccion.city,
+            state: datosDireccion.state,
+            postalCode: datosDireccion.postalCode,
+            country: datosDireccion.country,
+            isSaved: false,
+            isDefault: false,
             userId,
           },
         });
+
 
         // 3. Calcular el total
         const total = items.reduce(
@@ -199,9 +281,9 @@ export async function crearPedido(
             addressId: direccionCreada.id,
             total,
             history: {
-                create: {
-                  status: "PENDING",
-                },
+              create: {
+                status: "PENDING",
+              },
             },
             items: {
               create: items.map((item) => ({
