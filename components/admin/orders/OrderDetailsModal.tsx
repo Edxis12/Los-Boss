@@ -3,7 +3,9 @@
 import { X, Phone, Mail, MapPin, MessageCircle, Check } from "lucide-react";
 import { actualizarNotasPedido } from "@/lib/actions/admin-order-actions";
 import { useEffect, useState } from "react";
-import OrderStatusBadge from "./OrderStatusBadge";
+import OrderStatusBadge, {
+    type OrderStatus,
+} from "./OrderStatusBadge";
 import OrderStatusSelect from "@/components/admin/OrderStatusSelect";
 
 type Props = {
@@ -16,10 +18,15 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
     const [copiado, setCopiado] = useState("");
     const [notas, setNotas] = useState(pedido?.adminNotes ?? "");
     const [guardandoNotas, setGuardandoNotas] = useState(false);
+    const [estadoActual, setEstadoActual] = useState<OrderStatus>(pedido?.status ?? "PENDING");
 
     useEffect(() => {
         setNotas(pedido?.adminNotes ?? "");
-    }, [pedido?.id, pedido?.adminNotes]);
+
+        setEstadoActual(
+            pedido?.status ?? "PENDING"
+        );
+    }, [pedido?.id, pedido?.adminNotes, pedido?.status,]);
 
     useEffect(() => {
         if (!open || !pedido) return;
@@ -62,7 +69,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                         <h2 className="text-2xl font-black text-white">
                             Pedido #{pedido.orderNumber}
                         </h2>
-                        <OrderStatusBadge status={pedido.status} />
+                        <OrderStatusBadge status={estadoActual} />
                     </div>
 
                     <button onClick={onClose} className="text-zinc-400 hover:text-white">
@@ -188,7 +195,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                             </h3>
                         </div>
 
-                        <OrderStatusBadge status={pedido.status} />
+                        <OrderStatusBadge status={estadoActual} />
                     </div>
 
                     {pedido.history?.length > 0 ? (
@@ -362,7 +369,9 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                         </p>
                     </div>
 
-                    <OrderStatusSelect orderId={pedido.id} estadoActual={pedido.status} />
+                    <div className="w-full sm:w-64">
+                        <OrderStatusSelect orderId={pedido.id} estadoActual={estadoActual} onUpdated={setEstadoActual}/>
+                    </div>
                 </div>
             </div>
         </div>

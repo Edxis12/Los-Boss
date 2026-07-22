@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     actualizarEstadoPedido,
@@ -17,46 +17,110 @@ const ESTADOS = [
     { value: "CANCELLED", label: "Cancelado" },
 ] as const;
 
+type Props = {
+    orderId: string;
+    estadoActual: EstadoPedido;
+    onUpdated?: (nuevoEstado: EstadoPedido) => void;
+}
+
 export default function OrderStatusSelect({
     orderId,
     estadoActual,
-}: {
-    orderId: string;
-    estadoActual: string;
-}) {
+    onUpdated,
+}: Props) {
     const router = useRouter();
 
-    const [estado, setEstado] = useState<EstadoPedido>(
-        estadoActual as EstadoPedido
-    );
+    const [estado, setEstado] = useState<EstadoPedido>(estadoActual);
 
     const [guardando, setGuardando] = useState(false);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        setEstado(estadoActual);
+        setError("");
+    }, [estadoActual, orderId]);
 
     async function handleChange(nuevoEstado: EstadoPedido) {
+        if (guardando || nuevoEstado === estado) {
+            return;
+        }
+
+        const estadoAnterior = estado;
+
         setEstado(nuevoEstado);
         setGuardando(true);
+        setError("");
 
-        await actualizarEstadoPedido(orderId, nuevoEstado);
+        try {
+            const resultado = await actualizarEstadoPedido(orderId, nuevoEstado);
 
-        setGuardando(false);
-        router.refresh();
+            if (resultado.error) {
+                setEstado(estadoAnterior);
+                setError(resultado.error);
+                return;
+            }
+
+            onUpdated?.(nuevoEstado);
+            router.refresh();
+        } catch (error) {
+            console.error("Error al actualizar el estado:", error);
+
+            setEstado(estadoAnterior);
+            setError("No se pudo actualizar el estado");
+        } finally {
+            setGuardando(false);
+        }
     }
 
     return (
-        <select
-            value={estado}
-            disabled={guardando}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) =>
-                handleChange(e.target.value as EstadoPedido)
-            }
-            className="bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-sm text-white outline-none focus:border-white disabled:opacity-50"
-        >
-            {ESTADOS.map((e) => (
-                <option key={e.value} value={e.value}>
-                    {e.label}
-                </option>
-            ))}
-        </select>
+        <div className="min-w-0">
+            <select
+                value={estado}
+                disabled={guardando}
+                onClick={(event) => event.stopPropagation()}
+                onChange={(event) => handleChange(event.target.value as EstadoPedido)}
+                aria-label="Estado del pedido"
+                className="
+                    h-11
+                    w-full
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-black
+                    px-4
+                    text-sm
+                    font-semibold
+                    text-white
+                    outline-none
+                    transition
+                    focus:border-white
+                    focus:ring-4
+                    focus:ring-white/10
+                    disabled:cursor-wait
+                    disabled:opacity-50"
+            >
+                {ESTADOS.map((opcion) => (
+                    <option
+                        key={opcion.value}
+                        value={opcion.value}
+                    >
+                        {opcion.label}
+                    </option>
+                ))}
+            </select>
+
+            <p
+                className={`mt-2 text-xs ${error
+                        ? "text-red-400"
+                        : "text-zinc-600"
+                    }`}
+            >
+                {error
+                    ? error
+                    : guardando
+                        ? "Actualizando estado..."
+                        : "El cambio se registra en el historial."}
+            </p>
+        </div>
     );
 }

@@ -18,7 +18,7 @@ export default function LowStock({ variantes }: Props) {
     return (
         <section className="h-full rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
             <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justift-center rounded-xl bg-amber-500/10 text-amber-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
                     <AlertTriangle size={19} />
                 </div>
 

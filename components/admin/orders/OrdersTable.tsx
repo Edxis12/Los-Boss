@@ -3,7 +3,6 @@
 import { useState } from "react";
 import OrderDetailsModal from "./OrderDetailsModal";
 import OrderStatusBadge from "./OrderStatusBadge";
-import OrderStatusSelect from "../OrderStatusSelect";
 import { Eye, Search } from "lucide-react";
 
 type Props = {
@@ -128,59 +127,71 @@ export default function OrdersTable({ pedidos }: Props) {
             </div>
 
             <div className="divide-y divide-zinc-800">
-                {pedidosFiltrados.map((pedido) => {
-                    const totalArticulos = pedido.items.reduce(
-                        (total: number, item: any) => total + item.quantity,
-                        0
-                    );
+                {pedidosFiltrados.length === 0 ? (
+                    <div className="px-6 py-16 text-center">
+                        <p className="font-semibold text-white">
+                            No encontramos pedidos
+                        </p>
 
-                    return (
-                        
-                        <div
-                            key={pedido.id}
-                            className="grid gap-4 p-5 transition hover:bg-zinc-800/40 lg:grid-cols-[1fr_1.4fr_.8fr_.8fr_1fr_auto]"
-                        >
-                            <div>
-                                <p className="text-xs text-zinc-500">Pedido</p>
-                                <p className="font-semibold text-white">{pedido.orderNumber}</p>
-                            </div>
+                        <p className="mt-2 text-sm text-zinc-500">
+                            Prueba con otra búsqueda o cambia el
+                            filtro de estado.
+                        </p>
+                    </div>
+                ) : (
+                    pedidosFiltrados.map((pedido) => {
+                        const totalArticulos = pedido.items.reduce(
+                            (total: number, item: any) => total + item.quantity,
+                            0
+                        );
 
-                            <div>
-                                <p className="text-xs text-zinc-500">Cliente</p>
-                                <p className="text-white">{pedido.user.name || "Sin nombre"}</p>
-                                <p className="text-xs text-zinc-500">{pedido.user.email}</p>
-                            </div>
+                        return (
 
-                            <div>
-                                <p className="text-xs text-zinc-500">Artículos</p>
-                                <p className="text-zinc-300">{totalArticulos} piezas</p>
-                            </div>
-
-                            <div>
-                                <p className="text-xs text-zinc-500">Fecha</p>
-                                <p className="text-zinc-400">
-                                    {new Date(pedido.createdAt).toLocaleDateString("es-MX")}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="text-xs text-zinc-500">Estado</p>
-                                <div className="mt-1">
-                                    <OrderStatusBadge status={pedido.status} />
+                            <div
+                                key={pedido.id}
+                                className="grid gap-4 p-5 transition hover:bg-zinc-800/40 lg:grid-cols-[1fr_1.4fr_.8fr_.8fr_1fr_auto]"
+                            >
+                                <div>
+                                    <p className="text-xs text-zinc-500">Pedido</p>
+                                    <p className="font-semibold text-white">{pedido.orderNumber}</p>
                                 </div>
-                            </div>
 
-                            <div className="flex items-center justify-between gap-3 lg:justify-end">
-                                <div className="lg:hidden">
-                                    <p className="text-xs text-zinc-500">Total</p>
-                                    <p className="font-semibold text-white">
-                                        ${Number(pedido.total).toLocaleString("es-MX")}
+                                <div>
+                                    <p className="text-xs text-zinc-500">Cliente</p>
+                                    <p className="text-white">{pedido.user.name || "Sin nombre"}</p>
+                                    <p className="text-xs text-zinc-500">{pedido.user.email}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-zinc-500">Artículos</p>
+                                    <p className="text-zinc-300">{totalArticulos} piezas</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-zinc-500">Fecha</p>
+                                    <p className="text-zinc-400">
+                                        {new Date(pedido.createdAt).toLocaleDateString("es-MX")}
                                     </p>
                                 </div>
 
-                                <button
-                                    onClick={() => setPedidoSeleccionado(pedido)}
-                                    className="
+                                <div>
+                                    <p className="text-xs text-zinc-500">Estado</p>
+                                    <div className="mt-1">
+                                        <OrderStatusBadge status={pedido.status} />
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between gap-3 lg:justify-end">
+                                    <div className="lg:hidden">
+                                        <p className="text-xs text-zinc-500">Total</p>
+                                        <p className="font-semibold text-white">
+                                            ${Number(pedido.total).toLocaleString("es-MX")}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={() => setPedidoSeleccionado(pedido)}
+                                        className="
                             h-10
                             w-10
                             rounded-lg
@@ -194,20 +205,21 @@ export default function OrdersTable({ pedidos }: Props) {
                             hover:text-white
                             transition
                         "
-                                >
-                                    <Eye size={18} />
-                                </button>
-                            </div>
+                                    >
+                                        <Eye size={18} />
+                                    </button>
+                                </div>
 
-                            <div className="hidden lg:block lg:col-start-6 lg:row-start-1">
-                                <p className="text-xs text-zinc-500">Total</p>
-                                <p className="font-semibold text-white">
-                                    ${Number(pedido.total).toLocaleString("es-MX")}
-                                </p>
+                                <div className="hidden lg:block lg:col-start-6 lg:row-start-1">
+                                    <p className="text-xs text-zinc-500">Total</p>
+                                    <p className="font-semibold text-white">
+                                        ${Number(pedido.total).toLocaleString("es-MX")}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })
+                )}
             </div>
 
             <OrderDetailsModal

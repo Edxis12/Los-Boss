@@ -4,6 +4,7 @@ import { Bebas_Neue } from "next/font/google";
 import Providers from "@/providers";
 import Navbar from "@/components/layout/Navbar";
 import FavoritesSync from "@/components/layout/FavoritesSync";
+import Footer from "@/components/layout/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -39,9 +40,7 @@ export default function RootLayout({
           <FavoritesSync />
           <Navbar />
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-zinc-900 py-8 text-center text-xs text-zinc-600">
-            © {new Date().getFullYear()} Los Boss · Tuxtla Gutiérrez, Chiapas · Hype y Luxury · Todos los derechos reservados
-          </footer>
+          <Footer />
         </Providers>
       </body>
     </html>

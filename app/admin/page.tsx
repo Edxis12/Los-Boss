@@ -1,53 +1,313 @@
+import {
+    AlertTriangle,
+    Package,
+    ShoppingCart,
+    Users,
+} from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { Package, ShoppingCart, Users, AlertTriangle } from "lucide-react";
+import DashboardStats from "@/components/admin/dashboard/DashboardStats";
+import SalesChart from "@/components/admin/dashboard/SalesChart";
+import RecentOrders from "@/components/admin/dashboard/RecentOrders";
+import LowStock from "@/components/admin/dashboard/LowStock";
+import TopProducts, {
+    type TopProduct,
+} from "@/components/admin/dashboard/TopProducts";
+
+function obtenerUltimosDias(cantidad: number) {
+    const dias: Date[] = [];
+    const hoy = new Date();
+
+    hoy.setHours(0, 0, 0, 0);
+
+    for (let i = cantidad - 1; i >= 0; i--) {
+        const fecha = new Date(hoy);
+        fecha.setDate(hoy.getDate() - i);
+        dias.push(fecha);
+    }
+
+    return dias;
+}
+
+function claveFecha(fecha: Date) {
+    return [
+        fecha.getFullYear(),
+        String(fecha.getMonth() + 1).padStart(2, "0"),
+        String(fecha.getDate()).padStart(2, "0"),
+    ].join("-");
+}
 
 export default async function AdminDashboardPage() {
-    const [totalProductos, totalPedidos, totalUsuarios, productosBajoStock] =
-        await Promise.all([
-            prisma.product.count(),
-            prisma.order.count(),
-            prisma.user.count(),
-            prisma.productVariant.count({ where: { stock: { lte: 3 } } }),
-        ]);
+    const ultimosSieteDias = obtenerUltimosDias(7);
+    const fechaInicio = ultimosSieteDias[0];
+
+    const [
+        totalProductos,
+        totalPedidos,
+        totalUsuarios,
+        productosBajoStock,
+        pedidosRecientes,
+        variantesBajoStock,
+        pedidosUltimosDias,
+        productosAgrupados,
+    ] = await Promise.all([
+        prisma.product.count(),
+
+        prisma.order.count(),
+
+        prisma.user.count({
+            where: {
+                role: "USER",
+            },
+        }),
+
+        prisma.productVariant.count({
+            where: {
+                stock: {
+                    lte: 3,
+                },
+                product: {
+                    isActive: true,
+                },
+            },
+        }),
+
+        prisma.order.findMany({
+            take: 5,
+            orderBy: {
+                createdAt: "desc",
+            },
+            select: {
+                id: true,
+                orderNumber: true,
+                total: true,
+                status: true,
+                user: {
+                    select: {
+                        name: true,
+                        email: true,
+                    },
+                },
+            },
+        }),
+
+        prisma.productVariant.findMany({
+            take: 8,
+            where: {
+                stock: {
+                    lte: 3,
+                },
+                product: {
+                    isActive: true,
+                },
+            },
+            orderBy: {
+                stock: "asc",
+            },
+            select: {
+                id: true,
+                stock: true,
+                size: true,
+                color: true,
+                product: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        }),
+
+        prisma.order.findMany({
+            where: {
+                createdAt: {
+                    gte: fechaInicio,
+                },
+                status: {
+                    not: "CANCELLED",
+                },
+            },
+            select: {
+                total: true,
+                createdAt: true,
+            },
+        }),
+
+        prisma.orderItem.groupBy({
+            by: ["productId"],
+            where: {
+                productId: {
+                    not: null,
+                },
+                order: {
+                    status: {
+                        not: "CANCELLED",
+                    },
+                },
+            },
+            _sum: {
+                quantity: true,
+            },
+            orderBy: {
+                _sum: {
+                    quantity: "desc",
+                },
+            },
+            take: 5,
+        }),
+    ]);
+
+    const idsProductos = productosAgrupados
+        .map((registro) => registro.productId)
+        .filter((id): id is string => Boolean(id));
+
+    const productos =
+        idsProductos.length > 0
+            ? await prisma.product.findMany({
+                where: {
+                    id: {
+                        in: idsProductos,
+                    },
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    images: {
+                        take: 1,
+                        orderBy: {
+                            position: "asc",
+                        },
+                        select: {
+                            url: true,
+                        },
+                    },
+                },
+            })
+            : [];
+
+    const productosPorId = new Map(
+        productos.map((producto) => [producto.id, producto])
+    );
+
+    const topProductos = productosAgrupados.reduce<TopProduct[]>(
+        (resultado, registro) => {
+            if (!registro.productId) {
+                return resultado;
+            }
+
+            const producto = productosPorId.get(
+                registro.productId
+            );
+
+            if (!producto) {
+                return resultado;
+            }
+
+            resultado.push({
+                id: producto.id,
+                nombre: producto.name,
+                imagen: producto.images[0]?.url ?? null,
+                vendidos: registro._sum.quantity ?? 0,
+                posicion: resultado.length + 1,
+            });
+
+            return resultado;
+        },
+        []
+    );
+
+    const ventasPorFecha = new Map<string, number>();
+
+    for (const pedido of pedidosUltimosDias) {
+        const clave = claveFecha(pedido.createdAt);
+
+        ventasPorFecha.set(
+            clave,
+            (ventasPorFecha.get(clave) ?? 0) + Number(pedido.total)
+        );
+    }
+
+    const ventasGrafica = ultimosSieteDias.map((fecha) => ({
+        date: fecha.toLocaleDateString("es-MX", {
+            day: "2-digit",
+            month: "short",
+        }),
+        total: ventasPorFecha.get(claveFecha(fecha)) ?? 0,
+    }));
 
     const stats = [
-        { label: "Productos", value: totalProductos, icon: Package },
-        { label: "Pedidos totales", value: totalPedidos, icon: ShoppingCart },
-        { label: "Usuarios registrados", value: totalUsuarios, icon: Users },
+        {
+            label: "Productos",
+            value: totalProductos,
+            detail: "Productos registrados en la tienda",
+            icon: Package,
+        },
+        {
+            label: "Pedidos totales",
+            value: totalPedidos,
+            detail: "Pedidos realizados por clientes",
+            icon: ShoppingCart,
+        },
+        {
+            label: "Usuarios registrados",
+            value: totalUsuarios,
+            detail: "Cuentas de clientes activas",
+            icon: Users,
+        },
         {
             label: "Variantes con poco stock",
             value: productosBajoStock,
+            detail:
+                productosBajoStock > 0
+                    ? "Requieren revisión de inventario"
+                    : "El inventario se encuentra estable",
             icon: AlertTriangle,
             alerta: productosBajoStock > 0,
         },
     ];
 
-    return (
-        <div>
-            <h1 className="text-2x1 font-bold text-white mb-1">Dashboard</h1>
-            <p className="text-zinc-400 text-sm mb-8">
-                Resumen general de tu tienda
-            </p>
+    const pedidosRecientesPlano = pedidosRecientes.map((pedido) => ({
+        ...pedido,
+        total: Number(pedido.total),
+    }));
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {stats.map((stat) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div
-                            key={stat.label}
-                            className={`bg-zinc-900 rounded-xl p-5 border ${stat.alerta ? "border-amber-500/40" : "border-zinc-800"}`}
-                        >
-                            <div className="flex items-center justify-between mb-2">
-                                <Icon
-                                    size={20}
-                                    className={stat.alerta ? "text-amber-400" : "text-zinc-400"}
-                                />
-                            </div>
-                            <p className="text-2x1 font-bold text-white">{stat.value}</p>
-                            <p className="text-sm text-zinc-400 mt-1">{stat.label}</p>
-                        </div>
-                    );
-                })}
+    return (
+        <div className="space-y-8">
+            <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
+                    Administración
+                </p>
+
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                    Dashboard
+                </h1>
+
+                <p className="mt-2 text-zinc-500">
+                    Resumen general del rendimiento y actividad de Los Boss.
+                </p>
+            </div>
+
+            <DashboardStats stats={stats} />
+
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,.7fr)]">
+                <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold text-white">
+                            Ventas de los últimos 7 días
+                        </h2>
+
+                        <p className="mt-1 text-sm text-zinc-500">
+                            Total generado por pedidos no cancelados
+                        </p>
+                    </div>
+
+                    <SalesChart data={ventasGrafica} />
+                </section>
+
+                <LowStock variantes={variantesBajoStock} />
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+                <RecentOrders pedidos={pedidosRecientesPlano} />
+                <TopProducts productos={topProductos} />
             </div>
         </div>
     );
