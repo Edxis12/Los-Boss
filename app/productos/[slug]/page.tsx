@@ -68,8 +68,8 @@ export default async function ProductoDetallePage({ params }: PageProps) {
   return (
     <div className="min-h-screen">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2">
-        <nav className="flex items-center gap-1.5 text-xs text-zinc-500">
+      <div className="mx-auto max-w-7xl px-4 pb-1 pt-5 sm:px-6 sm:pt-7 lg:px-8">
+        <nav className="flex min-w-0 items-center gap-1.5 overflow-hidden whitespace-nowrap text-[11px] text-zinc-500 sm:text-xs">
           <Link href="/" className="hover:text-white transition">
             Inicio
           </Link>
@@ -85,13 +85,13 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             {producto.category.name}
           </Link>
           <ChevronRight size={12} />
-          <span className="text-zinc-300 line-clamp-1">{producto.name}</span>
+          <span className="min-w-0 truncate text-zinc-300">{producto.name}</span>
         </nav>
       </div>
 
       {/* Contenido principal */}
-      <div className="max-w-[1700px] mx-auto px-8 xl:px-14 py-12">
-        <div className="grid lg:grid-cols-[65%_35%] gap-28 items-start">
+      <div className="mx-auto max-w-[1700px] px-4 py-7 sm:px-6 sm:py-10 lg:px-8 lg:py-12 xl:px-14">
+        <div className="grid items-start gap-10 md:gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)] lg:gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(480px,.85fr)] xl:gap-14 2xl:gap-16">
           {/* Galería */}
           <ProductGallery
             images={producto.images}
@@ -100,15 +100,17 @@ export default async function ProductoDetallePage({ params }: PageProps) {
 
           {/* Info del producto */}
           <div className="
-            sticky 
-            top-28 
-            h-fit 
             flex 
-            flex-col 
-            pt-8 
-            lg:pt-12 
+            h-fit
+            max-w-none 
             animate-fade-in
-            max-w-[560px]
+            flex-col 
+            pt-1
+            lg:sticky
+            lg:top-28 
+            lg:max-w-[560px]
+            lg:pt-4 
+            xl:pt-8
             ">
 
             {/* Marca */}
@@ -120,29 +122,44 @@ export default async function ProductoDetallePage({ params }: PageProps) {
 
             {/* Nombre */}
             <h1 className="
-                  text-5xl
-                  lg:text-6xl
-                  font-black
-                  leading-[1.05]
-                  tracking-[-2px]
-                  text-white
-                  mb-5
+                  mb-3
+                  mt-2
                   max-w-[620px]
+                  break-words
+                  text-3xl
+                  font-black
+                  leading-[1.08]
+                  tracking-[-0.04em]
+                  text-white
+                  min-[430px]:text-4xl
+                  sm:mb-4
+                  md:text-5xl
+                  lg:text-[3.6rem]
+                  lg:text-6xl
                 ">
               {producto.name}
             </h1>
 
             {/* Categoría */}
-            <p className="mt-4 uppercase tracking-[0.18em] text-xs text-zinc-500">
+            <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-zinc-500 sm:mt-3 sm:text-xs">
               {producto.category.name}
             </p>
 
             {/* Precio */}
-            <div className="flex items-end gap-4 mt-8">
-
-              <h2 className="text-[56px] font-black tracking-[-2px] text-zinc-100"
+            <div className="mt-6 flex flex-wrap items-end gap-x-3 gap-y-2 sm:mt-7 sm:gap-x-4">
+              <h2
+                className="
+                    break-all
+                    text-[clamp(2.4rem,12vw,3.5rem)]
+                    font-black
+                    leading-none
+                    tracking-[-0.05em]
+                    text-zinc-100
+                    lg:text-[3.25rem]
+                    xl:text-[3.5rem]
+                  "
                 style={{
-                  textShadow: "0 0 30px rgba(255,255,255,0.12)"
+                  textShadow: "0 0 30px rgba(255,255,255,0.12)",
                 }}
               >
                 ${Number(producto.price).toLocaleString("es-MX")}
@@ -150,12 +167,12 @@ export default async function ProductoDetallePage({ params }: PageProps) {
 
               {producto.comparePrice &&
                 Number(producto.comparePrice) > Number(producto.price) && (
-                  <>
-                    <span className="text-lg text-zinc-500 line-through">
+                  <div className="flex items-center gap-2 pb-1">
+                    <span className="text-sm text-zinc-500 line-through sm:text-base">
                       ${Number(producto.comparePrice).toLocaleString("es-MX")}
                     </span>
 
-                    <span className="rounded-full bg-white text-black px-3 py-1 text-xs font-bold">
+                    <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-black sm:px-3 sm:text-xs">
                       -
                       {Math.round(
                         (1 -
@@ -165,14 +182,13 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                       )}
                       %
                     </span>
-                  </>
+                  </div>
                 )}
-
             </div>
 
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-4 flex items-start gap-2 sm:items-center">
               <div
-                className={`h-2.5 w-2.5 rounded-full ${agotado
+                className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full sm:mt-0 ${agotado
                   ? "bg-red-400"
                   : pocoStock
                     ? "bg-amber-400"
@@ -197,26 +213,10 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             </div>
 
             {/* Línea */}
-            <div className="my-8 border-t border-white/15" />
-
-            {/* Descripción */}
-            <div>
-
-              <h2 className="text-sm font-semibold uppercase tracking-[0.15em] text-zinc-400 mb-3">
-                Descripción
-              </h2>
-
-              <p className="leading-8 text-[17px] text-zinc-300">
-                {producto.description}
-              </p>
-
-            </div>
-
-            {/* Línea */}
-            <div className="my-8 border-t border-white/15" />
+            <div className="my-6 border-t border-white/15 sm:my-8" />
 
             {/* Selector */}
-            <div className="pt-2">
+            <div className="min-w-0 pt-1 sm:pt-2">
               <ProductActions
                 productId={producto.id}
                 slug={producto.slug}
@@ -234,25 +234,43 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               />
             </div>
 
+            <div className="my-6 border-t border-white/15 sm:my-8" />
+
+            {/* Descripción */}
+            <div>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.15em] text-zinc-400">
+                Descripción
+              </h2>
+
+              <p className="whitespace-pre-line text-sm leading-7 text-zinc-300 sm:text-base sm:leading-8 lg:text-[17px]">
+                {producto.description}
+              </p>
+            </div>
+
+            {/* Línea */}
+            <div className="my-6 border-t border-white/15 sm:my-8" />
+
             {/* Beneficios */}
-            <div className="mt-12 space-y-4">
+            <div className="mt-9 grid gap-3 sm:mt-12 sm:grid-cols-2 lg:grid-cols-1 xl:gap-4">
 
               <div className="
                 flex
                 items-start  
-                gap-4
-                rounded-xl
+                gap-3
+                rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-5
+                p-4
+                sm:gap-4
+                sm:p-5
               ">
-                <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
                 <div>
                   <h3 className="font-medium text-white">
                     Producto 100% original
                   </h3>
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="mt-1 text-xs leading-5 text-zinc-500 sm:text-sm sm:leading-6">
                     Todos nuestros productos son cuidadosamente revisados antes de ser entregados.
                   </p>
                 </div>
@@ -261,19 +279,21 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <div className="
                 flex
                 items-start  
-                gap-4
-                rounded-xl
+                gap-3
+                rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-5
+                p-4
+                sm:gap-4
+                sm:p-5
               ">
-                <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
                 <div>
                   <h3 className="font-medium text-white">
                     Envíos a todo México
                   </h3>
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="mt-1 text-xs leading-5 text-zinc-500 sm:text-sm sm:leading-6">
                     Empaque seguro y envío confiable a cualquier estado del país.
                   </p>
                 </div>
@@ -282,19 +302,21 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <div className="
                 flex
                 items-start  
-                gap-4
-                rounded-xl
+                gap-3
+                rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-5
+                p-4
+                sm:gap-4
+                sm:p-5
               ">
-                <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,.7)]" />
                 <div>
                   <h3 className="font-medium text-white">
                     Entregas personales
                   </h3>
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="mt-1 text-xs leading-5 text-zinc-500 sm:text-sm sm:leading-6">
                     Disponibles en Tuxtla Gutiérrez, Chiapas.
                   </p>
                 </div>
@@ -306,13 +328,13 @@ export default async function ProductoDetallePage({ params }: PageProps) {
         </div>
         {/* Productos relacionados */}
         {relacionados.length > 0 && (
-          <div className="mt-20">
-            <div className="flex items-end justify-between mb-8">
+          <div className="mt-14 border-t border-white/10 pt-12 sm:mt-20 sm:pt-16">
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-[10px] tracking-widest uppercase text-zinc-500 mb-1">
                   De la misma categoría
                 </p>
-                <h2 className="section-title text-white">También te puede gustar</h2>
+                <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">También te puede gustar</h2>
               </div>
               <Link
                 href={`/productos?categoria=${producto.category.slug}`}
@@ -321,7 +343,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 Ver todo →
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+            <div className="grid grid-cols-1 gap-x-5 gap-y-10 min-[430px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
               {relacionados.map((p: typeof relacionados[number]) => {
                 const stockRelacionado = p.variants.reduce(
                   (

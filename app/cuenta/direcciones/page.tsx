@@ -61,7 +61,7 @@ export default async function DireccionesPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 <Link
                     href="/cuenta"
                     className="inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-white"
@@ -70,17 +70,17 @@ export default async function DireccionesPage() {
                     Volver a mi cuenta
                 </Link>
 
-                <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+                <div className="mt-6 flex flex-col gap-5 sm:mt-8 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
                             Tu cuenta
                         </p>
 
-                        <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+                        <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                             Mis direcciones
                         </h1>
 
-                        <p className="mt-3 max-w-2xl text-zinc-500">
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
                             Guarda varias direcciones y elige cuál usar como principal
                             para tus próximas compras.
                         </p>
@@ -88,7 +88,7 @@ export default async function DireccionesPage() {
 
                     <Link
                         href="/cuenta/direcciones/nueva"
-                        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3.5 text-sm font-bold text-black transition hover:bg-zinc-200"
+                        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
                     >
                         <Plus size={17} />
                         Agregar dirección
@@ -96,30 +96,30 @@ export default async function DireccionesPage() {
                 </div>
 
                 {direcciones.length === 0 ? (
-                    <section className="mt-10 rounded-3xl border border-white/10 bg-[#0d0d0d] px-6 py-20 text-center shadow-[0_30px_80px_rgba(0,0,0,.3)]">
+                    <section className="mt-8 rounded-3xl border border-white/10 bg-[#0d0d0d] px-5 py-14 text-center shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:mt-10 sm:px-8 sm:py-20">
                         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
                             <MapPin size={27} className="text-zinc-500" />
                         </div>
 
-                        <h2 className="mt-6 text-2xl font-bold text-white">
+                        <h2 className="mt-6 text-2xl font-black tracking-tight text-white min-[430px]:text-3xl">
                             Todavía no tienes direcciones guardadas
                         </h2>
 
-                        <p className="mx-auto mt-3 max-w-md text-zinc-500">
+                        <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-zinc-500 sm:text-base">
                             Agrega una dirección para completar tus compras más rápido.
                             La primera se establecerá automáticamente como principal.
                         </p>
 
                         <Link
                             href="/cuenta/direcciones/nueva"
-                            className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-bold text-black transition hover:bg-zinc-200"
+                            className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
                         >
                             <Plus size={17} />
                             Agregar mi primera dirección
                         </Link>
                     </section>
                 ) : (
-                    <div className="mt-10 grid gap-6 md:grid-cols-2">
+                    <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2">
                         {direcciones.map((direccion) => (
                             <article
                                 key={direccion.id}
@@ -127,7 +127,7 @@ export default async function DireccionesPage() {
                                     rounded-3xl
                                     border
                                     bg-[#0d0d0d]
-                                    p-6
+                                    p-5
                                     shadow-[0_25px_70px_rgba(0,0,0,.25)]
                                     transition
                                     sm:p-7
@@ -138,7 +138,7 @@ export default async function DireccionesPage() {
                                 `}
                             >
                                 <div className="flex items-start justify-between gap-4">
-                                    <div>
+                                    <div className="min-w-0"> 
                                         <div className="flex flex-wrap items-center gap-2">
                                             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">
                                                 {direccion.label || "Dirección"}
@@ -155,7 +155,7 @@ export default async function DireccionesPage() {
                                             )}
                                         </div>
 
-                                        <h2 className="mt-4 text-xl font-bold text-white">
+                                        <h2 className="mt-4 break-words text-lg font-bold text-white sm:text-xl">
                                             {direccion.fullName}
                                         </h2>
                                     </div>
@@ -183,24 +183,24 @@ export default async function DireccionesPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 space-y-1.5 text-sm leading-6 text-zinc-500">
+                                <div className="mt-6 space-y-2 text-sm leading-7 text-zinc-500">
                                     <p className="text-zinc-300">
                                         {direccion.phone}
                                     </p>
 
-                                    <p>{direccion.street}</p>
+                                    <p className="break-words">{direccion.street}</p>
 
-                                    <p>
+                                    <p className="break-words">
                                         {direccion.city}, {direccion.state}
                                     </p>
 
-                                    <p>
+                                    <p className="break-words">
                                         C.P. {direccion.postalCode},{" "}
                                         {direccion.country}
                                     </p>
                                 </div>
 
-                                <div className="mt-7 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row">
+                                <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-5 sm:mt-7 sm:flex-row">
                                     {!direccion.isDefault && (
                                         <form
                                             action={async () => {

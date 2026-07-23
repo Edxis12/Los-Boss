@@ -86,7 +86,7 @@ export default function NuevaDireccionPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 <Link
                     href="/cuenta/direcciones"
                     className="inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-white"
@@ -95,16 +95,16 @@ export default function NuevaDireccionPage() {
                     Volver a mis direcciones
                 </Link>
 
-                <div className="mt-8">
+                <div className="mt-6 sm:mt-8">
                     <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
                         Tu cuenta
                     </p>
 
-                    <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+                    <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                         Nueva dirección
                     </h1>
 
-                    <p className="mt-3 max-w-2xl text-zinc-500">
+                    <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
                         Guarda una dirección para completar tus compras más rápido.
                         La primera dirección se establecerá automáticamente como
                         principal.
@@ -113,15 +113,15 @@ export default function NuevaDireccionPage() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="mt-10 space-y-8 rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-8"
+                    className="mt-8 space-y-7 rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:p-5 sm:mt-10 sm:space-y-8 sm:p-8"
                 >
-                    <div className="flex items-start gap-4">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-black">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-black sm:h-11 sm:w-11">
                             <MapPin size={20} />
                         </div>
 
                         <div>
-                            <h2 className="text-xl font-bold text-white sm:text-2xl">
+                            <h2 className="text-lg font-bold text-white min-[430px]:text-xl sm:text-2xl">
                                 Datos de entrega
                             </h2>
 
@@ -138,7 +138,7 @@ export default function NuevaDireccionPage() {
                         </div>
                     )}
 
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
                         <div className="sm:col-span-2">
                             <label className="text-sm font-medium text-zinc-300">
                                 Nombre de la dirección
@@ -280,7 +280,7 @@ export default function NuevaDireccionPage() {
                             />
                         </div>
 
-                        <div>
+                        <div className="min-w-0">
                             <label className="text-sm font-medium text-zinc-300">
                                 Estado
                             </label>
@@ -307,6 +307,7 @@ export default function NuevaDireccionPage() {
                                     mt-2
                                     h-14
                                     w-full
+                                    truncate
                                     rounded-xl
                                     border
                                     border-white/10
@@ -335,7 +336,7 @@ export default function NuevaDireccionPage() {
                             </select>
                         </div>
 
-                        <div>
+                        <div className="min-w-0">
                             <label className="text-sm font-medium text-zinc-300">
                                 Ciudad
                             </label>
@@ -351,6 +352,7 @@ export default function NuevaDireccionPage() {
                                     mt-2
                                     h-14
                                     w-full
+                                    truncate
                                     rounded-xl
                                     border
                                     border-white/10
@@ -425,7 +427,7 @@ export default function NuevaDireccionPage() {
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4 sm:p-5">
                         <div className="flex items-start gap-3">
                             <CheckCircle2
                                 size={19}
@@ -437,7 +439,7 @@ export default function NuevaDireccionPage() {
                                     Dirección guardada
                                 </p>
 
-                                <p className="mt-1 text-sm leading-6 text-zinc-500">
+                                <p className="mt-1 text-xs leading-5 text-zinc-500 sm:text-sm sm:leading-6">
                                     Podrás seleccionarla rápidamente durante el
                                     checkout y editarla desde tu cuenta.
                                 </p>
@@ -448,7 +450,7 @@ export default function NuevaDireccionPage() {
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                         <Link
                             href="/cuenta/direcciones"
-                            className="rounded-2xl border border-white/10 px-6 py-4 text-center font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
+                            className="flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/10 px-6 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white sm:w-auto"
                         >
                             Cancelar
                         </Link>
@@ -457,17 +459,25 @@ export default function NuevaDireccionPage() {
                             type="submit"
                             disabled={guardando}
                             className="
+                                min-h-14
+                                w-full
                                 rounded-2xl
                                 bg-white
-                                px-7
-                                py-4
+                                px-6
+                                py-3
+                                text-sm
                                 font-bold
                                 text-black
                                 shadow-[0_18px_40px_rgba(255,255,255,.15)]
                                 transition-all
+                                hover:-translate-y-0.5
                                 hover:bg-zinc-200
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
+                                disabled:hover:translate-y-0
+                                sm:w-auto
+                                sm:px-7
+                                sm:text-base
                             "
                         >
                             {guardando

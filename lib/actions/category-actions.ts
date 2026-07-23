@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 async function requireAdmin() {
     const session = await auth();
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!session?.user || (session.user as any).role !== "ADMIN") {
         throw new Error("No autorizado");
@@ -22,45 +23,256 @@ function slugify(texto: string) {
         .replace(/\s+/g, "-");
 }
 
-export async function crearCategoria(name: string, imageUrl?: string) {
+function normalizarImagen(imageUrl?: string) {
+    const imagen = imageUrl?.trim();
+
+    return imagen || null;
+}
+
+function revalidarCategorias() {
+    revalidatePath("/");
+    revalidatePath("/productos");
+    revalidatePath("/admin/categorias");
+    revalidatePath("/admin/productos");
+}
+
+export async function crearCategoria(
+    name: string,
+    imageUrl?: string
+) {
     await requireAdmin();
 
-    if (!name.trim()) {
-        return { error: "El nombre es requerido" };
+    const nombreLimpio = name.trim();
+
+    if (!nombreLimpio) {
+        return {
+            error: "El nombre es requerido",
+        };
     }
 
-    const slug = slugify(name);
+    const slug = slugify(nombreLimpio);
 
-    const existente = await prisma.category.findUnique({ where: { slug } });
-    if (existente) {
-        return { error: "Ya existe una categoría con ese nombre" };
+    if (!slug) {
+        return {
+            error: "Escribe un nombre válido",
+        };
     }
 
-    await prisma.category.create({
-        data: { name: name.trim(), slug, imageUrl: imageUrl || null },
-    });
+    try {
+        const existente = await prisma.category.findFirst({
+            where: {
+                OR: [
+                    {
+                        slug,
+                    },
+                    {
+                        name: {
+                            equals: nombreLimpio,
+                            mode: "insensitive",
+                        },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+            },
+        });
 
-    revalidatePath("/admin/categorias");
-    revalidatePath("/productos");
-    return { success: true };
+        if (existente) {
+            return {
+                error: "Ya existe una categoría con ese nombre",
+            };
+        }
+
+        await prisma.category.create({
+            data: {
+                name: nombreLimpio,
+                slug,
+                imageUrl: normalizarImagen(imageUrl),
+            },
+        });
+
+        revalidarCategorias();
+
+        return {
+            success: true,
+            message: "Categoría creada correctamente",
+        };
+    } catch (error) {
+        console.error("Error al crear categoría:", error);
+
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo crear la categoría",
+        };
+    }
+}
+
+export async function actualizarCategoria(
+    categoryId: string,
+    name: string,
+    imageUrl?: string
+) {
+    await requireAdmin();
+
+    const nombreLimpio = name.trim();
+
+    if (!categoryId) {
+        return {
+            error: "La categoría no es válida",
+        };
+    }
+
+    if (!nombreLimpio) {
+        return {
+            error: "El nombre es requerido",
+        };
+    }
+
+    const slug = slugify(nombreLimpio);
+
+    if (!slug) {
+        return {
+            error: "Escribe un nombre válido",
+        };
+    }
+
+    try {
+        const categoria = await prisma.category.findUnique({
+            where: {
+                id: categoryId,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!categoria) {
+            return {
+                error: "No encontramos la categoría",
+            };
+        }
+
+        const duplicada = await prisma.category.findFirst({
+            where: {
+                id: {
+                    not: categoryId,
+                },
+                OR: [
+                    {
+                        slug,
+                    },
+                    {
+                        name: {
+                            equals: nombreLimpio,
+                            mode: "insensitive",
+                        },
+                    },
+                ],
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (duplicada) {
+            return {
+                error: "Ya existe otra categoría con ese nombre",
+            };
+        }
+
+        await prisma.category.update({
+            where: {
+                id: categoryId,
+            },
+            data: {
+                name: nombreLimpio,
+                slug,
+                imageUrl: normalizarImagen(imageUrl),
+            },
+        });
+
+        revalidarCategorias();
+
+        return {
+            success: true,
+            message: "Categoría actualizada correctamente",
+        };
+    } catch (error) {
+        console.error("Error al actualizar categoría:", error);
+
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo actualizar la categoría",
+        };
+    }
 }
 
 export async function eliminarCategoria(categoryId: string) {
     await requireAdmin();
 
-    const productosEnCategoria = await prisma.product.count({
-        where: { categoryId },
-    });
-
-    if (productosEnCategoria > 0) {
+    if (!categoryId) {
         return {
-            error: `No puedes eliminar esta categoría: tiene ${productosEnCategoria} producto(s) asignado(s). Reasígnalos primero.`,
+            error: "La categoría no es válida",
         };
     }
 
-    await prisma.category.delete({ where: { id: categoryId } });
+    try {
+        const categoria = await prisma.category.findUnique({
+            where: {
+                id: categoryId,
+            },
+            select: {
+                id: true,
+                name: true,
+                _count: {
+                    select: {
+                        products: true,
+                    },
+                },
+            },
+        });
 
-    revalidatePath("/admin/categorias");
-    revalidatePath("/productos");
-    return { success: true };
+        if (!categoria) {
+            return {
+                error: "No encontramos la categoría",
+            };
+        }
+
+        if (categoria._count.products > 0) {
+            return {
+                error: `No puedes eliminar "${categoria.name}" porque tiene ${categoria._count.products
+                    } ${categoria._count.products === 1
+                        ? "producto asignado"
+                        : "productos asignados"
+                    }. Reasígnalos primero.`,
+            };
+        }
+
+        await prisma.category.delete({
+            where: {
+                id: categoryId,
+            },
+        });
+
+        revalidarCategorias();
+
+        return {
+            success: true,
+            message: "Categoría eliminada correctamente",
+        };
+    } catch (error) {
+        console.error("Error al eliminar categoría:", error);
+
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo eliminar la categoría",
+        };
+    }
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ShoppingBag,
   Heart,
@@ -20,7 +20,7 @@ import { useFavoritesCountStore } from "@/store/favorites-count-store";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 const NAV_LINKS = [
-  { label: "Nuevo", href: "/productos?ordenar=nuevo" },
+  { label: "Nuevo", href: "/productos?nuevos=true" },
   { label: "Hombres", href: "/productos?genero=HOMBRE" },
   { label: "Mujeres", href: "/productos?genero=MUJER" },
   { label: "Ofertas", href: "/productos?ofertas=true", highlight: true },
@@ -38,16 +38,38 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const userKey = useCartUserKey(session?.user?.id);
   const totalItems = useCartStore((state) => state.getTotalItems(userKey));
   const favoritesCount = useFavoritesCountStore((state) => state.count);
+  const nombreUsuario = session?.user?.name?.trim().split(" ")[0] ?? "Mi cuenta";
 
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    function handleClickFuera(event: MouseEvent) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickFuera);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickFuera
+      );
+    };
   }, []);
 
   function handleSearch(e: React.FormEvent) {
@@ -61,11 +83,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
+      className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
           ? "bg-black/95 backdrop-blur-sm border-b border-zinc-800/80"
           : "bg-black border-b border-zinc-800"
-      }`}
+        }`}
     >
       {/* Barra superior - marquee animado */}
       <div className="group bg-white text-black py-1.5 overflow-hidden">
@@ -101,11 +122,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-xs font-semibold transition tracking-widest uppercase ${
-                  link.highlight
+                className={`text-xs font-semibold transition tracking-widest uppercase ${link.highlight
                     ? "text-red-400 hover:text-red-300"
                     : "text-zinc-300 hover:text-white"
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -113,10 +133,10 @@ export default function Navbar() {
           </nav>
 
           {/* Iconos */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               aria-label="Buscar"
-              onClick={() => setSearchOpen((v) => !v)}
+              onClick={() => { setSearchOpen((v) => !v); setMenuOpen(false); setUserMenuOpen(false); }}
               className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300"
             >
               {searchOpen ? <X size={19} /> : <Search size={19} />}
@@ -127,7 +147,7 @@ export default function Navbar() {
               aria-label="Favoritos"
               className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 relative"
             >
-              <Heart size={19} />
+              <Heart size={20} />
               {mounted && favoritesCount > 0 && (
                 <span className="
                     absolute  
@@ -147,7 +167,7 @@ export default function Navbar() {
                     shadow-lg
                     animate-scale-in  
                   ">
-                  {favoritesCount}
+                  {favoritesCount > 99 ? "99+" : favoritesCount}
                 </span>
               )}
             </Link>
@@ -157,82 +177,165 @@ export default function Navbar() {
               aria-label="Carrito"
               className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 relative"
             >
-              <ShoppingBag size={19} />
+              <ShoppingBag size={20} />
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-white text-black text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                  {totalItems}
+                <span className="absolute -right-2 -top-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-black shadow-lg">
+                  {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
             </Link>
 
             {/* Sesión */}
             {status === "loading" ? (
-              <div className="w-5 h-5 rounded-full bg-zinc-800 animate-pulse" />
+              <div className="h-9 w-9 animate-pulse rounded-xl bg-zinc-800" />
             ) : session ? (
-              <div className="relative">
+              <div ref={userMenuRef} className="relative">
                 <button
-                  onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-1 text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300"
-                  aria-label="Mi cuenta"
+                  type="button"
+                  onClick={() =>
+                    setUserMenuOpen((actual) => !actual)
+                  }
+                  className={`
+        flex
+        h-10
+        items-center
+        justify-center
+        gap-2
+        rounded-xl
+        border
+        px-2.5
+        text-zinc-300
+        transition-all
+        duration-300
+        hover:border-white/30
+        hover:bg-white/[0.05]
+        hover:text-white
+        sm:px-3
+        ${userMenuOpen
+                      ? "border-white/30 bg-white/[0.06] text-white"
+                      : "border-transparent"
+                    }
+      `}
+                  aria-label="Abrir menú de cuenta"
+                  aria-expanded={userMenuOpen}
                 >
-                  <User size={19} />
-                  <ChevronDown size={13} />
+                  <User size={20} />
+
+                  <span className="hidden max-w-28 truncate text-sm font-semibold lg:block">
+                    {nombreUsuario}
+                  </span>
+
+                  <ChevronDown
+                    size={14}
+                    className={`hidden transition-transform duration-300 lg:block ${userMenuOpen ? "rotate-180" : ""
+                      }`}
+                  />
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-3 w-52 bg-[#101010] border border-zinc-800 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,.45)] overflow-hidden">
-                    <div className="px-4 py-3 border-b border-zinc-800">
-                      <p className="text-xs text-zinc-500 truncate">
+                  <div
+                    className="
+          absolute
+          right-0
+          top-full
+          mt-3
+          w-64
+          overflow-hidden
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#0d0d0d]
+          shadow-[0_25px_80px_rgba(0,0,0,.65)]
+          animate-fade-in
+        "
+                  >
+                    <div className="border-b border-white/10 px-5 py-4">
+                      <p className="truncate font-semibold text-white">
+                        {session.user?.name ?? "Usuario de Los Boss"}
+                      </p>
+
+                      <p className="mt-1 truncate text-xs text-zinc-500">
                         {session.user?.email}
                       </p>
-                      <p className="text-sm font-medium text-white mt-0.5">
-                        {session.user?.name ?? "Mi cuenta"}
-                      </p>
                     </div>
-                    <Link
-                      href="/cuenta"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
-                    >
-                      Mi cuenta
-                    </Link>
-                    <Link
-                      href="/cuenta/pedidos"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-zinc-900 transition"
-                    >
-                      Mis pedidos
-                    </Link>
-                    <Link
-                      href="/favoritos"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-zinc-900 transition"
-                    >
-                      Mis favoritos
-                    </Link>
-                    {(session.user as any)?.role === "ADMIN" && (
+
+                    <nav className="p-2">
                       <Link
-                        href="/admin/dashboard"
+                        href="/cuenta"
                         onClick={() => setUserMenuOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-zinc-900 transition border-t border-zinc-800"
+                        className="block rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
                       >
-                        Panel admin
+                        Mi cuenta
                       </Link>
+
+                      <Link
+                        href="/cuenta/pedidos"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+                      >
+                        Mis pedidos
+                      </Link>
+
+                      <Link
+                        href="/cuenta/direcciones"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+                      >
+                        Mis direcciones
+                      </Link>
+                    </nav>
+
+                    {(session.user as any)?.role === "ADMIN" && (
+                      <div className="border-t border-white/10 p-2">
+                        <Link
+                          href="/admin/dashboard"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-white/[0.07]"
+                        >
+                          Panel administrador
+                        </Link>
+                      </div>
                     )}
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-zinc-900 text-left border-t border-zinc-800 transition"
-                    >
-                      <LogOut size={15} />
-                      Cerrar sesión
-                    </button>
+
+                    <div className="border-t border-white/10 p-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          signOut({
+                            callbackUrl: "/",
+                          })
+                        }
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-red-400 transition hover:bg-red-500/10"
+                      >
+                        <LogOut size={16} />
+                        Cerrar sesión
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
             ) : (
               <Link
                 href="/login"
-                className="text-xs font-semibold tracking-widest uppercase text-white border border-zinc-700 hover:border-white px-4 py-2 rounded-lg transition"
+                className="
+                  hidden
+                  min-h-10
+                  items-center
+                  justify-center
+                  rounded-xl
+                  border
+                  border-white/15
+                  px-4
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-[0.15em]
+                  text-white
+                  transition
+                  hover:border-white/40
+                  hover:bg-white/[0.05]
+                  sm:inline-flex
+                "
               >
                 Entrar
               </Link>
@@ -240,7 +343,7 @@ export default function Navbar() {
 
             <button
               className="md:hidden text-zinc-300 hover:text-white"
-              onClick={() => setMenuOpen((v) => !v)}
+              onClick={() => {setMenuOpen((actual) => !actual); setSearchOpen(false); setUserMenuOpen(false); }}
               aria-label="Menú"
             >
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -276,11 +379,10 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className={`px-2 py-3 text-sm font-semibold uppercase tracking-widest border-b border-zinc-900 ${
-                    link.highlight
-                      ? "text-red-400 hover:text-red-300"
-                      : "text-zinc-300 hover:text-white"
-                }`}
+                className={`px-2 py-3 text-sm font-semibold uppercase tracking-widest border-b border-zinc-900 ${link.highlight
+                    ? "text-red-400 hover:text-red-300"
+                    : "text-zinc-300 hover:text-white"
+                  }`}
               >
                 {link.label}
               </Link>

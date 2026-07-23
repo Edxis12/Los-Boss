@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { SlidersHorizontal, X, } from "lucide-react";
 
 type Categoria = {
     name: string;
@@ -30,19 +31,29 @@ export default function FilterSidebar({
         searchParams.get("precioMax") ?? ""
     );
 
+    const [filtrosMovilAbiertos, setFiltrosMovilAbiertos] = useState(false);
+
     const ordenActual = searchParams.get("ordenar") ?? "";
     const marcaActual = searchParams.get("marca") ?? "";
-    const disponibilidadActual =
-        searchParams.get("disponibilidad") ?? "";
+    const disponibilidadActual = searchParams.get("disponibilidad") ?? "";
 
-    const soloDestacados =
-        searchParams.get("destacados") === "true";
+    const soloDestacados = searchParams.get("destacados") === "true";
+    const soloOfertas = searchParams.get("ofertas") === "true";
+    const soloNuevos = searchParams.get("nuevos") === "true";
+    const cantidadFiltrosActivos = useMemo(() => {
+        const filtros = [
+            searchParams.get("categoria"),
+            searchParams.get("marca"),
+            searchParams.get("disponibilidad"),
+            searchParams.get("precioMin"),
+            searchParams.get("precioMax"),
+            searchParams.get("destacados"),
+            searchParams.get("ofertas"),
+            searchParams.get("nuevos"),
+        ];
 
-    const soloOfertas =
-        searchParams.get("ofertas") === "true";
-
-    const soloNuevos =
-        searchParams.get("nuevos") === "true";
+        return filtros.filter(Boolean).length;
+    }, [searchParams]);
 
     useEffect(() => {
         setPrecioMin(searchParams.get("precioMin") ?? "");
@@ -53,6 +64,8 @@ export default function FilterSidebar({
         const query = params.toString();
 
         router.push(query ? `/productos?${query}` : "/productos");
+
+        setFiltrosMovilAbiertos(false);
     }
 
     function actualizarParametro(
@@ -128,22 +141,8 @@ export default function FilterSidebar({
         setPrecioMax("");
     }
 
-    return (
-        <aside
-            className="
-                h-fit
-                w-full
-                shrink-0
-                space-y-8
-                rounded-3xl
-                border
-                border-white/10
-                bg-[#111111]
-                p-7
-                shadow-[0_20px_60px_rgba(0,0,0,.35)]
-                md:w-72
-            "
-        >
+    const contenidoFiltros = (
+        <>
             <div className="flex items-center justify-between">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-zinc-500">
                     Filtros
@@ -176,10 +175,9 @@ export default function FilterSidebar({
                             text-sm
                             transition-all
                             duration-300
-                            ${
-                                !categoriaActiva
-                                    ? "bg-white font-semibold text-black shadow-md"
-                                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                            ${!categoriaActiva
+                                ? "bg-white font-semibold text-black shadow-md"
+                                : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
                             }
                         `}
                     >
@@ -196,10 +194,9 @@ export default function FilterSidebar({
                                 py-2
                                 text-sm
                                 transition
-                                ${
-                                    categoriaActiva === categoria.slug
-                                        ? "bg-white font-semibold text-black shadow-md"
-                                        : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                                ${categoriaActiva === categoria.slug
+                                    ? "bg-white font-semibold text-black shadow-md"
+                                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
                                 }
                             `}
                         >
@@ -282,10 +279,9 @@ export default function FilterSidebar({
                             text-left
                             text-sm
                             transition
-                            ${
-                                soloDestacados
-                                    ? "border-white bg-white font-semibold text-black"
-                                    : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
+                            ${soloDestacados
+                                ? "border-white bg-white font-semibold text-black"
+                                : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
                             }
                         `}
                     >
@@ -306,10 +302,9 @@ export default function FilterSidebar({
                             text-left
                             text-sm
                             transition
-                            ${
-                                soloOfertas
-                                    ? "border-red-400 bg-red-500/10 font-semibold text-red-300"
-                                    : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
+                            ${soloOfertas
+                                ? "border-red-400 bg-red-500/10 font-semibold text-red-300"
+                                : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
                             }
                         `}
                     >
@@ -330,10 +325,9 @@ export default function FilterSidebar({
                             text-left
                             text-sm
                             transition
-                            ${
-                                soloNuevos
-                                    ? "border-sky-400 bg-sky-500/10 font-semibold text-sky-300"
-                                    : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
+                            ${soloNuevos
+                                ? "border-sky-400 bg-sky-500/10 font-semibold text-sky-300"
+                                : "border-zinc-800 bg-[#0d0d0d] text-zinc-400 hover:border-zinc-600 hover:text-white"
                             }
                         `}
                     >
@@ -425,6 +419,139 @@ export default function FilterSidebar({
                     Aplicar precio
                 </button>
             </div>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            {/* Botón móvil */}
+            <div className="lg:hidden">
+                <button
+                    type="button"
+                    onClick={() =>
+                        setFiltrosMovilAbiertos(true)
+                    }
+                    className="
+                    flex
+                    h-12
+                    w-full
+                    items-center
+                    justify-between
+                    rounded-2xl
+                    border
+                    border-white/10
+                    bg-[#111111]
+                    px-4
+                    text-sm
+                    font-semibold
+                    text-white
+                    shadow-[0_15px_40px_rgba(0,0,0,.25)]
+                    transition
+                    hover:border-white/25
+                "
+                >
+                    <span className="flex items-center gap-2">
+                        <SlidersHorizontal size={17} />
+                        Filtros y orden
+                    </span>
+
+                    {cantidadFiltrosActivos > 0 && (
+                        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-white px-1.5 text-xs font-bold text-black">
+                            {cantidadFiltrosActivos}
+                        </span>
+                    )}
+                </button>
+            </div>
+
+            {/* Sidebar de escritorio */}
+            <aside
+                className="
+                hidden
+                h-fit
+                w-72
+                shrink-0
+                space-y-8
+                rounded-3xl
+                border
+                border-white/10
+                bg-[#111111]
+                p-7
+                shadow-[0_20px_60px_rgba(0,0,0,.35)]
+                lg:sticky
+                lg:top-28
+                lg:block
+            "
+            >
+                {contenidoFiltros}
+            </aside>
+
+            {/* Panel móvil */}
+            {filtrosMovilAbiertos && (
+                <div className="fixed inset-0 z-[200] lg:hidden">
+                    <button
+                        type="button"
+                        aria-label="Cerrar filtros"
+                        onClick={() =>
+                            setFiltrosMovilAbiertos(false)
+                        }
+                        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+                    />
+
+                    <div
+                        className="
+                        absolute
+                        inset-x-0
+                        bottom-0
+                        max-h-[88vh]
+                        overflow-y-auto
+                        rounded-t-[2rem]
+                        border-t
+                        border-white/10
+                        bg-[#0d0d0d]
+                        p-5
+                        shadow-[0_-30px_90px_rgba(0,0,0,.65)]
+                        sm:left-auto
+                        sm:right-0
+                        sm:top-0
+                        sm:h-full
+                        sm:max-h-none
+                        sm:w-[390px]
+                        sm:rounded-none
+                        sm:rounded-l-[2rem]
+                        sm:border-l
+                        sm:border-t-0
+                        sm:p-7
+                    "
+                    >
+                        <div className="mb-7 flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+                                    Catálogo
+                                </p>
+
+                                <h2 className="mt-1 text-2xl font-black text-white">
+                                    Filtros
+                                </h2>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setFiltrosMovilAbiertos(false)
+                                }
+                                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-zinc-400 transition hover:bg-white/[0.05] hover:text-white"
+                                aria-label="Cerrar filtros"
+                            >
+                                <X size={19} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-8">
+                            {contenidoFiltros}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

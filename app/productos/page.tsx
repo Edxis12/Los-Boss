@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/shop/ProductCard";
 import FilterSidebar from "@/components/shop/FilterSidebar";
 import { getFavoriteIds } from "@/lib/actions/favorite-actions";
+import Link from "next/link";
+import { PackageSearch, SlidersHorizontal } from "lucide-react";
 
 type PageProps = {
     searchParams: Promise<{
@@ -202,8 +204,8 @@ export default async function ProductosPage({
         ordenar === "precio-asc"
             ? { price: "asc" as const }
             : ordenar === "precio-desc"
-              ? { price: "desc" as const }
-              : { createdAt: "desc" as const };
+                ? { price: "desc" as const }
+                : { createdAt: "desc" as const };
 
     const [productos, categorias, marcasConNulos, favoritosIds] =
         await Promise.all([
@@ -265,38 +267,52 @@ export default async function ProductosPage({
         ofertas === "true"
             ? "Ofertas"
             : destacados === "true"
-              ? "Productos destacados"
-              : nuevos === "true"
-                ? "Productos nuevos"
-                : buscar
-                  ? `Resultados para "${buscar}"`
-                  : genero
-                    ? GENERO_LABELS[genero] ?? "Productos"
-                    : categoria
-                      ? categorias.find(
-                            (
-                                categoriaItem: typeof categorias[number]
-                            ) =>
-                                categoriaItem.slug === categoria
-                        )?.name ?? "Productos"
-                      : "Todos los productos";
+                ? "Productos destacados"
+                : nuevos === "true"
+                    ? "Productos nuevos"
+                    : buscar
+                        ? `Resultados para "${buscar}"`
+                        : genero
+                            ? GENERO_LABELS[genero] ?? "Productos"
+                            : categoria
+                                ? categorias.find(
+                                    (
+                                        categoriaItem: typeof categorias[number]
+                                    ) =>
+                                        categoriaItem.slug === categoria
+                                )?.name ?? "Productos"
+                                : "Todos los productos";
 
     return (
-        <div className="mx-auto max-w-[1600px] px-6 py-12 lg:px-10">
-            <div className="mb-8">
-                <h1 className="text-4xl font-black tracking-tight text-white">
-                    {titulo}
-                </h1>
-
-                <p className="mt-2 text-zinc-500">
-                    {productos.length}{" "}
-                    {productos.length === 1
-                        ? "producto"
-                        : "productos"}
+        <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
+            <div className="mb-10">
+                <p className="text-xs font-semibold upperase tracking-[0.35em] text-zinc-600">
+                    Catálogo
                 </p>
+
+                <div className="mt-3 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+                            {titulo}
+                        </h1>
+
+                        <p className="mt-3 max-w-xl text-zinc-500">
+                            Explora nuestra selección de ropa y accesorios originales.
+                        </p>
+                    </div>
+
+                    <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-zinc-400">
+                        <SlidersHorizontal size={15} />
+
+                        {productos.length}{" "}
+                        {productos.length === 1
+                            ? "producto encontrado"
+                            : "productos encontrados"}
+                    </div>
+                </div>
             </div>
 
-            <div className="flex flex-col gap-8 md:flex-row">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
                 <FilterSidebar
                     categorias={categorias}
                     marcas={marcas}
@@ -305,13 +321,29 @@ export default async function ProductosPage({
 
                 <div className="min-w-0 flex-1">
                     {productos.length === 0 ? (
-                        <div className="py-20 text-center">
-                            <p className="text-zinc-400">
-                                No encontramos productos con esos filtros.
+                        <div className="rounded-3xl border border-white/10 bg-[#0d0d0d] px-6 py-20 text-center">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
+                                <PackageSearch size={27} className="text-zinc-500" />
+                            </div>
+
+                            <h2 className="mt-6 text-2xl font-bold text-white">
+                                No encontramos productos
+                            </h2>
+
+                            <p className="mx-auto mt-3 max-w-md leading-7 text-zinc-500">
+                                No hay productos que coincidan con los filtros seleccionados.
+                                Prueba eliminando algunos filtros.
                             </p>
+
+                            <Link
+                                href="/productos"
+                                className="mt-7 inline-flex rounded-2xl bg-white px-7 py-3.5 font-bold text-black transition hover:bg-zinc-200"
+                            >
+                                Limpiar filtros
+                            </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 gap-x-10 gap-y-16 md:grid-cols-3 lg:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-x-6 gap-y-12 min-[430px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 xl:gap-y-16">
                             {productos.map(
                                 (
                                     producto: typeof productos[number]
@@ -339,8 +371,8 @@ export default async function ProductosPage({
                                             comparePrice={
                                                 producto.comparePrice
                                                     ? Number(
-                                                          producto.comparePrice
-                                                      )
+                                                        producto.comparePrice
+                                                    )
                                                     : null
                                             }
                                             brand={producto.brand}

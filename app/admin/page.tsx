@@ -270,31 +270,31 @@ export default async function AdminDashboardPage() {
     }));
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-600 sm:text-xs sm:tracking-[0.3em]">
                     Administración
                 </p>
 
-                <h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl">
                     Dashboard
                 </h1>
 
-                <p className="mt-2 text-zinc-500">
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
                     Resumen general del rendimiento y actividad de Los Boss.
                 </p>
             </div>
 
             <DashboardStats stats={stats} />
 
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,.7fr)]">
-                <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
-                    <div className="mb-6">
-                        <h2 className="text-lg font-bold text-white">
+            <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,.7fr)]">
+                <section className="min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 p-4 sm:p-6">
+                    <div className="mb-4 sm:mb-6">
+                        <h2 className="text-base font-bold leading-6 text-white sm:text-lg">
                             Ventas de los últimos 7 días
                         </h2>
 
-                        <p className="mt-1 text-sm text-zinc-500">
+                        <p className="mt-1 text-xs leading-5 text-zinc-500 sm:text-sm">
                             Total generado por pedidos no cancelados
                         </p>
                     </div>
@@ -305,7 +305,7 @@ export default async function AdminDashboardPage() {
                 <LowStock variantes={variantesBajoStock} />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
                 <RecentOrders pedidos={pedidosRecientesPlano} />
                 <TopProducts productos={topProductos} />
             </div>

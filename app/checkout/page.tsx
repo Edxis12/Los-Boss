@@ -233,9 +233,9 @@ export default function CheckoutPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 {/* Encabezado */}
-                <div className="mb-10">
+                <div className="mb-8 sm:mb-10">
                     <Link
                         href="/carrito"
                         className="mb-5 inline-flex text-sm text-zinc-500 transition hover:text-white"
@@ -247,7 +247,7 @@ export default function CheckoutPage() {
                         Finalizar compra
                     </p>
 
-                    <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+                    <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                         Checkout
                     </h1>
 
@@ -295,7 +295,7 @@ export default function CheckoutPage() {
                                 {direcciones.length > 0 &&
                                     !usarDireccionManual && (
                                         <div className="space-y-4">
-                                            <div className="flex items-center justify-between gap-4">
+                                            <div className="flex flex-col gap-3 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
                                                 <div>
                                                     <p className="text-sm font-semibold text-white">
                                                         Selecciona una dirección
@@ -336,7 +336,8 @@ export default function CheckoutPage() {
                                             w-full
                                             rounded-2xl
                                             border
-                                            p-5
+                                            p-4
+                                            sm:p-5
                                             text-left
                                             transition-all
                                             duration-300
@@ -480,7 +481,7 @@ export default function CheckoutPage() {
                                     usarDireccionManual) && (
                                         <div className="space-y-6">
                                             {direcciones.length > 0 && (
-                                                <div className="flex items-center justify-between gap-4">
+                                                <div className="flex flex-col gap-3 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
                                                     <div>
                                                         <p className="font-semibold text-white">
                                                             Usar otra dirección
@@ -511,7 +512,7 @@ export default function CheckoutPage() {
                                                             );
                                                             setError("");
                                                         }}
-                                                        className="shrink-0 text-sm font-semibold text-zinc-400 transition hover:text-white"
+                                                        className="w-fit text-sm font-semibold text-zinc-400 transition hover:text-white min-[430px]:shrink-0"
                                                     >
                                                         Usar guardada
                                                     </button>
@@ -609,7 +610,7 @@ export default function CheckoutPage() {
                                                     />
                                                 </div>
 
-                                                <div>
+                                                <div className="min-w-0">
                                                     <label className="text-sm font-medium text-zinc-300">
                                                         Estado
                                                     </label>
@@ -635,8 +636,7 @@ export default function CheckoutPage() {
                                                             );
                                                             setCity("");
                                                         }}
-                                                        className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"
-                                                    >
+                                                        className="mt-2 h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"                                                    >
                                                         <option value="">
                                                             Selecciona un estado
                                                         </option>
@@ -658,7 +658,7 @@ export default function CheckoutPage() {
                                                     </select>
                                                 </div>
 
-                                                <div>
+                                                <div className="min-w-0">
                                                     <label className="text-sm font-medium text-zinc-300">
                                                         Ciudad
                                                     </label>
@@ -672,8 +672,7 @@ export default function CheckoutPage() {
                                                                 event.target.value
                                                             )
                                                         }
-                                                        className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-                                                    >
+                                                        className="mt-2 h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"                                                    >
                                                         <option value="">
                                                             {stateCode
                                                                 ? "Selecciona una ciudad"
@@ -733,7 +732,7 @@ export default function CheckoutPage() {
                             </>
                         )}
 
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4 sm:p-5">
                             <div className="flex items-start gap-3">
                                 <CheckCircle2
                                     size={19}
@@ -757,21 +756,25 @@ export default function CheckoutPage() {
                             type="submit"
                             disabled={loading || cargandoDirecciones}
                             className="
-                            h-14
+                            min-h-14
                             w-full
                             rounded-2xl
                             bg-white
-                            text-base
+                            px-4
+                            py-3
+                            text-sm
                             font-bold
+                            leading-5
                             text-black
                             shadow-[0_18px_40px_rgba(255,255,255,.15)]
                             transition-all
                             duration-300
-                            hover:scale-[1.01]
+                            hover:-translate-y-0.5
                             hover:bg-zinc-200
                             disabled:cursor-not-allowed
                             disabled:opacity-50
-                            disabled:hover:scale-100
+                            disabled:hover:translate-y-0
+                            sm:text-base
                         "
                         >
                             {cargandoDirecciones
@@ -817,7 +820,7 @@ export default function CheckoutPage() {
                                 >
                                     <Link
                                         href={`/productos/${item.slug}`}
-                                        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100"
+                                        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 min-[430px]:h-20 min-[430px]:w-20 min-[430px]:rounded-2xl"
                                     >
                                         {item.imageUrl ? (
                                             <Image
@@ -825,7 +828,7 @@ export default function CheckoutPage() {
                                                 alt={item.name}
                                                 fill
                                                 className="object-contain p-2"
-                                                sizes="80px"
+                                                sizes="(max-width: 429px) 64px, 80px"
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center text-[10px] text-zinc-500">
@@ -850,13 +853,13 @@ export default function CheckoutPage() {
                                             </p>
                                         )}
 
-                                        <div className="mt-3 flex items-end justify-between gap-3">
+                                        <div className="mt-3 flex flex-col gap-1 min-[430px]:flex-row min-[430px]:items-end min-[430px]:justify-between min-[430px]:gap-3">
                                             <p className="text-xs text-zinc-500">
                                                 ${item.price.toLocaleString("es-MX")} ×{" "}
                                                 {item.quantity}
                                             </p>
 
-                                            <p className="shrink-0 text-sm font-bold text-white">
+                                            <p className="text-sm font-bold text-white min-[430px]:shrink-0">
                                                 $
                                                 {(
                                                     item.price * item.quantity
@@ -883,12 +886,12 @@ export default function CheckoutPage() {
                                 </span>
                             </div>
 
-                            <div className="flex items-end justify-between border-t border-white/10 pt-5">
+                            <div className="flex flex-wrap items-end justify-between gap-3 border-t border-white/10 pt-5">
                                 <span className="font-semibold text-white">
                                     Total
                                 </span>
 
-                                <span className="text-3xl font-black tracking-tight text-white">
+                                <span className="break-all text-2xl font-black tracking-tight text-white min-[430px]:text-3xl">
                                     ${totalPrice.toLocaleString("es-MX")}
                                 </span>
                             </div>

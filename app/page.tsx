@@ -87,10 +87,10 @@ export default async function HomePage() {
       isActive: true,
       ...(idsDestacados.length > 0
         ? {
-            id: {
-              notIn: idsDestacados,
-            },
-          }
+          id: {
+            notIn: idsDestacados,
+          },
+        }
         : {}),
     },
     take: 4,
@@ -126,26 +126,44 @@ export default async function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto grid min-h-[76vh] max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(420px,.88fr)] lg:px-8 lg:py-24">
+        <div className="
+          relative 
+          mx-auto 
+          grid 
+          max-w-7xl
+          items-center
+          gap-10
+          px-4
+          py-12
+          sm:px-6
+          sm:py-16
+          md:gap-14
+          lg:min-h-[76vh] 
+          lg:grid-cols-[minmax(0,1fr)_minmax(380px,.88fr)] 
+          lg:px-8 
+          lg:py-20
+          xl:grid-cols-[minmax(0,1fr)_minmax(440px,.88fr)]
+          xl:py-24
+          ">
           <div className="max-w-3xl animate-fade-in">
-            <div className="mb-7 flex flex-wrap items-center gap-3">
+            <div className="mb-6 flex flex-wrap items-center gap-2 sm:mb-7 sm:gap-3">
               <span className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-300">
                 Boutique premium
               </span>
 
-              <span className="text-xs uppercase tracking-[0.25em] text-zinc-600">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-600 sm:text-xs sm:tracking-[0.25em]">
                 México
               </span>
             </div>
 
-            <h1 className="font-display text-[clamp(4.5rem,10vw,8.5rem)] leading-[0.82] tracking-[0.01em] text-white">
+            <h1 className="font-display text-[clamp(3.5rem,18vw,8.5rem)] leading-[0.84] tracking-[0.01em] text-white min-[430px]:text-[clamp(4.2rem,16vw,8.5rem)] lg:text-[clamp(5rem,9vw,8.5rem)]">
               HYPE
               <span className="block text-zinc-500">
                 &amp; LUXURY
               </span>
             </h1>
 
-            <p className="mt-8 max-w-2xl text-base leading-8 text-zinc-400 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base sm:leading-8 lg:text-lg">
               Ropa y accesorios originales para quienes buscan piezas
               con presencia, estilo y personalidad. Entregas personales
               y envíos a todo México.
@@ -154,53 +172,149 @@ export default async function HomePage() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/productos"
-                className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-white px-8 text-sm font-bold uppercase tracking-[0.15em] text-black shadow-[0_18px_50px_rgba(255,255,255,.12)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-200"
+                className="
+                  inline-flex 
+                  min-h-13
+                  w-full
+                  items-center 
+                  justify-center 
+                  rounded-2xl 
+                  bg-white 
+                  px-6 
+                  text-xs 
+                  font-bold 
+                  uppercase 
+                  tracking-[0.12em] 
+                  text-black 
+                  shadow-[0_18px_50px_rgba(255,255,255,.12)] 
+                  transition-all 
+                  duration-300 
+                  hover:-translate-y-0.5 
+                  hover:bg-zinc-200
+                  sm:min-h-14
+                  sm:w-auto
+                  sm:px-8
+                  sm:text-sm
+                  sm:tracking-[0.15em]
+                  "
               >
                 Ver catálogo
               </Link>
 
               <Link
-                href="/productos?isFeatured=true"
-                className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.025] px-8 text-sm font-bold uppercase tracking-[0.15em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/[0.06]"
+                href="/productos?destacados=true"
+                className="
+                  inline-flex 
+                  min-h-13 
+                  w-full
+                  items-center 
+                  justify-center 
+                  rounded-2xl 
+                  border 
+                  border-white/15 
+                  bg-white/[0.025] 
+                  px-6 
+                  text-xs 
+                  font-bold 
+                  uppercase 
+                  tracking-[0.12em] 
+                  text-white 
+                  transition-all 
+                  duration-300 
+                  hover:-translate-y-0.5 
+                  hover:border-white/40 
+                  hover:bg-white/[0.06]
+                  sm:min-h-14
+                  sm:w-auto
+                  sm:px-8
+                  sm:text-sm
+                  sm:tracking-[0.15em]
+                  "
               >
                 Ver destacados
               </Link>
             </div>
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-4 border-t border-white/10 pt-7 sm:gap-5">
-              <div>
+            <div className="
+                    mt-8
+                    grid
+                    w-full
+                    grid-cols-1
+                    gap-3
+                    border-t
+                    border-white/10
+                    pt-6
+                    min-[430px]:grid-cols-3
+                    min-[430px]:gap-4
+                    sm:mt-10
+                    sm:pt-7
+                  ">
+              <div className="
+                    rounded-2xl
+                    border
+                    border-white/10
+                    bg-white/[0.035]
+                    p-4
+                    shadow-[0_12px_35px_rgba(0,0,0,.18)]
+                    min-[430px]:rounded-xl
+                    min-[430px]:p-3
+                    sm:p-4
+                  ">
                 <p className="text-xl font-black text-white sm:text-2xl">
                   100%
                 </p>
-                <p className="mt-1 text-[11px] text-zinc-600 sm:text-xs">
+
+                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
                   Original
                 </p>
               </div>
 
-              <div>
+              <div className="
+                      rounded-2xl
+                      border
+                      border-white/10
+                      bg-white/[0.035]
+                      p-4
+                      shadow-[0_12px_35px_rgba(0,0,0,.18)]
+                      min-[430px]:rounded-xl
+                      min-[430px]:p-3
+                      sm:p-4
+                    ">
                 <p className="text-xl font-black text-white sm:text-2xl">
                   MX
                 </p>
-                <p className="mt-1 text-[11px] text-zinc-600 sm:text-xs">
+
+                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
                   Envíos nacionales
                 </p>
               </div>
 
-              <div>
+              <div className="
+                      rounded-2xl
+                      border
+                      border-white/10
+                      bg-white/[0.035]
+                      p-4
+                      shadow-[0_12px_35px_rgba(0,0,0,.18)]
+                      min-[430px]:rounded-xl
+                      min-[430px]:p-3
+                      sm:p-4
+                    ">
                 <p className="text-xl font-black text-white sm:text-2xl">
                   24/7
                 </p>
-                <p className="mt-1 text-[11px] text-zinc-600 sm:text-xs">
+
+                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
                   Catálogo disponible
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="relative hidden lg:block">
+          <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
             <div className="absolute -inset-8 rounded-full bg-white/[0.025] blur-3xl" />
 
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-[#0d0d0d] shadow-[0_40px_120px_rgba(0,0,0,.6)]">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:aspect-[16/10] lg:aspect-[4/5] lg:rounded-[2rem] lg:shadow-[0_40px_120px_rgba(0,0,0,.6)]">
               <Image
                 src="/images/losBoss.jpg"
                 alt="Los Boss Boutique"
@@ -212,12 +326,12 @@ export default async function HomePage() {
 
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
 
-              <div className="absolute inset-x-0 bottom-0 p-8">
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 lg:p-8">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-zinc-500">
                   Los Boss Boutique
                 </p>
 
-                <p className="mt-3 max-w-sm text-2xl font-black leading-tight text-white">
+                <p className="mt-2 max-w-sm text-xl font-black leading-tight text-white sm:text-2xl lg:mt-3">
                   Piezas seleccionadas para destacar.
                 </p>
               </div>
@@ -229,14 +343,14 @@ export default async function HomePage() {
       {/* BENEFICIOS */}
       <section className="border-b border-zinc-200 bg-white text-black">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 divide-x divide-y divide-zinc-200 md:grid-cols-4 md:divide-y-0">
+          <div className="grid grid-cols-1 divide-y divide-zinc-200 min-[430px]:grid-cols-2 min-[430px]:divide-x md:grid-cols-4 md:divide-y-0">
             {BENEFICIOS.map((beneficio) => {
               const Icon = beneficio.icon;
 
               return (
                 <div
                   key={beneficio.label}
-                  className="flex flex-col items-center justify-center gap-3 px-4 py-7 text-center"
+                  className="flex flex-row items-center justify-center gap-3 px-4 py-5 text-left min-[430px]:flex-col min-[430px]:py-6 min-[430px]:text-center lg:py-7"
                 >
                   <Icon size={21} />
 
@@ -252,14 +366,14 @@ export default async function HomePage() {
 
       {/* CATEGORÍAS */}
       {categorias.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
+          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Explora
               </p>
 
-              <h2 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                 Comprar por categoría
               </h2>
 
@@ -278,12 +392,12 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 min-[500px]:grid-cols-2 lg:grid-cols-4 lg:gap-5">
             {categorias.map((categoria, index) => (
               <Link
                 key={categoria.id}
                 href={`/productos?categoria=${categoria.slug}`}
-                className="group relative min-h-[300px] overflow-hidden rounded-3xl border border-white/10 bg-zinc-950"
+                className="group relative min-h-[230px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 min-[430px]:min-h-[260px] sm:rounded-3xl lg:min-h-[300px]"
               >
                 {categoria.imageUrl ? (
                   <Image
@@ -295,23 +409,22 @@ export default async function HomePage() {
                   />
                 ) : (
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br ${
-                      FONDOS_CATEGORIAS[
-                        index % FONDOS_CATEGORIAS.length
-                      ]
-                    }`}
+                    className={`absolute inset-0 bg-gradient-to-br ${FONDOS_CATEGORIAS[
+                      index % FONDOS_CATEGORIAS.length
+                    ]
+                      }`}
                   />
                 )}
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                <div className="absolute inset-x-0 bottom-0 p-6">
+                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-500">
                     Colección
                   </p>
 
                   <div className="mt-2 flex items-end justify-between gap-4">
-                    <h3 className="text-2xl font-black text-white">
+                    <h3 className="text-xl font-black text-white sm:text-2xl">
                       {categoria.name}
                     </h3>
 
@@ -328,14 +441,14 @@ export default async function HomePage() {
 
       {/* PRODUCTOS DESTACADOS */}
       <section className="border-y border-white/10 bg-[#050505]">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-18 lg:py-24 sm:px-6 lg:px-8">
+          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Selección
               </p>
 
-              <h2 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                 Productos destacados
               </h2>
 
@@ -346,7 +459,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href="/productos?isFeatured=true"
+              href="/productos?destacados=true"
               className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-zinc-400 transition hover:gap-3 hover:text-white"
             >
               Ver destacados
@@ -355,7 +468,7 @@ export default async function HomePage() {
           </div>
 
           {destacados.length > 0 ? (
-            <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
+            <div className="grid grid-cols-1 gap-x-5 gap-y-10 min-[430px]:grid-cols-2 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
               {destacados.map((producto) => {
                 const stockTotal = producto.variants.reduce(
                   (total, variante) => total + variante.stock,
@@ -408,14 +521,14 @@ export default async function HomePage() {
 
       {/* NUEVOS INGRESOS */}
       {nuevosProductos.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
+          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Recién llegados
               </p>
 
-              <h2 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                 Nuevos ingresos
               </h2>
 
@@ -426,7 +539,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href="/productos?orden=recientes"
+              href="/productos?nuevos=true"
               className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-zinc-400 transition hover:gap-3 hover:text-white"
             >
               Ver novedades
@@ -434,7 +547,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
+          <div className="grid grid-cols-1 gap-x-5 gap-y-10 min-[430px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
             {nuevosProductos.map((producto) => {
               const stockTotal = producto.variants.reduce(
                 (total, variante) => total + variante.stock,
@@ -462,7 +575,7 @@ export default async function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="relative overflow-hidden border-t border-zinc-200 bg-white py-20 text-black lg:py-24">
+      <section className="relative overflow-hidden border-t border-zinc-200 bg-white py-14 text-black sm:py-18 lg:py-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,.08),transparent_35%)]" />
 
         <div className="relative mx-auto max-w-3xl px-4 text-center">
@@ -470,18 +583,18 @@ export default async function HomePage() {
             Los Boss Boutique
           </p>
 
-          <h2 className="mt-5 font-display text-[clamp(3rem,8vw,6rem)] leading-[0.9]">
+          <h2 className="mt-4 font-display text-[clamp(2.8rem,15vw,6rem)] leading-[0.9] sm:mt-5 sm:text-[clamp(3.5rem,9vw,6rem)]">
             CONSIGUE TU PIEZA
           </h2>
 
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-zinc-600">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-600 sm:mt-6 sm:text-lg sm:leading-8">
             Colecciones limitadas, piezas originales y envíos a todo
             México.
           </p>
 
           <Link
             href="/productos"
-            className="mt-9 inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-black px-9 text-sm font-bold uppercase tracking-[0.15em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-900"
+            className="mt-8 inline-flex min-h-13 w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-black px-6 text-xs font-bold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-900 sm:mt-9 sm:min-h-14 sm:w-auto sm:max-w-none sm:px-9 sm:text-sm sm:tracking-[0.15em]"
           >
             Explorar catálogo
             <ArrowRight size={17} />
