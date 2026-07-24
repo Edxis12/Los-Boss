@@ -59,6 +59,7 @@ export default function ProductForm({
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [subiendoImagenes, setSubiendoImagenes] = useState(false);
 
     const [name, setName] = useState(producto?.name ?? "");
     const [description, setDescription] = useState(producto?.description ?? "");
@@ -69,7 +70,7 @@ export default function ProductForm({
     const [brand, setBrand] = useState(producto?.brand ?? "");
     const [categoryId, setCategoryId] = useState(producto?.categoryId ?? "");
     const [imageUrls, setImageUrls] = useState<string[]>(
-        producto?.imageUrls?.length ? producto.imageUrls : [""]
+        producto?.imageUrls?.filter(Boolean) ?? []
     );
     const [isFeatured, setIsFeatured] = useState(producto?.isFeatured ?? false);
     const [gender, setGender] = useState<"HOMBRE" | "MUJER" | "UNISEX">(
@@ -107,7 +108,7 @@ export default function ProductForm({
     async function subirImagenesCloudinary(files: FileList | null) {
         if (!files || files.length === 0) return;
 
-        setLoading(true);
+        setSubiendoImagenes(true);
 
         const urls: string[] = [];
 
@@ -135,7 +136,7 @@ export default function ProductForm({
         }
 
         setImageUrls((prev) => [...prev.filter(Boolean), ...urls]);
-        setLoading(false);
+        setSubiendoImagenes(false);
     }
 
     function handleDragEnd(event: DragEndEvent) {
@@ -198,7 +199,7 @@ export default function ProductForm({
 
         setLoading(false);
 
-        if (resultado.error) {
+        if ("error" in resultado) {
             setError(resultado.error);
             return;
         }
@@ -208,7 +209,7 @@ export default function ProductForm({
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-7">
             {error && (
                 <p className="bg-red-950 text-red-400 text-sm rounded-lg px-3 py-2">
                     {error}
@@ -243,7 +244,7 @@ export default function ProductForm({
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
                     <label className="text-sm text-zinc-300">Precio actual (MXN)</label>
                     <input
@@ -304,7 +305,7 @@ export default function ProductForm({
             </div>
 
             <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-3 flex flex-col gap-3 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
                     <label className="text-sm text-zinc-300">Imágenes del producto</label>
                 </div>
 
@@ -313,12 +314,33 @@ export default function ProductForm({
                     accept="image/*"
                     multiple
                     onChange={(e) => subirImagenesCloudinary(e.target.files)}
-                    className="mb-3 block w-full text-sm text-zinc-400
-                    file:mr-4 file:rounded-lg file:border-0
-                    file:bg-white file:px-4 file:py-2
-                    file:text-sm file:font-semibold file:text-black
-                    hover:file:bg-zinc-200"
+                    className=" 
+                        block
+                        w-full
+                        text-sm
+                        text-zinc-400
+
+                        file:w-full
+                        file:min-h-12
+                        file:rounded-xl
+                        file:border-0
+                        file:bg-white
+                        file:px-4
+                        file:py-3
+                        file:font-semibold
+                        file:text-black
+
+                        sm:file:w-auto
+
+                        hover:file:bg-zinc-200
+                    "
                 />
+
+                {subiendoImagenes && (
+                    <p className="mt-3 animate-pulse text-sm text-zinc-400">
+                        Subiendo imágenes...
+                    </p>
+                )}
 
                 <DndContext
                     sensors={sensors}
@@ -326,22 +348,24 @@ export default function ProductForm({
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext
-                        items={imageUrls}
+                        items={imageUrls.filter(Boolean)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {imageUrls.map((url, index) => (
-                                <SortableImageCard
-                                    key={url}
-                                    url={url}
-                                    isPrincipal={index === 0}
-                                    onDelete={() =>
-                                        setImageUrls((prev) =>
-                                            prev.filter((_, i) => i !== index)
-                                        )
-                                    }
-                                />
-                            ))}
+                        <div className="grid grid-cols-1 min-[430px]:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {imageUrls
+                                .filter((url) => url.trim() !== "")
+                                .map((url, index) => (
+                                    <SortableImageCard
+                                        key={url}
+                                        url={url}
+                                        isPrincipal={index === 0}
+                                        onDelete={() =>
+                                            setImageUrls((prev) =>
+                                                prev.filter((item) => item !== url)
+                                            )
+                                        }
+                                    />
+                                ))}
                         </div>
                     </SortableContext>
                 </DndContext>
@@ -377,14 +401,32 @@ export default function ProductForm({
             </div>
 
             <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-3 flex flex-col gap-3 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
                     <label className="text-sm text-zinc-300">
                         Tallas / colores y stock
                     </label>
                     <button
                         type="button"
                         onClick={agregarVariante}
-                        className="flex items-center gap-1 text-xs text-zinc-300 hover:text-white border border-zinc-700 rounded-lg px-2.5 py-1"
+                        className="
+                            inline-flex
+                            min-h-12
+                            w-full
+                            items-center
+                            justify-center
+                            gap-1.5
+                            rounded-xl
+                            border
+                            border-zinc-700
+                            px-3
+                            text-sm
+                            font-medium
+                            text-zinc-300
+                            transition
+                            hover:border-zinc-500
+                            hover:text-white
+                            min-[430px]:w-auto
+                        "
                     >
                         <Plus size={13} />
                         Agregar variante
@@ -393,36 +435,151 @@ export default function ProductForm({
 
                 <div className="space-y-2">
                     {variantes.map((v, i) => (
-                        <div key={i} className="flex gap-2 items-center">
-                            <input
-                                type="text"
-                                placeholder="Talla"
-                                value={v.size}
-                                onChange={(e) => actualizarVariante(i, "size", e.target.value)}
-                                className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white text-sm outline-none focus:border-white"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Color"
-                                value={v.color}
-                                onChange={(e) => actualizarVariante(i, "color", e.target.value)}
-                                className="flex-1 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white text-sm outline-none focus:border-white"
-                            />
-                            <input
-                                type="number"
-                                min={0}
-                                placeholder="Stock"
-                                value={v.stock}
-                                onChange={(e) =>
-                                    actualizarVariante(i, "stock", Number(e.target.value))
-                                }
-                                className="w-24 rounded-lg bg-zinc-900 border border-zinc-700 px-3 py-2 text-white text-sm outline-none focus:border-white"
-                            />
+                        <div
+                            key={i}
+                            className="
+                                grid
+                                min-w-0
+                                gap-3
+                                rounded-2xl
+                                border
+                                border-white/10
+                                bg-black/20
+                                p-3
+                                min-[430px]:grid-cols-2
+                                sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_110px_auto]
+                                sm:items-end
+                                sm:gap-4
+                                sm:p-0
+                                sm:border-0
+                                sm:bg-transparent
+                            "
+                        >
+                            <div className="min-w-0">
+                                <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
+                                    Talla
+                                </label>
+
+                                <input
+                                    type="text"
+                                    placeholder="Talla"
+                                    value={v.size}
+                                    onChange={(e) =>
+                                        actualizarVariante(
+                                            i,
+                                            "size",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="
+                                        h-11
+                                        w-full
+                                        min-w-0
+                                        rounded-xl
+                                        border
+                                        border-zinc-700
+                                        bg-zinc-900
+                                        px-3
+                                        text-sm
+                                        text-white
+                                        outline-none
+                                        placeholder:text-zinc-600
+                                        focus:border-white
+                                    "
+                                />
+                            </div>
+
+                            <div className="min-w-0">
+                                <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
+                                    Color
+                                </label>
+
+                                <input
+                                    type="text"
+                                    placeholder="Color"
+                                    value={v.color}
+                                    onChange={(e) =>
+                                        actualizarVariante(
+                                            i,
+                                            "color",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="
+                                        h-11
+                                        w-full
+                                        min-w-0
+                                        rounded-xl
+                                        border
+                                        border-zinc-700
+                                        bg-zinc-900
+                                        px-3
+                                        text-sm
+                                        text-white
+                                        outline-none
+                                        placeholder:text-zinc-600
+                                        focus:border-white
+                                    "
+                                />
+                            </div>
+
+                            <div className="min-w-0 min-[430px]:col-span-2 sm:col-span-1">
+                                <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
+                                    Stock
+                                </label>
+
+                                <input
+                                    type="number"
+                                    min={0}
+                                    placeholder="Stock"
+                                    value={v.stock}
+                                    onChange={(e) =>
+                                        actualizarVariante(
+                                            i,
+                                            "stock",
+                                            Number(e.target.value)
+                                        )
+                                    }
+                                    className="
+                                        h-11
+                                        w-full
+                                        min-w-0
+                                        rounded-xl
+                                        border
+                                        border-zinc-700
+                                        bg-zinc-900
+                                        px-3
+                                        text-sm
+                                        text-white
+                                        outline-none
+                                        placeholder:text-zinc-600
+                                        focus:border-white
+                                        sm:w-[110px]
+                                    "
+                                />
+                            </div>
+
                             {variantes.length > 1 && (
                                 <button
                                     type="button"
                                     onClick={() => quitarVariante(i)}
-                                    className="text-zinc-500 hover:text-red-400 p-2"
+                                    aria-label="Eliminar variante"
+                                    className="
+                                        flex
+                                        h-11
+                                        w-full
+                                        items-center
+                                        justify-center
+                                        rounded-xl
+                                        border
+                                        border-red-500/20
+                                        text-red-400
+                                        transition
+                                        hover:bg-red-500/10
+                                        min-[430px]:col-span-2
+                                        sm:col-span-1
+                                        sm:w-11
+                                    "
                                 >
                                     <Trash2 size={16} />
                                 </button>
@@ -434,14 +591,26 @@ export default function ProductForm({
 
             <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-white text-black font-semibold rounded-lg py-3 hover:bg-zinc-200 transition disabled:opacity-50"
+                disabled={loading || subiendoImagenes}
+                className="
+                w-full
+                min-h-14
+                rounded-2xl
+                bg-white
+                font-bold
+                text-black
+                transition
+                hover:bg-zinc-200
+                disabled:opacity-50
+                "
             >
-                {loading
-                    ? "Guardando..."
-                    : esEdicion
-                        ? "Guardar cambios"
-                        : "Crear producto"}
+                {subiendoImagenes
+                    ? "Subiendo imágenes..."
+                    : loading
+                        ? "Guardando..."
+                        : esEdicion
+                            ? "Guardar cambios"
+                            : "Crear producto"}
             </button>
         </form>
     );

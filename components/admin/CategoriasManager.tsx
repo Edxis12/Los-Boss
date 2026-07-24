@@ -420,7 +420,7 @@ export default function CategoriasManager({
                 imageUrl
             );
 
-            if (resultado.error) {
+            if (!resultado.success) {
                 setError(resultado.error);
                 return;
             }
@@ -429,8 +429,7 @@ export default function CategoriasManager({
             setImageUrl("");
 
             setSuccess(
-                resultado.message ??
-                "Categoría creada correctamente"
+                resultado.message ?? "Categoría creada correctamente"
             );
 
             router.refresh();
@@ -481,7 +480,7 @@ export default function CategoriasManager({
                 categoriaEditando.imageUrl
             );
 
-            if (resultado.error) {
+            if ("error" in resultado) {
                 setError(resultado.error);
                 return;
             }
@@ -528,14 +527,12 @@ export default function CategoriasManager({
                 categoria.id
             );
 
-            if (resultado.error) {
+            if ("error" in resultado) {
                 setError(resultado.error);
                 return;
             }
 
-            if (
-                categoriaEditando?.id === categoria.id
-            ) {
+            if (categoriaEditando?.id === categoria.id) {
                 setCategoriaEditando(null);
             }
 

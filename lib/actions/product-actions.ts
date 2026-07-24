@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { prisma } from "../prisma";
+import type { ActionResponse } from "@/lib/types/action-response";
 
 // Helper: confirma que quien llama es admin. Lanza error si no.
 async function requireAdmin() {
@@ -32,114 +33,161 @@ export async function crearProducto(data: {
     isFeatured: boolean;
     gender: "HOMBRE" | "MUJER" | "UNISEX";
     variantes: VarianteInput[];
-}) {
-    await requireAdmin();
+}): Promise<ActionResponse> {
 
-    if (!data.name || !data.slug || !data.categoryId || data.variantes.length === 0) {
-        return { error: "Faltan campos requeridos" };
-    }
+    try {
+        await requireAdmin();
 
-    const existente = await prisma.product.findUnique({
-        where: { slug: data.slug },
-    });
-    if (existente) {
-        return { error: "Ya existe un producto con ese slug" };
-    }
+        if (!data.name || !data.slug || !data.categoryId || data.variantes.length === 0) {
+            return { success: false, error: "Faltan campos requeridos" };
+        }
 
-    await prisma.product.create({
-        data: {
-            name: data.name,
-            slug: data.slug,
-            description: data.description,
-            price: data.price,
-            comparePrice: data.comparePrice ?? null,
-            brand: data.brand || null,
-            isFeatured: data.isFeatured,
-            gender: data.gender,
-            category: { connect: { id: data.categoryId } },
-            images: data.imageUrls.length > 0
-                ? {
-                    create: data.imageUrls.map((url, index) => ({
-                        url: url.trim(),
-                        position: index,
+        const existente = await prisma.product.findUnique({
+            where: { slug: data.slug },
+        });
+        if (existente) {
+            return { success: false, error: "Ya existe un producto con ese slug" };
+        }
+
+        await prisma.product.create({
+            data: {
+                name: data.name,
+                slug: data.slug,
+                description: data.description,
+                price: data.price,
+                comparePrice: data.comparePrice ?? null,
+                brand: data.brand || null,
+                isFeatured: data.isFeatured,
+                gender: data.gender,
+                category: { connect: { id: data.categoryId } },
+                images: data.imageUrls.length > 0
+                    ? {
+                        create: data.imageUrls.map((url, index) => ({
+                            url: url.trim(),
+                            position: index,
+                        })),
+                    }
+                    : undefined,
+                variants: {
+                    create: data.variantes.map((v, i) => ({
+                        sku: `${data.slug.toUpperCase()}-${i}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                        size: v.size || null,
+                        color: v.color || null,
+                        stock: v.stock,
                     })),
-                }
-                : undefined,
-            variants: {
-                create: data.variantes.map((v, i) => ({
-                    sku: `${data.slug.toUpperCase()}-${i}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-                    size: v.size || null,
-                    color: v.color || null,
-                    stock: v.stock,
-                })),
+                },
             },
-        },
-    });
+        });
 
-    revalidatePath("/admin/productos");
-    revalidatePath("/productos");
-    return { success: true };
-}
+        revalidatePath("/admin/productos");
+        revalidatePath("/productos");
+        return { success: true };
 
-export async function actualizarStock(variantId: string, nuevoStock: number) {
-    await requireAdmin();
-
-    if (nuevoStock < 0) {
-        return { error: "El stock no puede ser negativo" };
+    } catch (error) {
+        return {
+            success: false,
+            error: "No se pudo crear el producto."
+        }
     }
-
-    await prisma.productVariant.update({
-        where: { id: variantId },
-        data: { stock: nuevoStock },
-    });
-
-    revalidatePath("/admin/productos");
-    revalidatePath("/productos");
-    return { success: true };
 }
 
-export async function eliminarProducto(productId: string) {
-    await requireAdmin();
+export async function actualizarStock(variantId: string, nuevoStock: number): Promise<ActionResponse> {
 
-    await prisma.product.delete({ where: { id: productId } });
+    try {
+        await requireAdmin();
 
-    revalidatePath("/admin/productos");
-    revalidatePath("/productos");
-    return { success: true };
+        if (nuevoStock < 0) {
+            return { success: false, error: "El stock no puede ser negativo" };
+        }
+
+        await prisma.productVariant.update({
+            where: { id: variantId },
+            data: { stock: nuevoStock },
+        });
+
+        revalidatePath("/admin/productos");
+        revalidatePath("/productos");
+        return { success: true };
+    } catch (error) {
+        return {
+            success: false,
+            error: "No se pudo actualizar el stock."
+        }
+    }
+}
+
+export async function eliminarProducto(productId: string): Promise<ActionResponse> {
+
+    try {
+
+        await requireAdmin();
+
+        await prisma.product.delete({ where: { id: productId } });
+
+        revalidatePath("/admin/productos");
+        revalidatePath("/productos");
+
+        return { success: true };
+    } catch (error) {
+        return {
+            success: false, 
+            error: "No se pudo eliminar el producto."
+        }
+    }
 }
 
 export async function cambiarEstadoProducto(
     productId: string,
     isActive: boolean
-) {
-    await requireAdmin();
+): Promise<ActionResponse> {
+    try {
+        await requireAdmin();
 
-    await prisma.product.update({
-        where: { id: productId },
-        data: { isActive },
-    });
+        await prisma.product.update({
+            where: { id: productId },
+            data: { isActive },
+        });
 
-    revalidatePath("/admin/productos");
-    revalidatePath("/productos");
-    return { success: true };
+        revalidatePath("/admin/productos");
+        revalidatePath("/productos");
+        return { success: true };
+    } catch (error) {
+        return {
+            success: false,
+            error: "No se pudo cambiar el estado del producto."
+        }
+    }
 }
 
 export async function actualizarOfertaProducto(
     productId: string,
     comparePrice: number | null
-) {
-    await requireAdmin();
+): Promise<ActionResponse> {
 
-    await prisma.product.update({
-        where: { id: productId },
-        data: {
-            comparePrice,
-        },
-    });
+    try {
+        await requireAdmin();
 
-    revalidatePath("/admin/productos");
-    revalidatePath("/productos");
-    return { succes: true };
+        await prisma.product.update({
+            where: { id: productId },
+            data: {
+                comparePrice,
+            },
+        });
+
+        revalidatePath("/admin/productos");
+        revalidatePath("/productos");
+        return { success: true };
+    } catch (error) {
+        console.error(
+            "Error al actualizar oferta del producto:",
+            error
+        );
+
+        return {
+            success: false,
+            error: "No se pudo actualizar la oferta del producto.",
+        };
+    }
 }
 
 export async function actualizarProducto(data: {
@@ -155,7 +203,7 @@ export async function actualizarProducto(data: {
     isFeatured: boolean;
     gender: "HOMBRE" | "MUJER" | "UNISEX";
     variantes: VarianteInput[];
-}) {
+}): Promise<ActionResponse> {
     await requireAdmin();
 
     if (
@@ -166,6 +214,7 @@ export async function actualizarProducto(data: {
         data.variantes.length === 0
     ) {
         return {
+            success: false,
             error: "Faltan campos requeridos",
         };
     }
@@ -178,6 +227,7 @@ export async function actualizarProducto(data: {
         )
     ) {
         return {
+            success: false,
             error: "El stock de las variantes no es válido",
         };
     }
@@ -197,6 +247,7 @@ export async function actualizarProducto(data: {
 
     if (productoConMismoSlug) {
         return {
+            success: false, 
             error: "Ya existe otro producto con ese slug",
         };
     }
@@ -412,6 +463,7 @@ export async function actualizarProducto(data: {
         );
 
         return {
+            success: false,
             error:
                 error instanceof Error
                     ? error.message

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { ActionResponse } from "@/lib/types/action-response";
 
 async function requireAdmin() {
     const session = await auth();
@@ -39,13 +40,14 @@ function revalidarCategorias() {
 export async function crearCategoria(
     name: string,
     imageUrl?: string
-) {
+): Promise<ActionResponse> {
     await requireAdmin();
 
     const nombreLimpio = name.trim();
 
     if (!nombreLimpio) {
         return {
+            success: false,
             error: "El nombre es requerido",
         };
     }
@@ -54,6 +56,7 @@ export async function crearCategoria(
 
     if (!slug) {
         return {
+            success: false,
             error: "Escribe un nombre válido",
         };
     }
@@ -80,6 +83,7 @@ export async function crearCategoria(
 
         if (existente) {
             return {
+                success: false,
                 error: "Ya existe una categoría con ese nombre",
             };
         }
@@ -102,6 +106,7 @@ export async function crearCategoria(
         console.error("Error al crear categoría:", error);
 
         return {
+            success: false,
             error:
                 error instanceof Error
                     ? error.message
@@ -114,19 +119,21 @@ export async function actualizarCategoria(
     categoryId: string,
     name: string,
     imageUrl?: string
-) {
+): Promise<ActionResponse> {
     await requireAdmin();
 
     const nombreLimpio = name.trim();
 
     if (!categoryId) {
         return {
+            success: false,
             error: "La categoría no es válida",
         };
     }
 
     if (!nombreLimpio) {
         return {
+            success: false,
             error: "El nombre es requerido",
         };
     }
@@ -135,6 +142,7 @@ export async function actualizarCategoria(
 
     if (!slug) {
         return {
+            success: false,
             error: "Escribe un nombre válido",
         };
     }
@@ -151,6 +159,7 @@ export async function actualizarCategoria(
 
         if (!categoria) {
             return {
+                success: false,
                 error: "No encontramos la categoría",
             };
         }
@@ -179,6 +188,7 @@ export async function actualizarCategoria(
 
         if (duplicada) {
             return {
+                success: false,
                 error: "Ya existe otra categoría con ese nombre",
             };
         }
@@ -204,6 +214,7 @@ export async function actualizarCategoria(
         console.error("Error al actualizar categoría:", error);
 
         return {
+            success: false,
             error:
                 error instanceof Error
                     ? error.message
@@ -212,11 +223,12 @@ export async function actualizarCategoria(
     }
 }
 
-export async function eliminarCategoria(categoryId: string) {
+export async function eliminarCategoria(categoryId: string): Promise<ActionResponse> {
     await requireAdmin();
 
     if (!categoryId) {
         return {
+            success: false,
             error: "La categoría no es válida",
         };
     }
@@ -239,12 +251,14 @@ export async function eliminarCategoria(categoryId: string) {
 
         if (!categoria) {
             return {
+                success: false,
                 error: "No encontramos la categoría",
             };
         }
 
         if (categoria._count.products > 0) {
             return {
+                success: false,
                 error: `No puedes eliminar "${categoria.name}" porque tiene ${categoria._count.products
                     } ${categoria._count.products === 1
                         ? "producto asignado"
@@ -269,10 +283,11 @@ export async function eliminarCategoria(categoryId: string) {
         console.error("Error al eliminar categoría:", error);
 
         return {
+            success: false,
             error:
                 error instanceof Error
                     ? error.message
                     : "No se pudo eliminar la categoría",
         };
     }
-}
+} 

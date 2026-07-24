@@ -42,7 +42,7 @@ export default function OrdersTable({ pedidos }: Props) {
     return (
         <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
 
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 p-4 border-b border-zinc-800 bg-black">
+            <div className="grid grid-cols-2 gap-3 p-4 border-b border-zinc-800 bg-black min-[500px]:grid-cols-3 xl:grid-cols-6">
                 {RESUMEN_ESTADOS.map((estado) => {
                     const activo = estadoFiltro === estado.value;
 
@@ -96,7 +96,7 @@ export default function OrdersTable({ pedidos }: Props) {
                 })}
             </div>
 
-            <div className="flex flex-col md:flex-row gap-3 p-4 border-b border-zinc-800 bg-zinc-950">
+            <div className="flex flex-col gap-3 border-b border-zinc-800 bg-zinc-950 p-4 lg:flex-row">
                 <div className="relative flex-1">
                     <Search
                         size={16}
@@ -113,7 +113,7 @@ export default function OrdersTable({ pedidos }: Props) {
                 <select
                     value={estadoFiltro}
                     onChange={(e) => setEstadoFiltro(e.target.value)}
-                    className="rounded-xl border border-zinc-800 bg-black px-4 py-2.5 text-sm text-white outline-none focus:border-white"
+                    className="h-11 w-full rounded-xl border border-zinc-800 bg-black px-4 text-sm text-white outline-none focus:border-white lg:w-64"
                 >
                     <option value="TODOS">Todos los estados</option>
                     <option value="PENDING">Pendiente</option>
@@ -128,16 +128,28 @@ export default function OrdersTable({ pedidos }: Props) {
 
             <div className="divide-y divide-zinc-800">
                 {pedidosFiltrados.length === 0 ? (
-                    <div className="px-6 py-16 text-center">
-                        <p className="font-semibold text-white">
+                    <section
+                        className="
+rounded-3xl
+border
+border-white/10
+bg-[#0d0d0d]
+px-5
+py-14
+text-center
+"
+                    >
+
+                        <h2>
                             No encontramos pedidos
+                        </h2>
+
+                        <p>
+                            Prueba con otra búsqueda o
+                            cambia el filtro aplicado.
                         </p>
 
-                        <p className="mt-2 text-sm text-zinc-500">
-                            Prueba con otra búsqueda o cambia el
-                            filtro de estado.
-                        </p>
-                    </div>
+                    </section>
                 ) : (
                     pedidosFiltrados.map((pedido) => {
                         const totalArticulos = pedido.items.reduce(
@@ -149,7 +161,7 @@ export default function OrdersTable({ pedidos }: Props) {
 
                             <div
                                 key={pedido.id}
-                                className="grid gap-4 p-5 transition hover:bg-zinc-800/40 lg:grid-cols-[1fr_1.4fr_.8fr_.8fr_1fr_auto]"
+                                className="grid gap-4 p-5 transition hover:bg-zinc-800/40 sm:p-6 lg:grid-cols-[minmax(0,1fr)minmax(0,1.4fr)minmax(0,.8fr)minmax(0,1fr)auto]"
                             >
                                 <div>
                                     <p className="text-xs text-zinc-500">Pedido</p>
@@ -158,8 +170,8 @@ export default function OrdersTable({ pedidos }: Props) {
 
                                 <div>
                                     <p className="text-xs text-zinc-500">Cliente</p>
-                                    <p className="text-white">{pedido.user.name || "Sin nombre"}</p>
-                                    <p className="text-xs text-zinc-500">{pedido.user.email}</p>
+                                    <p className="truncate text-white">{pedido.user.name || "Sin nombre"}</p>
+                                    <p className="truncate text-xs text-zinc-500">{pedido.user.email}</p>
                                 </div>
 
                                 <div>
@@ -192,25 +204,25 @@ export default function OrdersTable({ pedidos }: Props) {
                                     <button
                                         onClick={() => setPedidoSeleccionado(pedido)}
                                         className="
-                            h-10
-                            w-10
-                            rounded-lg
-                            border
-                            border-zinc-700
-                            flex
-                            items-center
-                            justify-center
-                            text-zinc-400
-                            hover:bg-zinc-800
-                            hover:text-white
-                            transition
-                        "
+                                            flex    
+                                            h-11
+                                            w-11
+                                            items-center
+                                            justify-center
+                                            rounded-xl
+                                            border
+                                            border-zinc-700
+                                            text-zinc-400
+                                            transition
+                                            hover:bg-zinc-800
+                                            hover:text-white
+                                        "
                                     >
                                         <Eye size={18} />
                                     </button>
                                 </div>
 
-                                <div className="hidden lg:block lg:col-start-6 lg:row-start-1">
+                                <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-3 lg:hidden">
                                     <p className="text-xs text-zinc-500">Total</p>
                                     <p className="font-semibold text-white">
                                         ${Number(pedido.total).toLocaleString("es-MX")}
