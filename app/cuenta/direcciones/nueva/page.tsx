@@ -86,7 +86,7 @@ export default function NuevaDireccionPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 <Link
                     href="/cuenta/direcciones"
                     className="inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-white"
@@ -95,16 +95,16 @@ export default function NuevaDireccionPage() {
                     Volver a mis direcciones
                 </Link>
 
-                <div className="mt-6 sm:mt-8">
+                <div className="mt-5 sm:mt-8">
                     <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
                         Tu cuenta
                     </p>
 
-                    <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+                    <h1 className="mt-3 text-[30px] font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                         Nueva dirección
                     </h1>
 
-                    <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-500 sm:mt-3 sm:text-base sm:leading-7">
                         Guarda una dirección para completar tus compras más rápido.
                         La primera dirección se establecerá automáticamente como
                         principal.
@@ -113,7 +113,7 @@ export default function NuevaDireccionPage() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="mt-8 space-y-7 rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:p-5 sm:mt-10 sm:space-y-8 sm:p-8"
+                    className="mt-8 space-y-7 rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:rounded-3xl min-[430px]:p-5"
                 >
                     <div className="flex items-start gap-3 sm:gap-4">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-black sm:h-11 sm:w-11">
@@ -427,7 +427,7 @@ export default function NuevaDireccionPage() {
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4 sm:p-5">
+                    <div className="rounded-xl border border-white/10 bg-white/[0.025] p-4 sm:rounded-2xl sm:p-5">
                         <div className="flex items-start gap-3">
                             <CheckCircle2
                                 size={19}
@@ -450,7 +450,7 @@ export default function NuevaDireccionPage() {
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                         <Link
                             href="/cuenta/direcciones"
-                            className="flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/10 px-6 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white sm:w-auto"
+                            className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/10 px-6 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white sm:min-h-14 sm:w-auto sm:rounded-2xl"
                         >
                             Cancelar
                         </Link>
@@ -459,9 +459,9 @@ export default function NuevaDireccionPage() {
                             type="submit"
                             disabled={guardando}
                             className="
-                                min-h-14
+                                min-h-12
                                 w-full
-                                rounded-2xl
+                                rounded-xl
                                 bg-white
                                 px-6
                                 py-3
@@ -475,7 +475,9 @@ export default function NuevaDireccionPage() {
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
                                 disabled:hover:translate-y-0
+                                sm:min-h-14
                                 sm:w-auto
+                                sm:rounded-2xl
                                 sm:px-7
                                 sm:text-base
                             "

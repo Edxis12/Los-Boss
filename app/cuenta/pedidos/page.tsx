@@ -227,7 +227,8 @@ export default async function MisPedidosPage() {
                                         key={pedido.id}
                                         className="
                                             overflow-hidden
-                                            rounded-3xl
+                                            rounded-2xl
+                                            min-[430px]:rounded-3xl
                                             border
                                             border-white/10
                                             bg-[#0d0d0d]
@@ -238,7 +239,7 @@ export default async function MisPedidosPage() {
                                             hover:border-white/20
                                         "
                                     >
-                                        <div className="p-4 min-[430:p-5] sm:p-7 sm:p-7">
+                                        <div className="p-4 min-[430px]:p-5 sm:p-7">
                                             <div className="flex flex-col gap-4 min-[430px]:flex-row min-[430px]:items-start min-[430px]:justify-between sm:gap-5">
                                                 <div>
                                                     <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-600">

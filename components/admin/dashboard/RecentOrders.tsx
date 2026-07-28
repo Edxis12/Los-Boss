@@ -20,12 +20,12 @@ type Props = {
 export default function RecentOrders({ pedidos }: Props) {
     return (
         <section className="h-full rounded-2xl border border-zinc-800 bg-zinc-950 p-5 sm:p-6">
-            <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-zinc-300">
-                    <ShoppingCart size={19} />
+            <div className="mb-6 flex items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/5 text-zinc-300">
+                    <ShoppingCart size={20} className="shrink-0" />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                     <h2 className="text-lg font-bold text-white">
                         Pedidos recientes
                     </h2>
@@ -36,22 +36,39 @@ export default function RecentOrders({ pedidos }: Props) {
             </div>
 
             {pedidos.length === 0 ? (
-                <p className="text-sm text-zinc-500">
-                    Todavía no hay pedidos.
-                </p>
+                <div className="py-10 text-center">
+                    <p className="text-sm text-zinc-500">
+                        Todavía no hay pedidos registrados.
+                    </p>
+                </div>
             ) : (
-                <div className="space-y-1">
+                <div className="space-y-3">
                     {pedidos.map((pedido) => (
                         <div
                             key={pedido.id}
-                            className="flex flex-col gap-3 border-b border-zinc-800 py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between"
+                            className="
+                                flex
+                                flex-col
+                                gap-4
+                                rounded-2xl
+                                border
+                                border-zinc-800
+                                bg-zinc-950
+                                p-4
+                                transition
+                                duration-300
+                                hover:border-zinc-700
+                                sm:flex-row
+                                sm:items-center
+                                sm:justify-between
+                            "
                         >
-                            <div>
-                                <p className="text-sm font-semibold text-white">
+                            <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold text-white">
                                     #{pedido.orderNumber}
                                 </p>
 
-                                <p className="text-xs text-zinc-500">
+                                <p className="truncate text-xs text-zinc-500">
                                     {pedido.user.name ??
                                         pedido.user.email ??
                                         "Cliente"}
@@ -59,7 +76,7 @@ export default function RecentOrders({ pedidos }: Props) {
                             </div>
 
                             <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-                                <p className="text-sm font-bold text-white">
+                                <p className="text-base font-black text-white sm:text-sm">
                                     ${pedido.total.toLocaleString("es-MX")}
                                 </p>
 

@@ -130,14 +130,14 @@ export default function OrdersTable({ pedidos }: Props) {
                 {pedidosFiltrados.length === 0 ? (
                     <section
                         className="
-rounded-3xl
-border
-border-white/10
-bg-[#0d0d0d]
-px-5
-py-14
-text-center
-"
+                        rounded-3xl
+                        border
+                        border-white/10
+                        bg-[#0d0d0d]
+                        px-5
+                        py-14
+                        text-center
+                        "
                     >
 
                         <h2>

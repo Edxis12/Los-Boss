@@ -210,7 +210,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 <Link
                     href="/cuenta/pedidos"
                     className="inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-white"
@@ -219,17 +219,17 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                     Volver a mis pedidos
                 </Link>
 
-                <div className="mt-6 flex flex-col gap-5 border-b border-white/10 pb-7 sm:mt-8 sm:flex-row sm:items-end sm:justify-between sm:pb-9">
+                <div className="mt-5 flex flex-col gap-5 border-b border-white/10 pb-7 sm:mt-8 sm:flex-row sm:items-end sm:justify-between sm:pb-9">
                     <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
                             Seguimiento del pedido
                         </p>
 
-                        <h1 className="mt-3 break-words text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+                        <h1 className="mt-3 break-words text-[30px] font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                             {pedido.orderNumber}
                         </h1>
 
-                        <p className="mt-3 text-sm leading-7 text-zinc-500 sm:text-base">
+                        <p className="mt-2 text-sm leading-6 text-zinc-500 sm:mt-3 sm:text-base sm:leading-7">
                             Pedido realizado el {formatearFecha(pedido.createdAt)}
                         </p>
                     </div>
@@ -244,7 +244,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                 </div>
 
                 {pedido.status === "DELIVERED" && (
-                    <div className="mt-6 rounded-3xl border border-emerald-500/20 bg-emerald-500/[0.06] p-4 min-[430px]:p-5 sm:mt-8 sm:p-8">
+                    <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] p-4 min-[430px]:rounded-3xl min-[430px]:p-5 sm:mt-8 sm:p-8">
                         <div className="flex items-start gap-3 sm:gap-4">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-black sm:h-12 sm:w-12">
                                 <Check size={23} strokeWidth={3} />
@@ -255,7 +255,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                                     Tu pedido fue entregado
                                 </h2>
 
-                                <p className="mt-2 leading-7 text-zinc-400">
+                                <p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
                                     Muchas gracias por confiar en Los Boss. Esperamos
                                     verte nuevamente muy pronto.
                                 </p>
@@ -265,7 +265,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                 )}
 
                 {pedidoCancelado && (
-                    <div className="mt-6 rounded-3xl border border-red-500/20 bg-red-500/[0.06] p-4 min-[430px]:p-5 sm:mt-8 sm:p-8">
+                    <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-500/[0.06] p-4 min-[430px]:rounded-3xl min-[430px]:p-5 sm:mt-8 sm:p-8">
                         <div className="flex items-start gap-3 sm:gap-4">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500 text-white sm:h-12 sm:w-12">
                                 <X size={23} strokeWidth={3} />
@@ -276,7 +276,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                                     Este pedido fue cancelado
                                 </h2>
 
-                                <p className="mt-2 leading-7 text-zinc-400">
+                                <p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
                                     Comunícate con nosotros si necesitas más
                                     información sobre la cancelación.
                                 </p>
@@ -293,9 +293,9 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                 )}
 
                 <div className="mt-8 grid items-start gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_380px]">
-                    <div className="space-y-8">
+                    <div className="space-y-6 sm:space-y-8">
                         {/* Timeline */}
-                        <section className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-6 shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:p-8">
+                        <section className="rounded-2xl min-[430px]:rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:p-8">
                             <div className="mb-6 sm:mb-8">
                                 <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-600">
                                     Progreso
@@ -423,7 +423,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                         </section>
 
                         {/* Productos */}
-                        <section className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:p-5 sm:p-8">
+                        <section className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-8">
                             <div className="flex flex-wrap items-end justify-between gap-3">
                                 <div>
                                     <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-600">
@@ -441,7 +441,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                                 </span>
                             </div>
 
-                            <div className="mt-7 space-y-5">
+                            <div className="mt-7 space-y-4 min-[430px]:space-y-5">
                                 {pedido.items.map((item) => {
                                     const imageUrl =
                                         item.product?.images[0]?.url;
@@ -449,7 +449,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                                     return (
                                         <div
                                             key={item.id}
-                                            className="grid gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0 min-[430px]:grid-cols-[80px_minmax(0,1fr)] sm:grid-cols-[96px_minmax(0,1fr)]"
+                                            className="grid gap-3 min-[430px]:gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0 min-[430px]:grid-cols-[80px_minmax(0,1fr)] sm:grid-cols-[96px_minmax(0,1fr)]"
                                         >
                                             <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 min-[430px]:w-20 sm:w-24 sm:rounded-2xl">
                                                 {imageUrl ? (
@@ -519,7 +519,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
 
                     <aside className="space-y-6 lg:sticky lg:top-28">
                         {/* Total */}
-                        <section className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:p-6">
+                        <section className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6">
                             <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-600">
                                 Resumen
                             </p>
@@ -541,7 +541,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                                     Total
                                 </span>
 
-                                <span className="break-all text-2xl font-black tracking-tight text-white min-[430px]:text-3xl">
+                                <span className="break-all text-[28px] font-black tracking-tight text-white min-[430px]:text-3xl">
                                     $
                                     {Number(pedido.total).toLocaleString(
                                         "es-MX"
@@ -551,7 +551,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
                         </section>
 
                         {/* Dirección */}
-                        <section className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 sm:p-6 shadow-[0_30px_80px_rgba(0,0,0,.3)]">
+                        <section className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6">
                             <div className="flex items-start gap-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
                                     <MapPin size={18} />
@@ -590,7 +590,7 @@ export default async function PedidoDetallePage({ params }: PageProps) {
 
                         <Link
                             href="/productos"
-                            className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-white px-5 text-center text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-zinc-200 sm:text-base"
+                            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-white px-5 text-center text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-zinc-200 sm:min-h-14 sm:rounded-2xl sm:text-base"
                         >
                             Seguir comprando
                         </Link>

@@ -351,7 +351,7 @@ export default function ProductForm({
                         items={imageUrls.filter(Boolean)}
                         strategy={verticalListSortingStrategy}
                     >
-                        <div className="grid grid-cols-1 min-[430px]:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="mt-6 grid grid-cols-1 gap-4 min-[430px]:grid-cols-2 lg:grid-cols-3">
                             {imageUrls
                                 .filter((url) => url.trim() !== "")
                                 .map((url, index) => (
@@ -370,7 +370,7 @@ export default function ProductForm({
                     </SortableContext>
                 </DndContext>
 
-                <p className="text-xs text-zinc-500 mt-2">
+                <p className="mt-3 text-xs leading-5 text-zinc-500">
                     La primera imagen será la imagen principal del producto.
                 </p>
             </div>

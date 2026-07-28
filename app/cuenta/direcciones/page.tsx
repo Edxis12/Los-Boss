@@ -61,7 +61,7 @@ export default async function DireccionesPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 <Link
                     href="/cuenta"
                     className="inline-flex items-center gap-2 text-sm text-zinc-500 transition hover:text-white"
@@ -70,17 +70,17 @@ export default async function DireccionesPage() {
                     Volver a mi cuenta
                 </Link>
 
-                <div className="mt-6 flex flex-col gap-5 sm:mt-8 sm:flex-row sm:items-end sm:justify-between">
+                <div className="mt-5 flex flex-col gap-5 sm:mt-8 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-500">
                             Tu cuenta
                         </p>
 
-                        <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+                        <h1 className="mt-3 text-[30px] font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                             Mis direcciones
                         </h1>
 
-                        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-500 sm:text-base">
+                        <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-500 sm:mt-3 sm:text-base sm:leading-7">
                             Guarda varias direcciones y elige cuál usar como principal
                             para tus próximas compras.
                         </p>
@@ -88,7 +88,7 @@ export default async function DireccionesPage() {
 
                     <Link
                         href="/cuenta/direcciones/nueva"
-                        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
+                        className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-white px-5 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
                     >
                         <Plus size={17} />
                         Agregar dirección
@@ -96,7 +96,7 @@ export default async function DireccionesPage() {
                 </div>
 
                 {direcciones.length === 0 ? (
-                    <section className="mt-8 rounded-3xl border border-white/10 bg-[#0d0d0d] px-5 py-14 text-center shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:mt-10 sm:px-8 sm:py-20">
+                    <section className="mt-8 rounded-2xl min-[430px]:rounded-3xl border border-white/10 bg-[#0d0d0d] px-5 py-14 text-center shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:mt-10 sm:px-8 sm:py-20">
                         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
                             <MapPin size={27} className="text-zinc-500" />
                         </div>
@@ -124,10 +124,12 @@ export default async function DireccionesPage() {
                             <article
                                 key={direccion.id}
                                 className={`
-                                    rounded-3xl
+                                    rounded-2xl
+                                    min-[430px]:rounded-3xl
                                     border
                                     bg-[#0d0d0d]
-                                    p-5
+                                    p-4
+                                    min-[430px]:p-5
                                     shadow-[0_25px_70px_rgba(0,0,0,.25)]
                                     transition
                                     sm:p-7
@@ -155,7 +157,7 @@ export default async function DireccionesPage() {
                                             )}
                                         </div>
 
-                                        <h2 className="mt-4 break-words text-lg font-bold text-white sm:text-xl">
+                                        <h2 className="mt-4 break-words text-[18px] font-bold text-white sm:text-xl">
                                             {direccion.fullName}
                                         </h2>
                                     </div>
@@ -183,7 +185,7 @@ export default async function DireccionesPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 space-y-2 text-sm leading-7 text-zinc-500">
+                                <div className="mt-6 space-y-2 text-sm leading-6 text-zinc-500 sm:leading-7">
                                     <p className="text-zinc-300">
                                         {direccion.phone}
                                     </p>
@@ -213,7 +215,7 @@ export default async function DireccionesPage() {
                                         >
                                             <button
                                                 type="submit"
-                                                className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
+                                                className="w-full min-h-12 rounded-xl border border-white/10 px-4 text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
                                             >
                                                 Hacer principal
                                             </button>
@@ -222,7 +224,7 @@ export default async function DireccionesPage() {
 
                                     <Link
                                         href={`/cuenta/direcciones/${direccion.id}/editar`}
-                                        className="flex-1 rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
+                                        className="flex-1 rounded-xl border border-white/10 px-4 py-3 min-h-12 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
                                     >
                                         Editar
                                     </Link>

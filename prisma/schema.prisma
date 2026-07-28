@@ -60,6 +60,26 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
 model Category {
   id        String    @id @default(cuid())
   name      String    @unique
@@ -158,7 +178,7 @@ model Favorite {
 }
 
 model Address {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   label      String?
   fullName   String
   phone      String
@@ -173,26 +193,26 @@ model Address {
   updatedAt  DateTime @default(now()) @updatedAt
   userId     String
 
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orders     Order[]
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
 
   @@index([userId, isSaved])
   @@index([userId, isDefault])
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  orderNumber     String      @unique
-  status          OrderStatus @default(PENDING)
-  total           Decimal     @db.Decimal(10, 2)
+  id              String               @id @default(cuid())
+  orderNumber     String               @unique
+  status          OrderStatus          @default(PENDING)
+  total           Decimal              @db.Decimal(10, 2)
   adminNotes      String?
   userId          String
   addressId       String
   stripeSessionId String?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  address         Address     @relation(fields: [addressId], references: [id])
-  user            User        @relation(fields: [userId], references: [id])
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  address         Address              @relation(fields: [addressId], references: [id])
+  user            User                 @relation(fields: [userId], references: [id])
   items           OrderItem[]
   history         OrderStatusHistory[]
 }

@@ -179,8 +179,7 @@ export default function CarritoPage() {
     // así que mostramos un estado neutro para evitar el mismatch de hidratación.
     if (!mounted) {
         return (
-            <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
-                <div className="h-8 w-48 bg-zinc-900 rounded animate-pulse mb-8" />
+            <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">                <div className="h-8 w-48 bg-zinc-900 rounded animate-pulse mb-8" />
                 <div className="space-y-4">
                     <div className="h-28 bg-zinc-900 rounded-xl animate-pulse" />
                     <div className="h-28 bg-zinc-900 rounded-xl animate-pulse" />
@@ -190,43 +189,42 @@ export default function CarritoPage() {
     }
 
     if (items.length === 0) {
-    return (
-        <main className="min-h-screen bg-black">
-            <div className="mx-auto flex min-h-[65vh] max-w-lg items-center px-4 py-14 sm:px-6 sm:py-20">
-                <div className="w-full rounded-3xl border border-white/10 bg-[#0d0d0d] px-5 py-12 text-center shadow-[0_25px_80px_rgba(0,0,0,.35)] sm:px-8 sm:py-16">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
-                        <ShoppingBag size={27} className="text-zinc-500" />
+        return (
+            <main className="min-h-screen bg-black">
+                <div className="mx-auto flex min-h-[65vh] max-w-lg items-center px-4 py-14 sm:px-6 sm:py-20">
+                    <div className="w-full rounded-3xl border border-white/10 bg-[#0d0d0d] px-5 py-12 text-center shadow-[0_25px_80px_rgba(0,0,0,.35)] sm:px-8 sm:py-16">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
+                            <ShoppingBag size={27} className="text-zinc-500" />
+                        </div>
+
+                        <h1 className="mt-6 text-2xl font-black tracking-tight text-white min-[430px]:text-3xl sm:text-4xl">
+                            Tu carrito está vacío
+                        </h1>
+
+                        <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-zinc-500 sm:text-base">
+                            Explora el catálogo y agrega las piezas que quieras comprar.
+                        </p>
+
+                        <Link
+                            href="/productos"
+                            className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-white px-6 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
+                        >
+                            Ver productos
+                        </Link>
                     </div>
-
-                    <h1 className="mt-6 text-2xl font-black tracking-tight text-white min-[430px]:text-3xl sm:text-4xl">
-                        Tu carrito está vacío
-                    </h1>
-
-                    <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-zinc-500 sm:text-base">
-                        Explora el catálogo y agrega las piezas que quieras comprar.
-                    </p>
-
-                    <Link
-                        href="/productos"
-                        className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-white px-6 text-sm font-bold text-black transition hover:bg-zinc-200 sm:w-auto"
-                    >
-                        Ver productos
-                    </Link>
                 </div>
-            </div>
-        </main>
-    );
-}
+            </main>
+        );
+    }
 
     return (
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
-            <div className="mb-8 sm:mb-10">
+            <div className="mb-6 sm:mb-10">
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                     Tu compra
                 </p>
 
-                <h1 className="mt-2 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-xl">
-                    Tu carrito
+                <h1 className="mt-2 text-[30px] font-black tracking-tight text-white min-[430px]:text-[36px] sm:text-4xl">                    Tu carrito
                 </h1>
 
                 <p className="mt-2 text-sm text-zinc-500 sm:text-base">
@@ -254,46 +252,52 @@ export default function CarritoPage() {
                             <div
                                 key={item.variantId}
                                 className="
-                                grid 
-                                gap-4 
-                                rounded-3xl 
-                                border
-                                border-white/10
-                                bg-[#0d0d0d]
-                                p-4
-                                transition-all
-                                duration-300
-                                hover:border-white/20
-                                hover:shadow-[0_20px_50px_rgba(0,0,0,.35)]  
-                                min-[430px]:grid-cols-[110px_minmax(0,1fr)]
-                                sm:gap-5
-                                sm:p-5
-                                md:grid-cols-[128px_minmax(0,1fr)_auto]
-                                md:items-start  
-                                lg:p-6
-                            "
+                                    grid
+                                    grid-cols-[96px_minmax(0,1fr)]
+                                    gap-3
+                                    rounded-2xl
+                                    border
+                                    border-white/10
+                                    bg-[#0d0d0d]
+                                    p-3
+                                    transition-all
+                                    duration-300
+                                    hover:border-white/20
+                                    hover:shadow-[0_20px_50px_rgba(0,0,0,.35)]
+                                    min-[430px]:grid-cols-[110px_minmax(0,1fr)]
+                                    min-[430px]:gap-4
+                                    min-[430px]:rounded-3xl
+                                    min-[430px]:p-4
+                                    sm:gap-5
+                                    sm:p-5
+                                    md:grid-cols-[128px_minmax(0,1fr)_auto]
+                                    md:items-start
+                                    lg:p-6
+                                "
                             >
                                 <Link
                                     href={`/productos/${item.slug}`}
                                     className="
-                                    relative 
-                                    aspect-square
-                                    w-full
-                                    overflow-hidden
-                                    rounded-2xl
-                                    border
-                                    border-zinc-200
-                                    bg-[linear-gradient(180deg,#fafafa,#f2f2f2)]  
-                                    min-[430px]:w-[110px]
-                                    md:w-32"
+                                        relative
+                                        aspect-square
+                                        w-24
+                                        overflow-hidden
+                                        rounded-xl
+                                        border
+                                        border-zinc-200
+                                        bg-[linear-gradient(180deg,#fafafa,#f2f2f2)]
+                                        min-[430px]:w-[110px]
+                                        min-[430px]:rounded-2xl
+                                        md:w-32
+                                    "
                                 >
                                     {item.imageUrl && (
                                         <Image
                                             src={item.imageUrl}
                                             alt={item.name}
                                             fill
-                                            className="object-contain p-3"
-                                            sizes="(max-width: 429px) 100vw, (max-width: 767px) 110px, 128px"
+                                            className="object-contain p-2 min-[430px]:p-3"
+                                            sizes="(max-width: 429px) 96px, (max-width: 767px) 110px, 128px"
                                         />
                                     )}
                                 </Link>
@@ -301,20 +305,19 @@ export default function CarritoPage() {
                                 <div className="min-w-0">
                                     <Link
                                         href={`/productos/${item.slug}`}
-                                        className="line-clamp-2 text-lg font-bold leading-6 tracking-tight text-white transition hover:text-zinc-300 sm:text-xl"
-                                    >
+                                        className="line-clamp-2 text-sm font-bold leading-5 tracking-tight text-white transition hover:text-zinc-300 min-[430px]:text-base min-[430px]:leading-6 sm:text-xl"                                    >
                                         {item.name}
                                     </Link>
                                     {(item.size || item.color) && (
-                                        <p className="text-sm text-zinc-400 mt-0.5">
+                                        <p className="mt-1 text-xs text-zinc-400 min-[430px]:text-sm">
                                             {[item.color, item.size].filter(Boolean).join(" / ")}
                                         </p>
                                     )}
-                                    <p className="mt-2 text-lg font-black tracking-tight text-white sm:text-xl">
+                                    <p className="mt-1.5 text-base font-black tracking-tight text-white min-[430px]:text-lg sm:text-xl">
                                         ${item.price.toLocaleString("es-MX")}
                                     </p>
 
-                                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    <div className="mt-3 flex flex-wrap items-center gap-2 min-[430px]:mt-4 min-[430px]:gap-3">
                                         <div className="flex items-center rounded-full border border-white/15 bg-black/20 overflow-hidden">
                                             <button
                                                 onClick={() =>
@@ -324,12 +327,12 @@ export default function CarritoPage() {
                                                         item.quantity - 1
                                                     )
                                                 }
-                                                className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:bg-white hover:text-black transition"
+                                                className="flex h-9 w-9 items-center justify-center text-zinc-300 transition hover:bg-white hover:text-black min-[430px]:h-10 min-[430px]:w-10"
                                                 aria-label="Disminuir cantidad"
                                             >
                                                 <Minus size={14} />
                                             </button>
-                                            <span className="w-10 text-center font-semibold text-white">
+                                            <span className="w-8 text-center text-sm font-semibold text-white min-[430px]:w-10 min-[430px]:text-base">
                                                 {item.quantity}
                                             </span>
                                             <button
@@ -343,8 +346,8 @@ export default function CarritoPage() {
                                                 disabled={validandoStock || llegoAlMaximo}
                                                 className="
                                                     flex
-                                                    h-10
-                                                    w-10
+                                                    h-9
+                                                    w-9
                                                     items-center
                                                     justify-center
                                                     text-zinc-300
@@ -354,7 +357,10 @@ export default function CarritoPage() {
                                                     disabled:cursor-not-allowed
                                                     disabled:opacity-30
                                                     disabled:hover:bg-transparent
-                                                    disabled:hover:text-zinc-300"
+                                                    disabled:hover:text-zinc-300
+                                                    min-[430px]:h-10
+                                                    min-[430px]:w-10
+                                                    "
                                                 aria-label="Aumentar cantidad"
                                             >
                                                 <Plus size={14} />
@@ -365,7 +371,7 @@ export default function CarritoPage() {
 
                                         <button
                                             onClick={() => removeItem(userKey, item.variantId)}
-                                            className="h-10 w-10 flex items-center justify-center hover:text-red-400 transition"
+                                            className="flex h-9 w-9 items-center justify-center text-zinc-500 transition hover:text-red-400 min-[430px]:h-10 min-[430px]:w-10"
                                             aria-label="Eliminar producto"
                                         >
                                             <Trash2 size={16} />
@@ -380,12 +386,12 @@ export default function CarritoPage() {
                                         )}
                                 </div>
 
-                                <div className="flex items-center justify-between border-t border-white/10 pt-4 min-[430px]:col-span-2 md:col-span-1 md:block md:border-0 md:pt-0 md:text-right">
+                                <div className="col-span-2 flex items-center justify-between border-t border-white/10 pt-3 md:col-span-1 md:block md:border-0 md:pt-0 md:text-right">
                                     <span className="text-xs text-zinc-500 md:hidden">
                                         Total
                                     </span>
 
-                                    <p className="whitespace-nowrap text-xl font-black tracking-tight text-white sm:text-2xl">
+                                    <p className="whitespace-nowrap text-lg font-black tracking-tight text-white min-[430px]:text-xl sm:text-2xl">
                                         ${(item.price * item.quantity).toLocaleString("es-MX")}
                                     </p>
                                 </div>
@@ -395,8 +401,10 @@ export default function CarritoPage() {
                 </div>
 
                 {/* Resumen */}
-                <div className="h-fit rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.3)] sm:p-6 lg:sticky lg:top-28 lg:p-8">
-                    <h2 className="text-lg font-semibold text-white mb-4">Resumen</h2>
+                <div className="h-fit rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6 lg:sticky lg:top-28 lg:p-8">
+                    <h2 className="mb-4 text-base font-semibold text-white sm:text-lg">
+                        Resumen
+                    </h2>
 
                     <div className="flex justify-between text-sm text-zinc-300 mb-2">
                         <span>Subtotal</span>
@@ -416,11 +424,11 @@ export default function CarritoPage() {
                         href="/checkout"
                         className="
                             flex
-                            min-h-14
+                            min-h-12
                             w-full
                             items-center
                             justify-center
-                            rounded-2xl
+                            rounded-xl
                             bg-white
                             px-5
                             text-center
@@ -432,6 +440,8 @@ export default function CarritoPage() {
                             duration-300
                             hover:-translate-y-0.5
                             hover:bg-zinc-100
+                            sm:min-h-14
+                            sm:rounded-2xl
                             sm:text-base
                         "
                     >

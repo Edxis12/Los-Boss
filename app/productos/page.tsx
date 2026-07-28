@@ -343,7 +343,7 @@ export default async function ProductosPage({
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-x-6 gap-y-12 min-[430px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 xl:gap-y-16">
+                        <div className="grid grid-cols-1 gap-x-3 gap-y-8 min-[430px]:grid-cols-2 sm:gap-x-5 sm:gap-y-10 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 xl:gap-y-16">
                             {productos.map(
                                 (
                                     producto: typeof productos[number]

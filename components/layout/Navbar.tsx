@@ -84,8 +84,8 @@ export default function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-          ? "bg-black/95 backdrop-blur-sm border-b border-zinc-800/80"
-          : "bg-black border-b border-zinc-800"
+        ? "bg-black/95 backdrop-blur-sm border-b border-zinc-800/80"
+        : "bg-black border-b border-zinc-800"
         }`}
     >
       {/* Barra superior - marquee animado */}
@@ -111,7 +111,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-display text-3xl text-white tracking-widest hover:opacity-80 transition"
+            className="font-display text-2xl tracking-[0.18em] text-white transition hover:opacity-80 min-[430px]:text-3xl"
           >
             LOS BOSS
           </Link>
@@ -123,8 +123,8 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`text-xs font-semibold transition tracking-widest uppercase ${link.highlight
-                    ? "text-red-400 hover:text-red-300"
-                    : "text-zinc-300 hover:text-white"
+                  ? "text-red-400 hover:text-red-300"
+                  : "text-zinc-300 hover:text-white"
                   }`}
               >
                 {link.label}
@@ -239,7 +239,8 @@ export default function Navbar() {
           right-0
           top-full
           mt-3
-          w-64
+          w-[290px]
+          max-w-[calc(100vw-32px)]
           overflow-hidden
           rounded-2xl
           border
@@ -343,7 +344,7 @@ export default function Navbar() {
 
             <button
               className="md:hidden text-zinc-300 hover:text-white"
-              onClick={() => {setMenuOpen((actual) => !actual); setSearchOpen(false); setUserMenuOpen(false); }}
+              onClick={() => { setMenuOpen((actual) => !actual); setSearchOpen(false); setUserMenuOpen(false); }}
               aria-label="Menú"
             >
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -365,7 +366,21 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar productos, marcas..."
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-lg pl-9 pr-4 py-2.5 text-white text-sm outline-none focus:border-white transition"
+                className="
+                  h-12
+                  w-full
+                  rounded-xl
+                  border
+                  border-zinc-700
+                  bg-zinc-950
+                  pl-10
+                  pr-4
+                  text-sm
+                  text-white
+                  outline-none
+                  transition
+                  focus:border-white
+                "
               />
             </div>
           </form>
@@ -373,15 +388,15 @@ export default function Navbar() {
 
         {/* Nav móvil */}
         {menuOpen && (
-          <nav className="md:hidden flex flex-col gap-1 pb-4 animate-fade-in">
+          <nav className="md:hidden flex flex-col gap-2 border-t border-zinc-900 pt-4 pb-4 animate-fade-in">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className={`px-2 py-3 text-sm font-semibold uppercase tracking-widest border-b border-zinc-900 ${link.highlight
-                    ? "text-red-400 hover:text-red-300"
-                    : "text-zinc-300 hover:text-white"
+                className={`rounded-xl px-4 py-3 text-sm font-semibold uppercase tracking-widest transition ${link.highlight
+                  ? "text-red-400 hover:text-red-300"
+                  : "text-zinc-300 hover:text-white"
                   }`}
               >
                 {link.label}

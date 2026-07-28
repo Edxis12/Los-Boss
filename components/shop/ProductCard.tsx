@@ -139,7 +139,10 @@ export default function ProductCard({
     }
 
     return (
-        <Link href={`/productos/${slug}`} className="group block animate-fade-in transition-all duration-500 ease-out hover:-translate-y-2">
+        <Link
+            href={`/productos/${slug}`}
+            aria-label={`Ver ${name}`}
+            className="group block animate-fade-in transition-all duration-500 ease-out hover:-translate-y-2">
             <div className="
                     relative 
                     aspect-[3/4] 
@@ -239,8 +242,8 @@ export default function ProductCard({
                         top-4
                         z-20
                         flex
-                        h-10
-                        w-10
+                        h-11
+                        w-11
                         items-center
                         justify-center
                         rounded-full
@@ -256,7 +259,7 @@ export default function ProductCard({
                     "
                 >
                     <Heart
-                        size={18}
+                        size={19}
                         className={`
                                 transition-all
                                 duration-300
@@ -267,18 +270,21 @@ export default function ProductCard({
                             `}
                     />
                 </button>
-                
-                <div className="
+
+                <div
+                    className="
                         absolute
                         bottom-5
                         left-4
                         right-4
+                        hidden
                         translate-y-10
                         opacity-0
                         transition-all
                         duration-500
-                        group-hover:translate-y-0
-                        group-hover:opacity-100
+                        sm:block
+                        sm:group-hover:translate-y-0
+                        sm:group-hover:opacity-100
                     "
                 >
                     <div className="
@@ -307,7 +313,18 @@ export default function ProductCard({
                         {brand}
                     </p>
                 )}
-                <h3 className="text-base font-semibold tracking-tight text-white leading-6 line-clamp-2 transition-all duration-300 group-hover:text-zinc-200">
+                <h3 className="
+                        line-clamp-2
+                        text-[15px]
+                        font-semibold
+                        leading-6
+                        tracking-tight
+                        text-white
+                        transition-all
+                        duration-300
+                        group-hover:text-zinc-200
+                        sm:text-base
+                    ">
                     {name}
                 </h3>
                 <div>
@@ -317,7 +334,7 @@ export default function ProductCard({
                         </p>
                     )}
 
-                    <p className="text-2xl font-black tracking-tight text-white">
+                    <p className="text-[26px] sm:text-3xl font-black tracking-tight text-white">
                         ${price.toLocaleString("es-MX")}
                     </p>
                 </div>

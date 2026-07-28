@@ -58,7 +58,7 @@ export default function Footer() {
                             </div>
 
                             <div>
-                                <p className="font-display text-2xl leading-none text-white">
+                                <p className="font-display text-xl leading-none text-white min-[430px]:text-2xl">
                                     LOS BOSS
                                 </p>
 
@@ -98,7 +98,7 @@ export default function Footer() {
                             Tienda
                         </p>
 
-                        <nav className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 sm:mt-5 sm:block sm:space-y-3">
+                        <nav className="mt-4 grid grid-cols-1 gap-3 min-[430px]:grid-cols-2 sm:mt-5 sm:block sm:space-y-3">
                             {ENLACES_TIENDA.map((enlace) => (
                                 <Link
                                     key={enlace.href}
@@ -132,7 +132,7 @@ export default function Footer() {
                 </div>
 
                 {/* Beneficios */}
-                <div className="mt-10 grid gap-3 border-t border-white/10 pt-7 sm:mt-12 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
+                <div className="mt-10 grid gap-3 border-t border-white/10 pt-7 sm:mt-12 min-[500px]:grid-cols-2 lg:grid-cols-3">
                     {BENEFICIOS.map((beneficio) => {
                         const Icon = beneficio.icon;
 
@@ -142,7 +142,7 @@ export default function Footer() {
                                 className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4"
                             >
                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.05] text-zinc-300">
-                                    <Icon size={18} />
+                                    <Icon size={18} className="shrink-0"/>
                                 </div>
 
                                 <div className="min-w-0">
@@ -162,13 +162,13 @@ export default function Footer() {
 
             {/* Barra inferior */}
             <div className="border-t border-white/10 bg-black">
-                <div className="mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-5 text-xs text-zinc-600 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+                <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-5 text-center text-xs text-zinc-600 sm:px-6 md:flex-row md:justify-between md:text-left lg:px-8">
                     <p className="leading-5">
                         © {new Date().getFullYear()} Los Boss. Todos los derechos
                         reservados.
                     </p>
 
-                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5">
+                    <div className="flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:gap-x-5 md:items-center">
                         <span className="inline-flex items-center gap-1.5">
                             <Heart size={13} />
                             Diseñado para destacar

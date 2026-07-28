@@ -233,9 +233,9 @@ export default function CheckoutPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
                 {/* Encabezado */}
-                <div className="mb-8 sm:mb-10">
+                <div className="mb-6 sm:mb-10">
                     <Link
                         href="/carrito"
                         className="mb-5 inline-flex text-sm text-zinc-500 transition hover:text-white"
@@ -247,11 +247,11 @@ export default function CheckoutPage() {
                         Finalizar compra
                     </p>
 
-                    <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+                    <h1 className="mt-2 text-[30px] font-black tracking-tight text-white min-[430px]:text-[36px] sm:mt-3 sm:text-5xl">
                         Checkout
                     </h1>
 
-                    <p className="mt-3 max-w-xl text-zinc-400">
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400 sm:mt-3 sm:text-base sm:leading-7">
                         Revisa tu pedido y completa los datos para coordinar la
                         entrega.
                     </p>
@@ -261,15 +261,15 @@ export default function CheckoutPage() {
                     {/* Formulario */}
                     <form
                         onSubmit={handleSubmit}
-                        className="space-y-8 rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-8"
+                        className="space-y-7 rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:space-y-8 min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-8"
                     >
                         <div className="flex items-start gap-4">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-black">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-black">
                                 <MapPin size={20} />
                             </div>
 
                             <div>
-                                <h2 className="text-xl font-bold text-white sm:text-2xl">
+                                <h2 className="text-lg font-bold text-white sm:text-2xl">
                                     Dirección de entrega
                                 </h2>
 
@@ -333,37 +333,37 @@ export default function CheckoutPage() {
                                                                     setError("");
                                                                 }}
                                                                 className={`
-                                            w-full
-                                            rounded-2xl
-                                            border
-                                            p-4
-                                            sm:p-5
-                                            text-left
-                                            transition-all
-                                            duration-300
-                                            ${seleccionada
+                                                                    w-full
+                                                                    rounded-2xl
+                                                                    border
+                                                                    p-4
+                                                                    sm:p-5
+                                                                    text-left
+                                                                    transition-all
+                                                                    duration-300
+                                                                    ${seleccionada
                                                                         ? "border-white bg-white/[0.06] shadow-[0_15px_45px_rgba(0,0,0,.25)]"
                                                                         : "border-white/10 bg-black/20 hover:border-white/25 hover:bg-white/[0.03]"
                                                                     }
-                                        `}
+                                                                `}
                                                             >
                                                                 <div className="flex items-start gap-4">
                                                                     <div
                                                                         className={`
-                                                    mt-0.5
-                                                    flex
-                                                    h-9
-                                                    w-9
-                                                    shrink-0
-                                                    items-center
-                                                    justify-center
-                                                    rounded-full
-                                                    border
-                                                    ${seleccionada
+                                                                            mt-0.5
+                                                                            flex
+                                                                            h-9
+                                                                            w-9
+                                                                            shrink-0
+                                                                            items-center
+                                                                            justify-center
+                                                                            rounded-full
+                                                                            border
+                                                                            ${seleccionada
                                                                                 ? "border-white bg-white text-black"
                                                                                 : "border-white/15 bg-black text-zinc-600"
                                                                             }
-                                                `}
+                                                                        `}
                                                                     >
                                                                         {seleccionada ? (
                                                                             <Check
@@ -550,7 +550,7 @@ export default function CheckoutPage() {
                                                             )
                                                         }
                                                         placeholder="Nombre de quien recibe"
-                                                        className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                     />
                                                 </div>
 
@@ -585,7 +585,7 @@ export default function CheckoutPage() {
                                                                 );
                                                             }}
                                                             placeholder="6671234567"
-                                                            className="h-14 w-full rounded-xl border border-white/10 bg-black/30 py-3.5 pl-11 pr-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                            className="h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 py-3.5 pl-11 pr-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                         />
                                                     </div>
                                                 </div>
@@ -606,7 +606,7 @@ export default function CheckoutPage() {
                                                             )
                                                         }
                                                         placeholder="Ej. Av. Central 123, Col. Centro"
-                                                        className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 sm:14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                     />
                                                 </div>
 
@@ -636,7 +636,7 @@ export default function CheckoutPage() {
                                                             );
                                                             setCity("");
                                                         }}
-                                                        className="mt-2 h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"                                                    >
+                                                        className="mt-2 h-12 sm:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"                                                    >
                                                         <option value="">
                                                             Selecciona un estado
                                                         </option>
@@ -672,7 +672,7 @@ export default function CheckoutPage() {
                                                                 event.target.value
                                                             )
                                                         }
-                                                        className="mt-2 h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"                                                    >
+                                                        className="mt-2 h-12 sm:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"                                                    >
                                                         <option value="">
                                                             {stateCode
                                                                 ? "Selecciona una ciudad"
@@ -723,7 +723,7 @@ export default function CheckoutPage() {
                                                             );
                                                         }}
                                                         placeholder="80000"
-                                                        className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                     />
                                                 </div>
                                             </div>
@@ -756,9 +756,9 @@ export default function CheckoutPage() {
                             type="submit"
                             disabled={loading || cargandoDirecciones}
                             className="
-                            min-h-14
+                            min-h-12
                             w-full
-                            rounded-2xl
+                            rounded-xl
                             bg-white
                             px-4
                             py-3
@@ -775,6 +775,8 @@ export default function CheckoutPage() {
                             disabled:opacity-50
                             disabled:hover:translate-y-0
                             sm:text-base
+                            sm:min-h-14
+                            sm:rounded-2xl
                         "
                         >
                             {cargandoDirecciones
@@ -788,7 +790,7 @@ export default function CheckoutPage() {
                     </form>
 
                     {/* Resumen */}
-                    <aside className="h-fit rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-7 lg:sticky lg:top-28">
+                    <aside className="h-fit rounded-2xl min-[430px]:rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 min-[430px]:p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-7 lg:sticky lg:top-28">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-zinc-500">
                             Tu pedido
                         </p>
@@ -812,11 +814,11 @@ export default function CheckoutPage() {
                             </span>
                         </div>
 
-                        <div className="my-6 max-h-[420px] space-y-5 overflow-y-auto pr-1">
+                        <div className="my-6 max-h-[420px] space-y-4 min-[430px]:space-y-5 overflow-y-auto pr-1">
                             {items.map((item) => (
                                 <div
                                     key={item.variantId}
-                                    className="flex gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0"
+                                    className="flex gap-3 min-[430]:gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0"
                                 >
                                     <Link
                                         href={`/productos/${item.slug}`}
@@ -891,7 +893,7 @@ export default function CheckoutPage() {
                                     Total
                                 </span>
 
-                                <span className="break-all text-2xl font-black tracking-tight text-white min-[430px]:text-3xl">
+                                <span className="break-all text-[28px] font-black tracking-tight text-white min-[430px]:text-3xl">
                                     ${totalPrice.toLocaleString("es-MX")}
                                 </span>
                             </div>

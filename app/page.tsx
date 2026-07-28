@@ -156,7 +156,16 @@ export default async function HomePage() {
               </span>
             </div>
 
-            <h1 className="font-display text-[clamp(3.5rem,18vw,8.5rem)] leading-[0.84] tracking-[0.01em] text-white min-[430px]:text-[clamp(4.2rem,16vw,8.5rem)] lg:text-[clamp(5rem,9vw,8.5rem)]">
+            <h1 className="
+                  font-display
+                  text-[48px]
+                  leading-[0.88]
+                  tracking-[0.01em]
+                  text-white
+                  min-[430px]:text-[58px]
+                  sm:text-[72px]
+                  lg:text-[clamp(5rem,9vw,8.5rem)]
+                ">
               HYPE
               <span className="block text-zinc-500">
                 &amp; LUXURY
@@ -254,17 +263,17 @@ export default async function HomePage() {
                     border
                     border-white/10
                     bg-white/[0.035]
-                    p-4
+                    p-3
                     shadow-[0_12px_35px_rgba(0,0,0,.18)]
                     min-[430px]:rounded-xl
                     min-[430px]:p-3
-                    sm:p-4
+                    sm:p-3
                   ">
-                <p className="text-xl font-black text-white sm:text-2xl">
+                <p className="text-lg font-black text-white sm:text-2xl">
                   100%
                 </p>
 
-                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
+                <p className="mt-1 text-[10px] text-zinc-500 sm:text-xs">
                   Original
                 </p>
               </div>
@@ -274,17 +283,17 @@ export default async function HomePage() {
                       border
                       border-white/10
                       bg-white/[0.035]
-                      p-4
+                      p-3
                       shadow-[0_12px_35px_rgba(0,0,0,.18)]
                       min-[430px]:rounded-xl
                       min-[430px]:p-3
                       sm:p-4
                     ">
-                <p className="text-xl font-black text-white sm:text-2xl">
+                <p className="text-lg font-black text-white sm:text-2xl">
                   MX
                 </p>
 
-                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
+                <p className="mt-1 text-[10px] text-zinc-500 sm:text-xs">
                   Envíos nacionales
                 </p>
               </div>
@@ -294,17 +303,17 @@ export default async function HomePage() {
                       border
                       border-white/10
                       bg-white/[0.035]
-                      p-4
+                      p-3
                       shadow-[0_12px_35px_rgba(0,0,0,.18)]
                       min-[430px]:rounded-xl
                       min-[430px]:p-3
-                      sm:p-4
+                      sm:p-3
                     ">
-                <p className="text-xl font-black text-white sm:text-2xl">
+                <p className="text-lg font-black text-white sm:text-2xl">
                   24/7
                 </p>
 
-                <p className="mt-1 text-[11px] text-zinc-500 sm:text-xs">
+                <p className="mt-1 text-[10px] text-zinc-500 sm:text-xs">
                   Catálogo disponible
                 </p>
               </div>
@@ -314,7 +323,7 @@ export default async function HomePage() {
           <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
             <div className="absolute -inset-8 rounded-full bg-white/[0.025] blur-3xl" />
 
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:aspect-[16/10] lg:aspect-[4/5] lg:rounded-[2rem] lg:shadow-[0_40px_120px_rgba(0,0,0,.6)]">
+            <div className="relative aspect-[5/4] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:aspect-[16/10] lg:aspect-[4/5] lg:rounded-[2rem] lg:shadow-[0_40px_120px_rgba(0,0,0,.6)]">
               <Image
                 src="/images/losBoss.jpg"
                 alt="Los Boss Boutique"
@@ -373,7 +382,7 @@ export default async function HomePage() {
                 Explora
               </p>
 
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
                 Comprar por categoría
               </h2>
 
@@ -397,7 +406,7 @@ export default async function HomePage() {
               <Link
                 key={categoria.id}
                 href={`/productos?categoria=${categoria.slug}`}
-                className="group relative min-h-[230px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 min-[430px]:min-h-[260px] sm:rounded-3xl lg:min-h-[300px]"
+                className="group relative min-h-[190px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 min-[430px]:min-h-[240px] sm:rounded-3xl lg:min-h-[300px]"
               >
                 {categoria.imageUrl ? (
                   <Image
@@ -424,7 +433,7 @@ export default async function HomePage() {
                   </p>
 
                   <div className="mt-2 flex items-end justify-between gap-4">
-                    <h3 className="text-xl font-black text-white sm:text-2xl">
+                    <h3 className="text-lg font-black text-white sm:text-2xl">
                       {categoria.name}
                     </h3>
 
@@ -448,7 +457,7 @@ export default async function HomePage() {
                 Selección
               </p>
 
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
                 Productos destacados
               </h2>
 
@@ -528,7 +537,7 @@ export default async function HomePage() {
                 Recién llegados
               </p>
 
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
                 Nuevos ingresos
               </h2>
 

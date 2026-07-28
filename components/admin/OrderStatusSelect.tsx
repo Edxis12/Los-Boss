@@ -10,7 +10,10 @@ import {
 const ESTADOS = [
     { value: "PENDING", label: "Pendiente" },
     { value: "CONTACTED", label: "Contactado" },
-    { value: "PAYMENT_CONFIRMED", label: "Pago confirmado" },
+    {
+        value: "PAYMENT_CONFIRMED",
+        label: "Pago confirmado",
+    },
     { value: "PREPARING", label: "Preparando" },
     { value: "SHIPPED", label: "Enviado" },
     { value: "DELIVERED", label: "Entregado" },
@@ -21,7 +24,7 @@ type Props = {
     orderId: string;
     estadoActual: EstadoPedido;
     onUpdated?: (nuevoEstado: EstadoPedido) => void;
-}
+};
 
 export default function OrderStatusSelect({
     orderId,
@@ -30,7 +33,8 @@ export default function OrderStatusSelect({
 }: Props) {
     const router = useRouter();
 
-    const [estado, setEstado] = useState<EstadoPedido>(estadoActual);
+    const [estado, setEstado] =
+        useState<EstadoPedido>(estadoActual);
 
     const [guardando, setGuardando] = useState(false);
     const [error, setError] = useState("");
@@ -40,7 +44,9 @@ export default function OrderStatusSelect({
         setError("");
     }, [estadoActual, orderId]);
 
-    async function handleChange(nuevoEstado: EstadoPedido) {
+    async function handleChange(
+        nuevoEstado: EstadoPedido
+    ) {
         if (guardando || nuevoEstado === estado) {
             return;
         }
@@ -52,21 +58,29 @@ export default function OrderStatusSelect({
         setError("");
 
         try {
-            const resultado = await actualizarEstadoPedido(orderId, nuevoEstado);
+            const resultado = await actualizarEstadoPedido(
+                    orderId,
+                    nuevoEstado
+                );
 
-            if (resultado.error) {
+            if ("error" in resultado) {
                 setEstado(estadoAnterior);
-                setError(resultado.error);
+                setError(resultado.error ?? "No se pudo actualizar el estado");
                 return;
             }
 
             onUpdated?.(nuevoEstado);
             router.refresh();
         } catch (error) {
-            console.error("Error al actualizar el estado:", error);
+            console.error(
+                "Error al actualizar el estado:",
+                error
+            );
 
             setEstado(estadoAnterior);
-            setError("No se pudo actualizar el estado");
+            setError(
+                "No se pudo actualizar el estado"
+            );
         } finally {
             setGuardando(false);
         }
@@ -77,12 +91,22 @@ export default function OrderStatusSelect({
             <select
                 value={estado}
                 disabled={guardando}
-                onClick={(event) => event.stopPropagation()}
-                onChange={(event) => handleChange(event.target.value as EstadoPedido)}
-                aria-label="Estado del pedido"
+                onClick={(event) =>
+                    event.stopPropagation()
+                }
+                onChange={(event) =>
+                    handleChange(
+                        event.target
+                            .value as EstadoPedido
+                    )
+                }
+                aria-label="Cambiar estado del pedido"
+                aria-describedby={`estado-pedido-mensaje-${orderId}`}
+                aria-busy={guardando}
                 className="
                     h-11
                     w-full
+                    min-w-0
                     rounded-xl
                     border
                     border-white/10
@@ -97,7 +121,8 @@ export default function OrderStatusSelect({
                     focus:ring-4
                     focus:ring-white/10
                     disabled:cursor-wait
-                    disabled:opacity-50"
+                    disabled:opacity-50
+                "
             >
                 {ESTADOS.map((opcion) => (
                     <option
@@ -110,7 +135,9 @@ export default function OrderStatusSelect({
             </select>
 
             <p
-                className={`mt-2 text-xs ${error
+                id={`estado-pedido-mensaje-${orderId}`}
+                aria-live="polite"
+                className={`mt-2 text-xs leading-5 ${error
                         ? "text-red-400"
                         : "text-zinc-600"
                     }`}

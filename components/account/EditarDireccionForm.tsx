@@ -120,15 +120,15 @@ export default function EditarDireccionForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="mt-10 space-y-8 rounded-3xl border border-white/10 bg-[#0d0d0d] p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-8"
+            className="mt-8 space-y-7 rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:mt-10 sm:space-y-8 sm:p-8"
         >
-            <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-black">
+            <div className="flex items-start gap-3 sm:gap-4 min-[430px]:flex-row min-[430px]:items-start">
+                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl bg-white text-black">
                     <MapPin size={20} />
                 </div>
 
                 <div>
-                    <h2 className="text-xl font-bold text-white sm:text-2xl">
+                    <h2 className="text-lg font-bold text-white min-[430px]:text-xl sm:text-2xl">
                         Datos de entrega
                     </h2>
 
@@ -139,7 +139,7 @@ export default function EditarDireccionForm({
             </div>
 
             {direccion.isDefault && (
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300">
+                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300 text-sm leading-6 ">
                     Esta es tu dirección principal.
                 </div>
             )}
@@ -152,7 +152,7 @@ export default function EditarDireccionForm({
                 </div>
             )}
 
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
                 <div className="sm:col-span-2">
                     <label className="text-sm font-medium text-zinc-300">
                         Nombre de la dirección
@@ -325,24 +325,24 @@ export default function EditarDireccionForm({
                 </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <div className="flex items-start gap-3">
+            <div className="rounded-xl sm:rounded-2xl border border-white/10 bg-white/[0.025] p-4 sm:p-5">
+                <div className="flex gap-3">
                     <CheckCircle2
                         size={19}
                         className="mt-0.5 shrink-0 text-emerald-400"
                     />
 
-                    <p className="text-sm leading-6 text-zinc-500">
+                    <p className="text-sm leading-6 sm:leading-7 text-zinc-500">
                         Editar esta dirección no modificará la información
                         de pedidos anteriores.
                     </p>
                 </div>
             </div>
 
-            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
                 <Link
                     href="/cuenta/direcciones"
-                    className="rounded-2xl border border-white/10 px-6 py-4 text-center font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white"
+                    className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/10 px-6 text-center text-sm font-semibold text-zinc-300 transition hover:border-white/30 hover:bg-white/[0.04] hover:text-white sm:min-h-14 sm:w-auto sm:rounded-2xl"
                 >
                     Cancelar
                 </Link>
@@ -350,7 +350,7 @@ export default function EditarDireccionForm({
                 <button
                     type="submit"
                     disabled={guardando}
-                    className="rounded-2xl bg-white px-7 py-4 font-bold text-black shadow-[0_18px_40px_rgba(255,255,255,.15)] transition-all hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="min-h-12 w-full rounded-xl bg-white px-6 py-3 text-sm font-bold text-black shadow-[0_18px_40px_rgba(255,255,255,.15)] transition-all hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-14 sm:w-auto sm:rounded-2xl sm:px-7 sm:text-base"
                 >
                     {guardando
                         ? "Guardando cambios..."

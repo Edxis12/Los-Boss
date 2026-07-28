@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 type ProductImage = {
@@ -20,6 +20,12 @@ export default function ProductGallery({
 }: Props) {
     const [selected, setSelected] = useState(0);
 
+    useEffect(() => {
+        if (selected >= images.length) {
+            setSelected(0);
+        }
+    }, [images, selected]);
+
     const current = images[selected];
 
     if (!current) {
@@ -35,28 +41,44 @@ export default function ProductGallery({
 
             {/* Miniaturas */}
 
-            <div className="order-2 lg:order-1 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible pb-2">
+            <div
+                className="
+                    order-2
+                    flex
+                    justify-center
+                    gap-3
+                    overflow-x-auto
+                    pb-2
+                    lg:order-1
+                    lg:flex-col
+                    lg:justify-start
+                    lg:overflow-visible
+                "
+            >
 
                 {images.map((img, index) => (
                     <button
                         key={img.id}
                         onClick={() => setSelected(index)}
                         className={`
-              relative
-              h-24
-              w-24
-              rounded-xl
-              overflow-hidden
-              bg-white
-              border
-              shadow-sm
-              transition-all
-              duration-300
-              ${selected === index
+                        relative
+                        h-20
+                        w-20
+                        rounded-xl
+                        overflow-hidden
+                        bg-white
+                        border
+                        shadow-sm
+                        transition-all
+                        duration-300
+                        sm:h-24
+                        sm:w-24
+                        cursor-pointer
+                        ${selected === index
                                 ? "border-black ring-2 ring-black scale-105 shadow-lg"
                                 : "border-zinc-300 hover:border-black hover:scale-105"
                             }
-            `}
+                        `}
                     >
                         <Image
                             src={img.url}
@@ -89,9 +111,10 @@ export default function ProductGallery({
                 before:inset-0
                 before:bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_70%)]
                 before:pointer-events-none
-                h-[480px] 
-                sm:h-[620px] 
-                lg:h-[820px] 
+                h-[380px]
+                min-[430px]:h-[460px]
+                sm:h-[620px]
+                lg:h-[820px]
             ">
 
                     <Image
@@ -100,7 +123,10 @@ export default function ProductGallery({
                         alt={current.altText ?? productName}
                         fill
                         priority
-                        sizes="(max-width:1024px)100vw,60vw"
+                        sizes="
+                        (max-width:640px) 100vw,
+                        (max-width:1024px) 80vw,
+                        60vw"
                         className="
                             object-contain
                             p-0

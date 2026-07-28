@@ -79,20 +79,28 @@ export default function OrderStatusBadge({ status }: Props) {
 
     return (
         <span
+            aria-label={`Estado del pedido: ${config.label}`}
             className={`
                 inline-flex
                 items-center
                 gap-2
+                shrink-0
+                whitespace-nowrap
                 rounded-full
                 border
                 px-3
                 py-1.5
-                text-xs
+                text-[11px]
+                sm:text-xs
                 font-semibold
+                leading-none
                 ${config.color}
             `}
         >
-            <Icon size={14} />
+            <Icon
+                size={14}
+                className="shrink-0"
+            />
             {config.label}
         </span>
     );

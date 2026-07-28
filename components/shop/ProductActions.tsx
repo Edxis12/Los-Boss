@@ -102,8 +102,9 @@ export default function ProductActions({
                                 key={color}
                                 onClick={() => setColorSeleccionado(color)}
                                 className={`
+                                        min-h-11
+                                        min-w-[70px]
                                         px-5
-                                        h-11
                                         rounded-lg
                                         border
                                         text-sm
@@ -142,7 +143,7 @@ export default function ProductActions({
 
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
                         {tallas.map((talla) => {
                             const disponible = variants.some(
                                 (v) =>
@@ -181,14 +182,16 @@ export default function ProductActions({
             )}
 
             {/* Stock disponible */}
-            {varianteActual && varianteActual.stock > 0 && varianteActual.stock <= 3 && (
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-sm text-amber-300 w-fit">
-                    <AlertTriangle size={16} />
-                    <span>
-                        Solo quedan {varianteActual.stock} piezas disponibles
-                    </span>
-                </div>
-            )}
+            <div className="animate-fade-in">
+                {varianteActual && varianteActual.stock > 0 && varianteActual.stock <= 3 && (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-sm text-amber-300 w-fit">
+                        <AlertTriangle size={16} />
+                        <span>
+                            Solo quedan {varianteActual.stock} piezas disponibles
+                        </span>
+                    </div>
+                )}
+            </div>
 
             {sinStock && !faltaSeleccionar && (
                 <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3">
@@ -232,9 +235,11 @@ export default function ProductActions({
             </button>
 
             {agregado && (
-                <button
-                    onClick={() => router.push("/carrito")}
-                    className="
+                <div className="animate-fade-in">
+
+                    <button
+                        onClick={() => router.push("/carrito")}
+                        className="
                         h-14
                         w-full
                         rounded-xl
@@ -249,9 +254,10 @@ export default function ProductActions({
                         text-white
                         font-medium
                     "
-                >
-                    Ver carrito
-                </button>
+                    >
+                        Ver carrito
+                    </button>
+                </div>
             )}
         </div>
     );

@@ -58,7 +58,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
 
         const overflowOriginal = document.body.style.overflow;
 
-        document.body.style.overflow = overflowOriginal;
+        document.body.style.overflow = "hidden";
         document.addEventListener("keydown", handleEscape);
 
         return () => {
@@ -417,6 +417,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                                             <img
                                                 src={imageUrl}
                                                 alt={item.product?.name ?? "Producto"}
+                                                loading="lazy"
                                                 className="h-full w-full object-contain p-1"
                                             />
                                         ) : (
@@ -459,6 +460,7 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                         value={notas}
                         onChange={(e) => setNotas(e.target.value)}
                         rows={4}
+                        maxLength={1000}
                         placeholder="Ej. Cliente contactado por WhatsApp, pagará por transferencia..."
                         className="
                             min-h-32
@@ -480,13 +482,17 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                     />
 
                     <p className="mt-2 text-xs text-zinc-500">
+                        {notas.length}/1000 caracteres
+                    </p>
+
+                    <p className="mt-2 text-xs text-zinc-500">
                         {guardandoNotas ? "Guardando cambios..." : "Guardado automáticamente"}
                     </p>
                 </div>
 
                 <div className="mt-6 flex flex-col gap-5 border-t border-zinc-800 pt-6 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p className="text-sm text-zinc-500">Total</p>
+                        <p className="text-sm font-medium text-zinc-500">Total del pedido</p>
                         <p className="mt-1 break-all text-2xl font-black text-white min-[430px]:text-3xl">
                             ${Number(pedido.total).toLocaleString("es-MX")}
                         </p>

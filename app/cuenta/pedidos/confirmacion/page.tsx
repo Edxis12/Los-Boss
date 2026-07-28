@@ -105,9 +105,9 @@ export default async function ConfirmacionPedidoPage({
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-16">
-                <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_35px_100px_rgba(0,0,0,.45)]">
-                    <div className="border-b border-white/10 px-5 py-8 text-center min-[430px]:px-6 sm:px-10 sm:py-10">
+            <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-16">
+                <section className="overflow-hidden rounded-2xl min-[430px]:rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_35px_100px_rgba(0,0,0,.45)]">
+                    <div className="border-b border-white/10 px-4 py-7 min-[430px]:px-5 min-[430px]:py-8 text-center min-[430px]:px-6 sm:px-10 sm:py-10">
                         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 min-[430px]:h-20 min-[430px]:w-20">
                             <CheckCircle2
                                 size={34}
@@ -119,11 +119,11 @@ export default async function ConfirmacionPedidoPage({
                             Pedido registrado
                         </p>
 
-                        <h1 className="mt-3 text-3xl font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
+                        <h1 className="mt-3 text-[30px] font-black tracking-tight text-white min-[430px]:text-4xl sm:text-5xl">
                             ¡Pedido confirmado!
                         </h1>
 
-                        <p className="mt-4 text-sm leading-7 text-zinc-400 sm:text-base">
+                        <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
                             Gracias por tu compra. Nos pondremos en contacto contigo
                             para coordinar el pago y la entrega.
                         </p>
@@ -156,12 +156,12 @@ export default async function ConfirmacionPedidoPage({
                             </span>
                         </div>
 
-                        <div className="space-y-5">
+                        <div className="space-y-4 min-[430px]:space-y-5">
                             {pedido.items.map(
                                 (item: typeof pedido.items[number]) => (
                                     <div
                                         key={item.id}
-                                        className="grid gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0 min-[430px]:grid-cols-[80px_minmax(0,1fr)] sm:grid-cols-[96px_minmax(0,1fr)]"
+                                        className="grid gap-3 min-[430px]:gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0 min-[430px]:grid-cols-[80px_minmax(0,1fr)] sm:grid-cols-[96px_minmax(0,1fr)]"
                                     >
                                         <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 min-[430px]:w-20 sm:w-24 sm:rounded-2xl">
                                             {item.product?.images[0]?.url ? (
@@ -228,7 +228,7 @@ export default async function ConfirmacionPedidoPage({
                                 Total
                             </span>
 
-                            <span className="break-all text-2xl font-black tracking-tight text-white min-[430px]:text-3xl">
+                            <span className="break-all text-[28px] font-black tracking-tight text-white min-[430px]:text-3xl">
                                 ${Number(pedido.total).toLocaleString("es-MX")}
                             </span>
                         </div>
@@ -268,14 +268,14 @@ export default async function ConfirmacionPedidoPage({
                         <div className="mt-8 grid gap-3 sm:grid-cols-2">
                             <Link
                                 href={`/cuenta/pedidos/${pedido.id}`}
-                                className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-white px-5 text-center text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-zinc-200 sm:text-base"
+                                className="flex min-h-12 sm:min-h-14 w-full items-center justify-center rounded-xl sm:rounded-2xl bg-white px-5 text-center text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-zinc-200 sm:text-base"
                             >
                                 Ver seguimiento del pedido
                             </Link>
 
                             <Link
                                 href="/productos"
-                                className="flex min-h-14 w-full items-center justify-center rounded-2xl border border-zinc-700 px-5 text-center text-sm font-semibold text-white transition hover:border-white hover:bg-white/[0.04] sm:text-base"
+                                className="flex min-h-12 sm:min-h-14 w-full items-center justify-center rounded-xl sm:rounded-2xl border border-zinc-700 px-5 text-center text-sm font-semibold text-white transition hover:border-white hover:bg-white/[0.04] sm:text-base"
                             >
                                 Seguir comprando
                             </Link>

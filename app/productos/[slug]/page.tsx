@@ -91,8 +91,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
 
       {/* Contenido principal */}
       <div className="mx-auto max-w-[1700px] px-4 py-7 sm:px-6 sm:py-10 lg:px-8 lg:py-12 xl:px-14">
-        <div className="grid items-start gap-10 md:gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)] lg:gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(480px,.85fr)] xl:gap-14 2xl:gap-16">
-          {/* Galería */}
+        <div className="grid items-start gap-7 sm:gap-9 md:gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)] lg:gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(480px,.85fr)] xl:gap-14 2xl:gap-16">          {/* Galería */}
           <ProductGallery
             images={producto.images}
             productName={producto.name}
@@ -126,16 +125,15 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                   mt-2
                   max-w-[620px]
                   break-words
-                  text-3xl
+                  text-[30px]
                   font-black
                   leading-[1.08]
                   tracking-[-0.04em]
                   text-white
-                  min-[430px]:text-4xl
+                  min-[430px]:text-[36px]
                   sm:mb-4
-                  md:text-5xl
+                  sm:text-[44px]
                   lg:text-[3.6rem]
-                  lg:text-6xl
                 ">
               {producto.name}
             </h1>
@@ -150,13 +148,14 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <h2
                 className="
                     break-all
-                    text-[clamp(2.4rem,12vw,3.5rem)]
+                    text-[40px]
+                    min-[430px]:text-[46px]
                     font-black
                     leading-none
                     tracking-[-0.05em]
                     text-zinc-100
+                    sm:text-[52px]
                     lg:text-[3.25rem]
-                    xl:text-[3.5rem]
                   "
                 style={{
                   textShadow: "0 0 30px rgba(255,255,255,0.12)",
@@ -242,8 +241,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 Descripción
               </h2>
 
-              <p className="whitespace-pre-line text-sm leading-7 text-zinc-300 sm:text-base sm:leading-8 lg:text-[17px]">
-                {producto.description}
+              <p className="whitespace-pre-line text-sm leading-6 text-zinc-300 sm:text-base sm:leading-8 lg:text-[17px]">                {producto.description}
               </p>
             </div>
 
@@ -256,12 +254,12 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <div className="
                 flex
                 items-start  
-                gap-3
+                gap-2.5
                 rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-4
+                p-3.5
                 sm:gap-4
                 sm:p-5
               ">
@@ -279,12 +277,12 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <div className="
                 flex
                 items-start  
-                gap-3
+                gap-2.5
                 rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-4
+                p-3.5
                 sm:gap-4
                 sm:p-5
               ">
@@ -302,12 +300,12 @@ export default async function ProductoDetallePage({ params }: PageProps) {
               <div className="
                 flex
                 items-start  
-                gap-3
+                gap-2.5
                 rounded-2xl
                 border
                 border-white/10
                 bg-white/[0.02]
-                p-4
+                p-3.5
                 sm:gap-4
                 sm:p-5
               ">
@@ -334,7 +332,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 <p className="text-[10px] tracking-widest uppercase text-zinc-500 mb-1">
                   De la misma categoría
                 </p>
-                <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">También te puede gustar</h2>
+                <h2 className="text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-4xl lg:text-5xl">También te puede gustar</h2>
               </div>
               <Link
                 href={`/productos?categoria=${producto.category.slug}`}
