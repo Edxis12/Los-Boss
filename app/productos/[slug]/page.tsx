@@ -5,7 +5,7 @@ import ProductActions from "@/components/shop/ProductActions";
 import ProductCard from "@/components/shop/ProductCard";
 import { getFavoriteIds } from "@/lib/actions/favorite-actions";
 import { ChevronRight } from "lucide-react";
-import ProductGallery from "@/components/shop/ProductoGallery";
+import ProductGallery from "@/components/shop/ProductGallery";
 
 type PageProps = {
   params: Promise<{ slug: string }>;

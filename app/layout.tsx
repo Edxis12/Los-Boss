@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import FavoritesSync from "@/components/layout/FavoritesSync";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
+import CartDrawer from "@/components/cart/CartDrawer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,6 +40,7 @@ export default function RootLayout({
         <Providers>
           <FavoritesSync />
           <Navbar />
+          <CartDrawer/>
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>

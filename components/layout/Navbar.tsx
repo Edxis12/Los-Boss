@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCartStore, useCartUserKey } from "@/store/cart-store";
 import { useFavoritesCountStore } from "@/store/favorites-count-store";
+import { useCartDrawerStore } from "@/store/cart-drawer-store";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -42,6 +43,7 @@ export default function Navbar() {
 
   const userKey = useCartUserKey(session?.user?.id);
   const totalItems = useCartStore((state) => state.getTotalItems(userKey));
+  const openDrawer = useCartDrawerStore((state) => state.openDrawer);
   const favoritesCount = useFavoritesCountStore((state) => state.count);
   const nombreUsuario = session?.user?.name?.trim().split(" ")[0] ?? "Mi cuenta";
 
@@ -172,18 +174,20 @@ export default function Navbar() {
               )}
             </Link>
 
-            <Link
-              href="/carrito"
-              aria-label="Carrito"
-              className="text-zinc-300 hover:text-white hover:scale-110 transition-all duration-300 relative"
+            <button
+              type="button"
+              onClick={openDrawer}
+              aria-label="Abrir carrito"
+              className="relative text-zinc-300 transition-all duration-300 hover:scale-110 hover:text-white"
             >
               <ShoppingBag size={20} />
+
               {mounted && totalItems > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-1 text-[10px] font-bold text-black shadow-lg">
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
-            </Link>
+            </button>
 
             {/* Sesión */}
             {status === "loading" ? (
