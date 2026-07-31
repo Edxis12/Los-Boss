@@ -32,7 +32,7 @@ export const viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    "https://losboss.com"
+    "https://los-boss.vercel.app"
   ),
 
   title: {
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     description:
       "Compra ropa 100% original de las mejores marcas. Envíos a todo México.",
 
-    url: "https://losboss.com",
+    url: "https://los-boss.vercel.app",
 
     siteName: "Los Boss",
 
