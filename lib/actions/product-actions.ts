@@ -130,7 +130,7 @@ export async function eliminarProducto(productId: string): Promise<ActionRespons
         return { success: true };
     } catch (error) {
         return {
-            success: false, 
+            success: false,
             error: "No se pudo eliminar el producto."
         }
     }
@@ -247,7 +247,7 @@ export async function actualizarProducto(data: {
 
     if (productoConMismoSlug) {
         return {
-            success: false, 
+            success: false,
             error: "Ya existe otro producto con ese slug",
         };
     }
@@ -470,4 +470,84 @@ export async function actualizarProducto(data: {
                     : "No se pudo actualizar el producto",
         };
     }
+}
+
+export type QuickViewProduct = {
+    id: string;
+    slug: string;
+    name: string;
+    description: string;
+    price: number;
+    comparePrice: number | null;
+    brand: string | null;
+    category: {
+        name: string;
+        slug: string;
+    };
+    images: {
+        id: string;
+        url: string;
+        altText: string | null;
+        position: number;
+    }[];
+    variants: {
+        id: string;
+        size: string | null;
+        color: string | null;
+        stock: number;
+    }[];
+};
+
+export async function getQuickViewProduct(
+    slug: string
+): Promise<QuickViewProduct | null> {
+    const product = await prisma.product.findUnique({
+        where: {
+            slug,
+            isActive: true,
+        },
+        include: {
+            images: {
+                orderBy: {
+                    position: "asc",
+                },
+            },
+            variants: true,
+            category: {
+                select: {
+                    name: true,
+                    slug: true,
+                },
+            },
+        },
+    });
+
+    if (!product) {
+        return null;
+    }
+
+    return {
+        id: product.id,
+        slug: product.slug,
+        name: product.name,
+        description: product.description,
+        price: Number(product.price),
+        comparePrice: product.comparePrice
+            ? Number(product.comparePrice)
+            : null,
+        brand: product.brand,
+        category: product.category,
+        images: product.images.map((image) => ({
+            id: image.id,
+            url: image.url,
+            altText: image.altText,
+            position: image.position,
+        })),
+        variants: product.variants.map((variant) => ({
+            id: variant.id,
+            size: variant.size,
+            color: variant.color,
+            stock: variant.stock,
+        })),
+    };
 }

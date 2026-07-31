@@ -6,10 +6,96 @@ import ProductCard from "@/components/shop/ProductCard";
 import { getFavoriteIds } from "@/lib/actions/favorite-actions";
 import { ChevronRight } from "lucide-react";
 import ProductGallery from "@/components/shop/ProductGallery";
+import type { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const producto = await prisma.product.findUnique({
+    where: {
+      slug,
+      isActive: true,
+    },
+    include: {
+      images: {
+        take: 1,
+        orderBy: {
+          position: "asc",
+        },
+      },
+      category: true,
+    },
+  });
+
+  if (!producto) {
+    return {
+      title: "Producto no encontrado",
+    };
+  }
+
+  const imagen = producto.images[0]?.url;
+
+  const descripcion =
+    producto.description.length > 160
+      ? producto.description.slice(0, 157) + "..."
+      : producto.description;
+
+  return {
+    title: producto.name,
+
+    description: descripcion,
+
+    keywords: [
+      producto.name,
+      producto.category.name,
+      producto.brand ?? "",
+      "Los Boss",
+    ].filter(Boolean),
+
+    openGraph: {
+      title: producto.name,
+
+      description: descripcion,
+
+      url: `https://losboss.com/productos/${producto.slug}`,
+
+      siteName: "Los Boss",
+
+      type: "website",
+
+      locale: "es_MX",
+
+      images: imagen
+        ? [
+          {
+            url: imagen,
+            width: 1200,
+            height: 630,
+            alt: producto.name,
+          },
+        ]
+        : [],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+
+      title: producto.name,
+
+      description: descripcion,
+
+      images: imagen ? [imagen] : [],
+    },
+  };
+}
 
 export default async function ProductoDetallePage({ params }: PageProps) {
   const { slug } = await params;

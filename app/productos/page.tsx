@@ -77,6 +77,12 @@ const GENERO_LABELS: Record<string, string> = {
     UNISEX: "Unisex",
 };
 
+export const metadata = {
+    title: "Productos",
+    description:
+        "Compra ropa original..."
+}
+
 export default async function ProductosPage({
     searchParams,
 }: PageProps) {
@@ -286,7 +292,7 @@ export default async function ProductosPage({
     return (
         <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
             <div className="mb-10">
-                <p className="text-xs font-semibold upperase tracking-[0.35em] text-zinc-600">
+                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-600">
                     Catálogo
                 </p>
 

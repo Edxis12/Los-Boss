@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 
 type ProductImage = {
     id: string;
@@ -27,6 +28,8 @@ export default function ProductGallery({
     }, [images, selected]);
 
     const current = images[selected];
+
+    const handleSelect = useCallback((index:number)=>{setSelected(index)}, []);
 
     if (!current) {
         return (
@@ -59,18 +62,18 @@ export default function ProductGallery({
                 {images.map((img, index) => (
                     <button
                         key={img.id}
-                        onClick={() => setSelected(index)}
+                        onClick={() => handleSelect(index)}
                         className={`
                         relative
                         h-20
                         w-20
                         rounded-xl
-                        overflow-hidden
+                        overflow-hidden 
                         bg-white
                         border
                         shadow-sm
-                        transition-all
-                        duration-300
+                        transition-colors
+                        duration-150
                         sm:h-24
                         sm:w-24
                         cursor-pointer
@@ -97,32 +100,34 @@ export default function ProductGallery({
             <div className="order-1 lg:order-2 flex-1">
 
                 <div className="
-                group 
-                relative 
-                overflow-hidden 
-                rounded-2xl 
-                border 
-                border-zinc-200 
-                ring-1
-                ring-black/15
-                shadow-[0_40px_100px_rgba(0,0,0,0.18)] 
-                bg-[linear-gradient(180deg,#fcfcfc_0%,#f7f7f7_45%,#efefef_100%)]
-                before:absolute
-                before:inset-0
-                before:bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_70%)]
-                before:pointer-events-none
-                h-[380px]
-                min-[430px]:h-[460px]
-                sm:h-[620px]
-                lg:h-[820px]
-            ">
+                        group
+                        relative
+                        will-change-transform
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-zinc-200
+                        ring-1
+                        ring-black/15
+                        shadow-[0_24px_60px_rgba(0,0,0,0.16)]
+                        bg-[linear-gradient(180deg,#fcfcfc_0%,#f7f7f7_45%,#efefef_100%)]
+                        before:absolute
+                        before:inset-0
+                        before:bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_70%)]
+                        before:pointer-events-none
+                        h-[380px]
+                        min-[430px]:h-[460px]
+                        sm:h-[620px]
+                        lg:h-[820px]
+                    "
+                >
 
                     <Image
-                        key={current.id}
                         src={current.url}
                         alt={current.altText ?? productName}
                         fill
-                        priority
+                        priority={selected === 0}
+                        fetchPriority={selected === 0 ? "high" : "auto"}
                         sizes="
                         (max-width:640px) 100vw,
                         (max-width:1024px) 80vw,

@@ -13,15 +13,25 @@ export default function VerifyEmailPage() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
+        if (!token) {
+            setSuccess(false);
+            setMessage("El enlace de verificación no es válido.");
+            setLoading(false);
+            return;
+        }
+
         async function verifyEmail() {
             try {
-                const response = await fetch("/api/auth/verificar-correo", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ token }),
-                });
+                const response = await fetch(
+                    "/api/auth/verificar-correo",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ token }),
+                    }
+                );
 
                 const data = await response.json();
 
@@ -47,9 +57,7 @@ export default function VerifyEmailPage() {
             }
         }
 
-        if (token) {
-            verifyEmail();
-        }
+        verifyEmail();
     }, [token]);
 
     return (

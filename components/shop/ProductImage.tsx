@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 interface ProductImageProps {
@@ -12,25 +14,24 @@ export default function ProductImage({
     agotado,
 }: ProductImageProps) {
     return (
-        <>
+        <div className="absolute inset-0">
             {imageUrl ? (
                 <Image
                     src={imageUrl}
                     alt={name}
                     fill
+                    loading="lazy"
+                    placeholder="empty"
                     sizes="(max-width:768px) 50vw, 25vw"
                     className={`
                         object-contain
                         p-5
-                        transition-all
-                        duration-700
+                        transition-opacity
+                        duration-500
                         ease-out
-                        group-hover:scale-110
-                        group-hover:-translate-y-1
-                        ${
-                            agotado
-                                ? "opacity-55 grayscale"
-                                : ""
+                        ${agotado
+                            ? "opacity-55 grayscale"
+                            : ""
                         }
                     `}
                 />
@@ -42,6 +43,7 @@ export default function ProductImage({
 
             <div
                 className="
+                    pointer-events-none
                     absolute
                     inset-0
                     bg-gradient-to-t
@@ -54,6 +56,6 @@ export default function ProductImage({
                     group-hover:opacity-100
                 "
             />
-        </>
+        </div>
     );
 }
