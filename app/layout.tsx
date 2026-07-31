@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue } from "next/font/google";
+import { Bebas_Neue, Inter } from "next/font/google";
 
 import Providers from "@/providers";
 
@@ -10,8 +10,10 @@ import FavoritesSync from "@/components/layout/FavoritesSync";
 import CartDrawer from "@/components/cart/CartDrawer";
 import QuickViewModal from "@/components/shop/QuickViewModal";
 
-import { Inter } from "next/font/google";
 import "./globals.css";
+
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,8 +27,6 @@ const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
   display: "swap",
 });
-
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export const viewport = {
   themeColor: "#000000",
@@ -53,63 +53,29 @@ export const metadata: Metadata = {
     "Los Boss",
   ],
 
-  authors: [
-    {
-      name: "Los Boss",
-    },
-  ],
-
-  applicationName: "Los Boss",
-
-  category: "fashion",
-
+  authors: [{ name: "Los Boss" }],
   creator: "Los Boss",
 
   openGraph: {
     title: "Los Boss",
-
     description:
       "Compra ropa 100% original de las mejores marcas. Envíos a todo México.",
-
-    url: "https://los-boss.vercel.app",
-
+    url: "/",
     siteName: "Los Boss",
-
-    locale: "es_MX",
-
     type: "website",
-
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Los Boss",
-      },
-    ],
+    locale: "es_MX",
   },
-
-  referrer: "origin-when-cross-origin",
 
   twitter: {
     card: "summary_large_image",
-
     title: "Los Boss",
-
     description:
-      "Compra ropa 100% original de las mejores marcas.",
-
-    images: ["/og-image.jpg"],
+      "Compra ropa 100% original de las mejores marcas. Envíos a todo México.",
   },
 
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
