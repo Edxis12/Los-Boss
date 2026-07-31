@@ -65,7 +65,7 @@ export async function generateMetadata({
 
       description: descripcion,
 
-      url: `https://los-boss.vercel.app/productos/${producto.slug}`,
+      url: `/productos/${producto.slug}`,
 
       siteName: "Los Boss",
 

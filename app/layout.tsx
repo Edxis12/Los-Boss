@@ -26,14 +26,14 @@ const bebasNeue = Bebas_Neue({
   display: "swap",
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export const viewport = {
   themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    "https://los-boss.vercel.app"
-  ),
+  metadataBase: new URL(appUrl),
 
   title: {
     default: "Los Boss",
