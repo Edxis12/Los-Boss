@@ -4,12 +4,11 @@ import type { Prisma } from "@/generated/prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { randomUUID } from "crypto";
 
 type ItemPedido = {
-  productId: string;
   variantId: string;
   quantity: number;
-  price: number;
 };
 
 type DireccionManualInput = {
@@ -124,52 +123,142 @@ export async function crearPedido(
     };
   }
 
-  if (items.length === 0) {
+  if (!Array.isArray(items) || items.length === 0) {
     return {
       error: "Tu carrito está vacío",
     };
   }
+
+  /*
+   * Validación básica antes de consultar la base de datos.
+   * No aceptamos cantidades decimales, negativas, cero o exageradas.
+   */
+  for (const item of items) {
+    if (
+      typeof item.variantId !== "string" ||
+      !item.variantId.trim() ||
+      !Number.isInteger(item.quantity) ||
+      item.quantity <= 0 ||
+      item.quantity > 100
+    ) {
+      return {
+        error: "El carrito contiene datos no válidos",
+      };
+    }
+  }
+
+  /*
+   * Agrupamos variantes repetidas.
+   * Evita que alguien envíe dos entradas de la misma variante
+   * para intentar superar el stock disponible.
+   */
+  const cantidadesPorVariante = new Map<string, number>();
+
+  for (const item of items) {
+    cantidadesPorVariante.set(
+      item.variantId,
+      (cantidadesPorVariante.get(item.variantId) ?? 0) +
+      item.quantity
+    );
+  }
+
+  const itemsNormalizados = Array.from(
+    cantidadesPorVariante,
+    ([variantId, quantity]) => ({
+      variantId,
+      quantity,
+    })
+  );
 
   const userId = session.user.id;
 
   try {
     const pedido = await prisma.$transaction(
       async (tx: Prisma.TransactionClient) => {
-        // 1. Comprobar el stock de todas las variantes
-        for (const item of items) {
-          const variante = await tx.productVariant.findUnique({
+        /*
+         * Obtenemos productos, precios y stock directamente
+         * desde la base de datos.
+         */
+        const variantes =
+          await tx.productVariant.findMany({
             where: {
-              id: item.variantId,
+              id: {
+                in: itemsNormalizados.map(
+                  (item) => item.variantId
+                ),
+              },
             },
-            include: {
+            select: {
+              id: true,
+              stock: true,
               product: {
                 select: {
+                  id: true,
+                  name: true,
+                  price: true,
                   isActive: true,
-                }
-              }
-            }
+                },
+              },
+            },
           });
 
-          if (!variante) {
-            throw new Error(
-              "Una de las variantes seleccionadas ya no existe"
-            );
-          }
-
-          if (!variante.product.isActive) {
-            throw new Error(
-              "Uno de los productos ya no está disponible"
-            );
-          }
-
-          if (variante.stock < item.quantity) {
-            throw new Error(
-              "No hay suficiente stock disponible para uno de los productos"
-            );
-          }
+        if (
+          variantes.length !==
+          itemsNormalizados.length
+        ) {
+          throw new Error(
+            "Uno de los productos ya no está disponible"
+          );
         }
 
-        // 2. Crear una copia de la dirección para conservarla en el pedido
+        const variantesPorId = new Map(
+          variantes.map((variante) => [
+            variante.id,
+            variante,
+          ])
+        );
+
+        const itemsSeguros = itemsNormalizados.map(
+          (item) => {
+            const variante =
+              variantesPorId.get(item.variantId);
+
+            if (!variante) {
+              throw new Error(
+                "Uno de los productos ya no está disponible"
+              );
+            }
+
+            if (!variante.product.isActive) {
+              throw new Error(
+                `${variante.product.name} ya no está disponible`
+              );
+            }
+
+            if (variante.stock < item.quantity) {
+              throw new Error(
+                `No hay suficiente stock de ${variante.product.name}`
+              );
+            }
+
+            return {
+              productId: variante.product.id,
+              variantId: variante.id,
+              productName: variante.product.name,
+              quantity: item.quantity,
+
+              /*
+               * Precio real de Prisma.
+               * Nunca usamos el precio enviado por el navegador.
+               */
+              price: variante.product.price,
+            };
+          }
+        );
+
+        /*
+         * Resolvemos y validamos la dirección.
+         */
         let datosDireccion: {
           label?: string | null;
           fullName: string;
@@ -182,23 +271,24 @@ export async function crearPedido(
         };
 
         if ("savedAddressId" in direccion) {
-          const direccionGuardada = await tx.address.findFirst({
-            where: {
-              id: direccion.savedAddressId,
-              userId,
-              isSaved: true,
-            },
-            select: {
-              label: true,
-              fullName: true,
-              phone: true,
-              street: true,
-              city: true,
-              state: true,
-              postalCode: true,
-              country: true,
-            },
-          });
+          const direccionGuardada =
+            await tx.address.findFirst({
+              where: {
+                id: direccion.savedAddressId,
+                userId,
+                isSaved: true,
+              },
+              select: {
+                label: true,
+                fullName: true,
+                phone: true,
+                street: true,
+                city: true,
+                state: true,
+                postalCode: true,
+                country: true,
+              },
+            });
 
           if (!direccionGuardada) {
             throw new Error(
@@ -208,22 +298,34 @@ export async function crearPedido(
 
           datosDireccion = direccionGuardada;
         } else {
+          const fullName = direccion.fullName.trim();
+          const phone = direccion.phone.trim();
+          const street = direccion.street.trim();
+          const city = direccion.city.trim();
+          const state = direccion.state.trim();
+          const postalCode =
+            direccion.postalCode.trim();
+
           if (
-            !direccion.fullName.trim() ||
-            !direccion.phone.trim() ||
-            !direccion.street.trim() ||
-            !direccion.city.trim() ||
-            !direccion.state.trim() ||
-            !direccion.postalCode.trim()
+            !fullName ||
+            !phone ||
+            !street ||
+            !city ||
+            !state ||
+            !postalCode
           ) {
-            throw new Error("Completa todos los campos de dirección");
+            throw new Error(
+              "Completa todos los campos de dirección"
+            );
           }
 
-          if (!/^\d{10}$/.test(direccion.phone)) {
-            throw new Error("El teléfono debe contener 10 números");
+          if (!/^\d{10}$/.test(phone)) {
+            throw new Error(
+              "El teléfono debe contener 10 números"
+            );
           }
 
-          if (!/^\d{5}$/.test(direccion.postalCode)) {
+          if (!/^\d{5}$/.test(postalCode)) {
             throw new Error(
               "El código postal debe contener 5 números"
             );
@@ -231,49 +333,88 @@ export async function crearPedido(
 
           datosDireccion = {
             label: null,
-            fullName: direccion.fullName.trim(),
-            phone: direccion.phone.trim(),
-            street: direccion.street.trim(),
-            city: direccion.city.trim(),
-            state: direccion.state.trim(),
-            postalCode: direccion.postalCode.trim(),
+            fullName,
+            phone,
+            street,
+            city,
+            state,
+            postalCode,
             country: "México",
           };
         }
 
-        const direccionCreada = await tx.address.create({
-          data: {
-            label: datosDireccion.label,
-            fullName: datosDireccion.fullName,
-            phone: datosDireccion.phone,
-            street: datosDireccion.street,
-            city: datosDireccion.city,
-            state: datosDireccion.state,
-            postalCode: datosDireccion.postalCode,
-            country: datosDireccion.country,
-            isSaved: false,
-            isDefault: false,
-            userId,
-          },
-        });
+        /*
+         * Copia histórica de la dirección usada.
+         */
+        const direccionCreada =
+          await tx.address.create({
+            data: {
+              label: datosDireccion.label,
+              fullName: datosDireccion.fullName,
+              phone: datosDireccion.phone,
+              street: datosDireccion.street,
+              city: datosDireccion.city,
+              state: datosDireccion.state,
+              postalCode:
+                datosDireccion.postalCode,
+              country: datosDireccion.country,
+              isSaved: false,
+              isDefault: false,
+              userId,
+            },
+          });
 
+        /*
+         * Descuento atómico del inventario.
+         *
+         * Aunque dos pedidos intenten comprar la última
+         * pieza simultáneamente, solo uno podrá disminuirla.
+         */
+        for (const item of itemsSeguros) {
+          const resultado =
+            await tx.productVariant.updateMany({
+              where: {
+                id: item.variantId,
+                stock: {
+                  gte: item.quantity,
+                },
+              },
+              data: {
+                stock: {
+                  decrement: item.quantity,
+                },
+              },
+            });
 
-        // 3. Calcular el total
-        const total = items.reduce(
+          if (resultado.count !== 1) {
+            throw new Error(
+              `El stock de ${item.productName} cambió. Revisa tu carrito e intenta nuevamente.`
+            );
+          }
+        }
+
+        /*
+         * Calculamos el total usando únicamente precios
+         * obtenidos desde la base de datos.
+         */
+        const total = itemsSeguros.reduce(
           (acumulado, item) =>
-            acumulado + item.price * item.quantity,
+            acumulado +
+            Number(item.price) * item.quantity,
           0
         );
 
-        // 4. Generar el número de pedido
-        const totalPedidos = await tx.order.count();
+        /*
+         * No usamos count() + 1 porque dos pedidos
+         * simultáneos podrían recibir el mismo número.
+         */
+        const identificador = randomUUID()
+          .replaceAll("-", "")
+          .slice(0, 10)
+          .toUpperCase();
 
-        const orderNumber = `LB-${String(totalPedidos + 1).padStart(
-          5,
-          "0"
-        )}`;
+        const orderNumber = `LB-${identificador}`;
 
-        // 5. Crear el pedido y sus productos
         const nuevoPedido = await tx.order.create({
           data: {
             orderNumber,
@@ -286,7 +427,7 @@ export async function crearPedido(
               },
             },
             items: {
-              create: items.map((item) => ({
+              create: itemsSeguros.map((item) => ({
                 productId: item.productId,
                 variantId: item.variantId,
                 quantity: item.quantity,
@@ -296,20 +437,6 @@ export async function crearPedido(
           },
         });
 
-        // 6. Descontar el stock
-        for (const item of items) {
-          await tx.productVariant.update({
-            where: {
-              id: item.variantId,
-            },
-            data: {
-              stock: {
-                decrement: item.quantity,
-              },
-            },
-          });
-        }
-
         return nuevoPedido;
       }
     );
@@ -318,6 +445,7 @@ export async function crearPedido(
     revalidatePath("/admin/pedidos");
     revalidatePath("/admin/dashboard");
     revalidatePath("/productos");
+    revalidatePath("/carrito");
 
     return {
       success: true,
@@ -327,13 +455,28 @@ export async function crearPedido(
   } catch (error) {
     console.error("Error al crear pedido:", error);
 
-    const mensaje =
-      error instanceof Error
-        ? error.message
-        : "Error al procesar el pedido";
+    /*
+     * Mensajes que sí podemos mostrar al usuario.
+     */
+    if (
+      error instanceof Error &&
+      (
+        error.message.includes("stock") ||
+        error.message.includes("disponible") ||
+        error.message.includes("dirección") ||
+        error.message.includes("teléfono") ||
+        error.message.includes("código postal") ||
+        error.message.includes("campos")
+      )
+    ) {
+      return {
+        error: error.message,
+      };
+    }
 
     return {
-      error: mensaje,
+      error:
+        "No fue posible procesar el pedido. Intenta nuevamente.",
     };
   }
 }

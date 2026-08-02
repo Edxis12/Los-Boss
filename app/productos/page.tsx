@@ -1,9 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/shop/ProductCard";
 import FilterSidebar from "@/components/shop/FilterSidebar";
+import Pagination from "@/components/shop/Pagination";
 import { getFavoriteIds } from "@/lib/actions/favorite-actions";
 import Link from "next/link";
 import { PackageSearch, SlidersHorizontal } from "lucide-react";
+import type { Metadata } from "next";
+
+const PRODUCTOS_POR_PAGINA = 12;
 
 type PageProps = {
     searchParams: Promise<{
@@ -18,6 +22,7 @@ type PageProps = {
         nuevos?: string;
         marca?: string;
         disponibilidad?: string;
+        page?: string;
     }>;
 };
 
@@ -77,15 +82,17 @@ const GENERO_LABELS: Record<string, string> = {
     UNISEX: "Unisex",
 };
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "Productos",
     description:
-        "Compra ropa original..."
-}
+        "Explora ropa y accesorios originales de Los Boss. Encuentra productos destacados, novedades, ofertas y envíos a todo México.",
+};
 
 export default async function ProductosPage({
     searchParams,
 }: PageProps) {
+    const parametros = await searchParams;
+
     const {
         categoria,
         buscar,
@@ -98,7 +105,13 @@ export default async function ProductosPage({
         nuevos,
         marca,
         disponibilidad,
-    } = await searchParams;
+        page,
+    } = parametros;
+
+    const paginaSolicitada = Math.max(
+        1,
+        Number.parseInt(page ?? "1", 10) || 1
+    );
 
     const where: ProductWhere = {
         isActive: true,
@@ -213,50 +226,83 @@ export default async function ProductosPage({
                 ? { price: "desc" as const }
                 : { createdAt: "desc" as const };
 
-    const [productos, categorias, marcasConNulos, favoritosIds] =
-        await Promise.all([
-            prisma.product.findMany({
-                where,
-                orderBy,
-                include: {
-                    images: {
-                        orderBy: {
-                            position: "asc",
-                        },
-                        take: 1,
-                    },
-                    variants: {
-                        select: {
-                            stock: true,
-                        },
-                    },
-                },
-            }),
+    const [
+        totalProductos,
+        categorias,
+        marcasConNulos,
+        favoritosIds,
+    ] = await Promise.all([
+        prisma.product.count({
+            where,
+        }),
 
-            prisma.category.findMany({
+        prisma.category.findMany({
+            orderBy: {
+                name: "asc",
+            },
+            select: {
+                id: true,
+                name: true,
+                slug: true,
+            },
+        }),
+
+        prisma.product.findMany({
+            where: {
+                isActive: true,
+                brand: {
+                    not: null,
+                },
+            },
+            select: {
+                brand: true,
+            },
+            distinct: ["brand"],
+            orderBy: {
+                brand: "asc",
+            },
+        }),
+
+        getFavoriteIds(),
+    ]);
+
+    const totalPaginas = Math.max(
+        1,
+        Math.ceil(
+            totalProductos / PRODUCTOS_POR_PAGINA
+        )
+    );
+
+    const paginaActual = Math.min(
+        paginaSolicitada,
+        totalPaginas
+    );
+
+    const productos = await prisma.product.findMany({
+        where,
+        orderBy,
+
+        skip:
+            (paginaActual - 1) *
+            PRODUCTOS_POR_PAGINA,
+
+        take: PRODUCTOS_POR_PAGINA,
+
+        include: {
+            images: {
                 orderBy: {
-                    name: "asc",
+                    position: "asc",
                 },
-            }),
+                take: 1,
+            },
 
-            prisma.product.findMany({
-                where: {
-                    isActive: true,
-                    brand: {
-                        not: null,
-                    },
-                },
+            variants: {
                 select: {
-                    brand: true,
+                    stock: true,
                 },
-                distinct: ["brand"],
-                orderBy: {
-                    brand: "asc",
-                },
-            }),
-
-            getFavoriteIds(),
-        ]);
+            },
+        },
+    });
 
     const marcas = marcasConNulos
         .map(
@@ -290,35 +336,35 @@ export default async function ProductosPage({
                                 : "Todos los productos";
 
     return (
-        <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-10 lg:py-14">
-            <div className="mb-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-zinc-600">
+        <div className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12 xl:px-10">
+            <div className="mb-8 sm:mb-10">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-600 sm:text-xs sm:tracking-[0.3em]">
                     Catálogo
                 </p>
 
-                <div className="mt-3 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div className="mt-2.5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+                        <h1 className="break-words text-[30px] font-black leading-tight tracking-tight text-white min-[430px]:text-[34px] sm:text-[40px] lg:text-[44px]">
                             {titulo}
                         </h1>
 
-                        <p className="mt-3 max-w-xl text-zinc-500">
+                        <p className="mt-2.5 max-w-xl text-sm leading-6 text-zinc-500 sm:text-[15px] sm:leading-7">
                             Explora nuestra selección de ropa y accesorios originales.
                         </p>
                     </div>
 
-                    <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-zinc-400">
+                    <div className="flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-zinc-400 sm:text-sm">
                         <SlidersHorizontal size={15} />
 
-                        {productos.length}{" "}
-                        {productos.length === 1
+                        {totalProductos}{" "}
+                        {totalProductos === 1
                             ? "producto encontrado"
                             : "productos encontrados"}
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8 xl:gap-10">
                 <FilterSidebar
                     categorias={categorias}
                     marcas={marcas}
@@ -327,12 +373,12 @@ export default async function ProductosPage({
 
                 <div className="min-w-0 flex-1">
                     {productos.length === 0 ? (
-                        <div className="rounded-3xl border border-white/10 bg-[#0d0d0d] px-6 py-20 text-center">
-                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
+                        <div className="rounded-2xl border border-white/10 bg-[#0d0d0d] px-5 py-14 text-center sm:rounded-3xl sm:px-6 sm:py-16 lg:py-20">
+                            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] sm:h-16 sm:w-16">
                                 <PackageSearch size={27} className="text-zinc-500" />
                             </div>
 
-                            <h2 className="mt-6 text-2xl font-bold text-white">
+                            <h2 className="mt-5 text-xl font-bold text-white sm:text-2xl">
                                 No encontramos productos
                             </h2>
 
@@ -343,13 +389,27 @@ export default async function ProductosPage({
 
                             <Link
                                 href="/productos"
-                                className="mt-7 inline-flex rounded-2xl bg-white px-7 py-3.5 font-bold text-black transition hover:bg-zinc-200"
+                                className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-black transition hover:bg-zinc-200 sm:min-h-12 sm:rounded-2xl sm:px-7"
                             >
                                 Limpiar filtros
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-x-3 gap-y-8 min-[430px]:grid-cols-2 sm:gap-x-5 sm:gap-y-10 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 xl:gap-y-16">
+                        <div className="
+                                    grid
+                                    grid-cols-1
+                                    gap-x-3
+                                    gap-y-7
+                                    min-[390px]:grid-cols-2
+                                    min-[390px]:gap-x-4
+                                    sm:gap-x-5
+                                    sm:gap-y-9
+                                    lg:grid-cols-3
+                                    lg:gap-x-6
+                                    xl:grid-cols-4
+                                    xl:gap-x-7
+                                    xl:gap-y-12
+                                ">
                             {productos.map(
                                 (
                                     producto: typeof productos[number]
@@ -396,10 +456,15 @@ export default async function ProductosPage({
                                             createdAt={producto.createdAt.toISOString()}
                                         />
                                     );
-                                }
-                            )}
+                                })}
+
                         </div>
                     )}
+                    <Pagination
+                        paginaActual={paginaActual}
+                        totalPaginas={totalPaginas}
+                        searchParams={parametros}
+                    />
                 </div>
             </div>
         </div>

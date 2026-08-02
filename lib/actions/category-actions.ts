@@ -8,10 +8,33 @@ import type { ActionResponse } from "@/lib/types/action-response";
 async function requireAdmin() {
     const session = await auth();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!session?.user || (session.user as any).role !== "ADMIN") {
-        throw new Error("No autorizado");
+    if (!session?.user?.id) {
+        return {
+            authorized: false as const,
+        };
     }
+
+    const usuario = await prisma.user.findUnique({
+        where: {
+            id: session.user.id,
+        },
+        select: {
+            role: true,
+        },
+    });
+
+    return {
+        authorized:
+            usuario?.role === "ADMIN",
+    };
+}
+
+function validarCategoryId(categoryId: string) {
+    return (
+        typeof categoryId === "string" &&
+        categoryId.trim().length > 0 &&
+        categoryId.length <= 100
+    );
 }
 
 function slugify(texto: string) {
@@ -27,7 +50,38 @@ function slugify(texto: string) {
 function normalizarImagen(imageUrl?: string) {
     const imagen = imageUrl?.trim();
 
-    return imagen || null;
+    if (!imagen) {
+        return {
+            value: null,
+        };
+    }
+
+    if (imagen.length > 500) {
+        return {
+            error: "La URL de la imagen es demasiado larga",
+        };
+    }
+
+    try {
+        const url = new URL(imagen);
+
+        if (
+            url.protocol !== "https:" ||
+            url.hostname !== "res.cloudinary.com"
+        ) {
+            return {
+                error: "La imagen debe provenir de Cloudinary",
+            };
+        }
+
+        return {
+            value: url.toString(),
+        };
+    } catch {
+        return {
+            error: "La URL de la imagen no es válida",
+        };
+    }
 }
 
 function revalidarCategorias() {
@@ -41,9 +95,23 @@ export async function crearCategoria(
     name: string,
     imageUrl?: string
 ): Promise<ActionResponse> {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    if (!admin.authorized) {
+        return {
+            success: false,
+            error: "No autorizado",
+        };
+    }
 
     const nombreLimpio = name.trim();
+
+    if (nombreLimpio.length > 60) {
+        return {
+            success: false,
+            error: "El nombre no puede superar 60 caracteres",
+        };
+    }
 
     if (!nombreLimpio) {
         return {
@@ -58,6 +126,15 @@ export async function crearCategoria(
         return {
             success: false,
             error: "Escribe un nombre válido",
+        };
+    }
+
+    const imagenNormalizada = normalizarImagen(imageUrl);
+
+    if (imagenNormalizada.error) {
+        return {
+            success: false,
+            error: imagenNormalizada.error,
         };
     }
 
@@ -92,7 +169,7 @@ export async function crearCategoria(
             data: {
                 name: nombreLimpio,
                 slug,
-                imageUrl: normalizarImagen(imageUrl),
+                imageUrl: imagenNormalizada.value,
             },
         });
 
@@ -107,10 +184,7 @@ export async function crearCategoria(
 
         return {
             success: false,
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo crear la categoría",
+            error: "No se pudo crear la categoría",
         };
     }
 }
@@ -120,11 +194,25 @@ export async function actualizarCategoria(
     name: string,
     imageUrl?: string
 ): Promise<ActionResponse> {
-    await requireAdmin();
+    const admin = await requireAdmin();
+
+    if (!admin.authorized) {
+        return {
+            success: false,
+            error: "No autorizado",
+        };
+    }
 
     const nombreLimpio = name.trim();
 
-    if (!categoryId) {
+    if (nombreLimpio.length > 60) {
+        return {
+            success: false,
+            error: "El nombre no puede superar 60 caracteres",
+        };
+    }
+
+    if (!validarCategoryId(categoryId)) {
         return {
             success: false,
             error: "La categoría no es válida",
@@ -144,6 +232,15 @@ export async function actualizarCategoria(
         return {
             success: false,
             error: "Escribe un nombre válido",
+        };
+    }
+
+    const imagenNormalizada = normalizarImagen(imageUrl);
+
+    if (imagenNormalizada.error) {
+        return {
+            success: false,
+            error: imagenNormalizada.error,
         };
     }
 
@@ -200,7 +297,7 @@ export async function actualizarCategoria(
             data: {
                 name: nombreLimpio,
                 slug,
-                imageUrl: normalizarImagen(imageUrl),
+                imageUrl: imagenNormalizada.value,
             },
         });
 
@@ -215,18 +312,24 @@ export async function actualizarCategoria(
 
         return {
             success: false,
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo actualizar la categoría",
+            error: "No se pudo actualizar la categoría",
         };
     }
 }
 
-export async function eliminarCategoria(categoryId: string): Promise<ActionResponse> {
-    await requireAdmin();
+export async function eliminarCategoria(
+    categoryId: string
+): Promise<ActionResponse> {
+    const admin = await requireAdmin();
 
-    if (!categoryId) {
+    if (!admin.authorized) {
+        return {
+            success: false,
+            error: "No autorizado",
+        };
+    }
+
+    if (!validarCategoryId(categoryId)) {
         return {
             success: false,
             error: "La categoría no es válida",
@@ -284,10 +387,7 @@ export async function eliminarCategoria(categoryId: string): Promise<ActionRespo
 
         return {
             success: false,
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo eliminar la categoría",
+            error: "No se pudo eliminar la categoría",
         };
     }
 } 

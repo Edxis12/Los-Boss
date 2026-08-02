@@ -79,24 +79,29 @@ export default function FavoriteButton({
                 top-4
                 z-20
                 flex
-                h-11
-                w-11
+                h-10
+                w-10
                 items-center
                 justify-center
                 rounded-full
-                bg-white/90
+                bg-white/85
+                border
+                border-white/30
                 text-black
                 backdrop-blur-md
                 transition-all
                 duration-300
-                hover:scale-110
+                hover:scale-105
                 hover:bg-white
+                shadow-[0_6px_18px_rgba(0,0,0,.18)]
+                sm:h-11
+                sm:w-11
                 disabled:cursor-wait
                 disabled:opacity-60
             "
         >
             <Heart
-                size={19}
+                size={18}
                 className={`
                     transition-all
                     duration-300

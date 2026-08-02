@@ -40,7 +40,7 @@ export default function ProductGallery({
     }
 
     return (
-        <div className="flex flex-col lg:flex-row gap-4 animate-fade-in">
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-5 animate-fade-in">
 
             {/* Miniaturas */}
 
@@ -50,7 +50,7 @@ export default function ProductGallery({
                     flex
                     justify-center
                     gap-3
-                    overflow-x-auto
+                    scrollbar-hide
                     pb-2
                     lg:order-1
                     lg:flex-col
@@ -65,8 +65,8 @@ export default function ProductGallery({
                         onClick={() => handleSelect(index)}
                         className={`
                         relative
-                        h-20
-                        w-20
+                        h-[72px]
+                        w-[72px]
                         rounded-xl
                         overflow-hidden 
                         bg-white
@@ -74,12 +74,14 @@ export default function ProductGallery({
                         shadow-sm
                         transition-colors
                         duration-150
-                        sm:h-24
-                        sm:w-24
+                        sm:h-20
+                        sm:w-20
+                        lg:h-24
+                        lg:w-24
                         cursor-pointer
                         ${selected === index
-                                ? "border-black ring-2 ring-black scale-105 shadow-lg"
-                                : "border-zinc-300 hover:border-black hover:scale-105"
+                                ? "border-black ring-2 ring-black scale-105 shadow-xl"
+                                : "border-zinc-300 hover:border-black hover:shadow-md"
                             }
                         `}
                     >
@@ -107,18 +109,19 @@ export default function ProductGallery({
                         rounded-2xl
                         border
                         border-zinc-200
-                        ring-1
-                        ring-black/15
+                        ring-black/10
                         shadow-[0_24px_60px_rgba(0,0,0,0.16)]
                         bg-[linear-gradient(180deg,#fcfcfc_0%,#f7f7f7_45%,#efefef_100%)]
                         before:absolute
                         before:inset-0
                         before:bg-[radial-gradient(circle_at_top,#ffffff_0%,transparent_70%)]
                         before:pointer-events-none
-                        h-[380px]
-                        min-[430px]:h-[460px]
-                        sm:h-[620px]
-                        lg:h-[820px]
+                        h-[360px]
+                        min-[430px]:h-[430px]
+                        sm:h-[560px]
+                        lg:h-[700px]
+                        xl:h-[760px]
+                        2xl:h-[820px]
                     "
                 >
 
@@ -136,11 +139,11 @@ export default function ProductGallery({
                             object-contain
                             p-0
                             transition-all
-                            duration-500
+                            duration-400
                             animate-fade-in
                             ease-out
-                            group-hover:scale-105
-                            drop-shadow-[0_45px_60px_rgba(0,0,0,0.22)]
+                            group-hover:scale-[1.03]
+                            drop-shadow-[0_28px_42px_rgba(0,0,0,0.18)]
                         "
                     />
 
@@ -150,7 +153,7 @@ export default function ProductGallery({
                         bg-gradient-to-tr
                         from-transparent
                         via-white/5
-                        to-white/20
+                        to-white/12
                         pointer-events-none
                     "/>
 

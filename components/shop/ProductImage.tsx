@@ -21,22 +21,24 @@ export default function ProductImage({
                     alt={name}
                     fill
                     loading="lazy"
-                    placeholder="empty"
-                    sizes="(max-width:768px) 50vw, 25vw"
+                    sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw
+"
                     className={`
                         object-contain
-                        p-5
-                        transition-opacity
+                        p-4
+                        sm:p-5
+                        transition-all
+                        group-hover:scale-[1.03]
                         duration-500
                         ease-out
                         ${agotado
-                            ? "opacity-55 grayscale"
+                            ? "opacity-50 grayscale"
                             : ""
                         }
                     `}
                 />
             ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm text-zinc-600">
+                <div className="flex h-full w-full items-center justify-center text-sm font-medium text-zinc-500">
                     Sin imagen
                 </div>
             )}
@@ -47,13 +49,13 @@ export default function ProductImage({
                     absolute
                     inset-0
                     bg-gradient-to-t
-                    from-black/20
+                    from-black/10
                     via-transparent
-                    to-white/10
+                    to-white/5
                     opacity-0
                     transition-all
                     duration-500
-                    group-hover:opacity-100
+                    group-hover:opacity-80
                 "
             />
         </div>

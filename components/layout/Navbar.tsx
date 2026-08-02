@@ -91,14 +91,14 @@ export default function Navbar() {
         }`}
     >
       {/* Barra superior - marquee animado */}
-      <div className="group bg-white text-black py-1.5 overflow-hidden">
+      <div className="group overflow-hidden bg-white py-1 text-black">
         <div className="flex whitespace-nowrap w-max animate-marquee group-hover:[animation-play-state:paused]">
           {[0, 1].map((bloque) => (
             <div key={bloque} className="flex shrink-0" aria-hidden={bloque === 1}>
               {Array.from({ length: 6 }).map((_, i) => (
                 <span
                   key={i}
-                  className="mx-6 text-[11px] font-medium tracking-widest uppercase"
+                  className="mx-5 text-[10px] font-medium uppercase tracking-[0.16em]"
                 >
                   {ANUNCIO}
                 </span>
@@ -108,23 +108,23 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between lg:h-[60px]">
           {/* Logo */}
           <Link
             href="/"
-            className="font-display text-2xl tracking-[0.18em] text-white transition hover:opacity-80 min-[430px]:text-3xl"
+            className="font-display text-[22px] tracking-[0.16em] text-white transition hover:opacity-80 sm:text-2xl"
           >
             LOS BOSS
           </Link>
 
           {/* Nav desktop */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden items-center gap-6 md:flex lg:gap-7">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-xs font-semibold transition tracking-widest uppercase ${link.highlight
+                className={`text-[11px] font-semibold uppercase tracking-[0.14em] transition ${link.highlight
                   ? "text-red-400 hover:text-red-300"
                   : "text-zinc-300 hover:text-white"
                   }`}
@@ -135,7 +135,7 @@ export default function Navbar() {
           </nav>
 
           {/* Iconos */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               aria-label="Buscar"
               onClick={() => { setSearchOpen((v) => !v); setMenuOpen(false); setUserMenuOpen(false); }}

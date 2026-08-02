@@ -176,7 +176,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
       </div>
 
       {/* Contenido principal */}
-      <div className="mx-auto max-w-[1700px] px-4 py-7 sm:px-6 sm:py-10 lg:px-8 lg:py-12 xl:px-14">
+      <div className="mx-auto max-w-[1440px] px-4 py-7 sm:px-6 sm:py-10 lg:px-8 lg:py-12 xl:px-14">
         <div className="grid items-start gap-7 sm:gap-9 md:gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)] lg:gap-10 xl:grid-cols-[minmax(0,1.2fr)_minmax(480px,.85fr)] xl:gap-14 2xl:gap-16">          {/* Galería */}
           <ProductGallery
             images={producto.images}
@@ -192,8 +192,9 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             flex-col 
             pt-1
             lg:sticky
-            lg:top-28 
-            lg:max-w-[560px]
+            lg:top-24
+            lg:max-w-[500px]
+            xl:max-w-[540px]
             lg:pt-4 
             xl:pt-8
             ">
@@ -219,7 +220,8 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                   min-[430px]:text-[36px]
                   sm:mb-4
                   sm:text-[44px]
-                  lg:text-[3.6rem]
+                  lg:text-[3.2rem]
+                  xl:text-[3.5rem]
                 ">
               {producto.name}
             </h1>
@@ -241,7 +243,8 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                     tracking-[-0.05em]
                     text-zinc-100
                     sm:text-[52px]
-                    lg:text-[3.25rem]
+                    lg:text-[3rem]
+                    xl:text-[3.2rem]
                   "
                 style={{
                   textShadow: "0 0 30px rgba(255,255,255,0.12)",
@@ -327,7 +330,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 Descripción
               </h2>
 
-              <p className="whitespace-pre-line text-sm leading-6 text-zinc-300 sm:text-base sm:leading-8 lg:text-[17px]">                {producto.description}
+              <p className="whitespace-pre-line text-sm leading-6 text-zinc-300 sm:text-base sm:leading-8 lg:text-base">                {producto.description}
               </p>
             </div>
 
@@ -335,7 +338,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
             <div className="my-6 border-t border-white/15 sm:my-8" />
 
             {/* Beneficios */}
-            <div className="mt-9 grid gap-3 sm:mt-12 sm:grid-cols-2 lg:grid-cols-1 xl:gap-4">
+            <div className="mt-9 grid gap-3 sm:mt-12 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 xl:gap-4">
 
               <div className="
                 flex
@@ -412,13 +415,13 @@ export default async function ProductoDetallePage({ params }: PageProps) {
         </div>
         {/* Productos relacionados */}
         {relacionados.length > 0 && (
-          <div className="mt-14 border-t border-white/10 pt-12 sm:mt-20 sm:pt-16">
+          <div className="mt-12 border-t border-white/10 pt-12 sm:mt-16 sm:pt-16">
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-[10px] tracking-widest uppercase text-zinc-500 mb-1">
                   De la misma categoría
                 </p>
-                <h2 className="text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-4xl lg:text-5xl">También te puede gustar</h2>
+                <h2 className="text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-[38px] lg:text-[42px]">También te puede gustar</h2>
               </div>
               <Link
                 href={`/productos?categoria=${producto.category.slug}`}
@@ -427,7 +430,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 Ver todo →
               </Link>
             </div>
-            <div className="grid grid-cols-1 gap-x-5 gap-y-10 min-[430px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-12">
+            <div className="grid grid-cols-1 gap-x-5 gap-y-10 min-[430px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-10">
               {relacionados.map((p: typeof relacionados[number]) => {
                 const stockRelacionado = p.variants.reduce(
                   (

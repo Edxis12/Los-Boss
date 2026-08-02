@@ -10,13 +10,14 @@ import { useCartStore, useCartUserKey } from "@/store/cart-store";
 import { crearPedido } from "@/lib/actions/order-actions";
 import { obtenerDireccionesGuardadas, type DireccionGuardada } from "@/lib/actions/address-actions";
 import { City, State as CountryState } from "country-state-city"
+import { useShallow } from "zustand/react/shallow";
 
 export default function CheckoutPage() {
     const router = useRouter();
     const { data: session, status } = useSession();
     const userKey = useCartUserKey(session?.user?.id);
 
-    const items = useCartStore((state) => state.getItems(userKey));
+    const items = useCartStore(useShallow((state) => state.getItems(userKey)));
     const totalPrice = useCartStore((state) => state.getTotalPrice(userKey));
     const clearCart = useCartStore((state) => state.clearCart);
 
@@ -209,12 +210,10 @@ export default function CheckoutPage() {
 
         const resultado = await crearPedido(
             items.map((item) => ({
-                productId: item.productId,
                 variantId: item.variantId,
                 quantity: item.quantity,
-                price: item.price,
             })),
-            direccionPedido
+            direccionPedido 
         );
 
         setLoading(false);
@@ -233,7 +232,7 @@ export default function CheckoutPage() {
 
     return (
         <main className="min-h-screen bg-black">
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
                 {/* Encabezado */}
                 <div className="mb-6 sm:mb-10">
                     <Link
@@ -247,7 +246,7 @@ export default function CheckoutPage() {
                         Finalizar compra
                     </p>
 
-                    <h1 className="mt-2 text-[30px] font-black tracking-tight text-white min-[430px]:text-[36px] sm:mt-3 sm:text-5xl">
+                    <h1 className="mt-2 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:mt-3 sm:text-[40px] lg:text-[44px]">
                         Checkout
                     </h1>
 
@@ -257,11 +256,11 @@ export default function CheckoutPage() {
                     </p>
                 </div>
 
-                <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
+                <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(340px,390px)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_420px] xl:gap-12">
                     {/* Formulario */}
                     <form
                         onSubmit={handleSubmit}
-                        className="space-y-7 rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:space-y-8 min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-8"
+                        className="space-y-6 rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:space-y-7 min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6 lg:p-7 xl:p-8"
                     >
                         <div className="flex items-start gap-4">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-black">
@@ -550,7 +549,7 @@ export default function CheckoutPage() {
                                                             )
                                                         }
                                                         placeholder="Nombre de quien recibe"
-                                                        className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 lg:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                     />
                                                 </div>
 
@@ -585,7 +584,7 @@ export default function CheckoutPage() {
                                                                 );
                                                             }}
                                                             placeholder="6671234567"
-                                                            className="h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 py-3.5 pl-11 pr-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                            className="h-12 lg:h-14 w-full rounded-xl border border-white/10 bg-black/30 py-3.5 pl-11 pr-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                         />
                                                     </div>
                                                 </div>
@@ -606,7 +605,7 @@ export default function CheckoutPage() {
                                                             )
                                                         }
                                                         placeholder="Ej. Av. Central 123, Col. Centro"
-                                                        className="mt-2 h-12 sm:14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10 lg:h-14"
                                                     />
                                                 </div>
 
@@ -636,7 +635,7 @@ export default function CheckoutPage() {
                                                             );
                                                             setCity("");
                                                         }}
-                                                        className="mt-2 h-12 sm:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"                                                    >
+                                                        className="mt-2 h-12 lg:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10"                                                    >
                                                         <option value="">
                                                             Selecciona un estado
                                                         </option>
@@ -672,7 +671,7 @@ export default function CheckoutPage() {
                                                                 event.target.value
                                                             )
                                                         }
-                                                        className="mt-2 h-12 sm:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"                                                    >
+                                                        className="mt-2 h-12 lg:h-14 w-full truncate rounded-xl border border-white/10 bg-[#090909] px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:cursor-not-allowed disabled:opacity-40"                                                    >
                                                         <option value="">
                                                             {stateCode
                                                                 ? "Selecciona una ciudad"
@@ -723,7 +722,7 @@ export default function CheckoutPage() {
                                                             );
                                                         }}
                                                         placeholder="80000"
-                                                        className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
+                                                        className="mt-2 h-12 lg:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10"
                                                     />
                                                 </div>
                                             </div>
@@ -790,7 +789,7 @@ export default function CheckoutPage() {
                     </form>
 
                     {/* Resumen */}
-                    <aside className="h-fit rounded-2xl min-[430px]:rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 min-[430px]:p-5 shadow-[0_30px_80px_rgba(0,0,0,.35)] sm:p-7 lg:sticky lg:top-28">
+                    <aside className="h-fit rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.35)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6 lg:sticky lg:top-24 xl:p-7">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-zinc-500">
                             Tu pedido
                         </p>
@@ -818,7 +817,7 @@ export default function CheckoutPage() {
                             {items.map((item) => (
                                 <div
                                     key={item.variantId}
-                                    className="flex gap-3 min-[430]:gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0"
+                                    className="flex gap-3 border-b border-white/10 pb-5 last:border-0 last:pb-0 min-[430px]:gap-4"
                                 >
                                     <Link
                                         href={`/productos/${item.slug}`}
@@ -893,7 +892,7 @@ export default function CheckoutPage() {
                                     Total
                                 </span>
 
-                                <span className="break-all text-[28px] font-black tracking-tight text-white min-[430px]:text-3xl">
+                                <span className="break-all text-[26px] font-black tracking-tight text-white sm:text-[28px] lg:text-3xl">
                                     ${totalPrice.toLocaleString("es-MX")}
                                 </span>
                             </div>

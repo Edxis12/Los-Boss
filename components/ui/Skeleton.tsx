@@ -22,7 +22,7 @@ export default function Skeleton({
         <div
             aria-hidden="true"
             className={clsx(
-                "animate-pulse bg-white/[0.08]",
+                "animate-pulse bg-white/[0.08] transition-all duration-300",
                 roundedStyles[rounded],
                 className
             )}

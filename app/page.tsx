@@ -127,24 +127,24 @@ export default async function HomePage() {
         />
 
         <div className="
-          relative 
-          mx-auto 
-          grid 
-          max-w-7xl
-          items-center
-          gap-10
-          px-4
-          py-12
-          sm:px-6
-          sm:py-16
-          md:gap-14
-          lg:min-h-[76vh] 
-          lg:grid-cols-[minmax(0,1fr)_minmax(380px,.88fr)] 
-          lg:px-8 
-          lg:py-20
-          xl:grid-cols-[minmax(0,1fr)_minmax(440px,.88fr)]
-          xl:py-24
-          ">
+              relative
+              mx-auto
+              grid
+              max-w-[1440px]
+              items-center
+              gap-8
+              px-4
+              py-10
+              sm:px-6
+              sm:py-12
+              md:gap-10
+              lg:min-h-[620px]
+              lg:grid-cols-[minmax(0,1fr)_minmax(360px,.82fr)]
+              lg:px-8
+              lg:py-14
+              xl:grid-cols-[minmax(0,1fr)_minmax(400px,.82fr)]
+              xl:py-16
+            ">
           <div className="max-w-3xl animate-fade-in">
             <div className="mb-6 flex flex-wrap items-center gap-2 sm:mb-7 sm:gap-3">
               <span className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-zinc-300">
@@ -158,13 +158,13 @@ export default async function HomePage() {
 
             <h1 className="
                   font-display
-                  text-[48px]
-                  leading-[0.88]
+                  text-[44px]
+                  leading-[0.9]
                   tracking-[0.01em]
                   text-white
-                  min-[430px]:text-[58px]
-                  sm:text-[72px]
-                  lg:text-[clamp(5rem,9vw,8.5rem)]
+                  min-[430px]:text-[52px]
+                  sm:text-[64px]
+                  lg:text-[clamp(4.25rem,6.4vw,6.75rem)]
                 ">
               HYPE
               <span className="block text-zinc-500">
@@ -172,18 +172,18 @@ export default async function HomePage() {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base sm:leading-8 lg:text-lg">
+            <p className="mt-5 max-w-xl text-sm leading-6 text-zinc-400 sm:text-[15px] sm:leading-7 lg:text-base">
               Ropa y accesorios originales para quienes buscan piezas
               con presencia, estilo y personalidad. Entregas personales
               y envíos a todo México.
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/productos"
                 className="
                   inline-flex 
-                  min-h-13
+                  min-h-11
                   w-full
                   items-center 
                   justify-center 
@@ -200,9 +200,9 @@ export default async function HomePage() {
                   duration-300 
                   hover:-translate-y-0.5 
                   hover:bg-zinc-200
-                  sm:min-h-14
+                  sm:min-h-12
                   sm:w-auto
-                  sm:px-8
+                  sm:px-7
                   sm:text-sm
                   sm:tracking-[0.15em]
                   "
@@ -214,7 +214,7 @@ export default async function HomePage() {
                 href="/productos?destacados=true"
                 className="
                   inline-flex 
-                  min-h-13 
+                  min-h-11
                   w-full
                   items-center 
                   justify-center 
@@ -233,9 +233,9 @@ export default async function HomePage() {
                   hover:-translate-y-0.5 
                   hover:border-white/40 
                   hover:bg-white/[0.06]
-                  sm:min-h-14
+                  sm:min-h-12
                   sm:w-auto
-                  sm:px-8
+                  sm:px-7
                   sm:text-sm
                   sm:tracking-[0.15em]
                   "
@@ -245,7 +245,7 @@ export default async function HomePage() {
             </div>
 
             <div className="
-                    mt-8
+                    mt-7
                     grid
                     w-full
                     grid-cols-1
@@ -269,7 +269,7 @@ export default async function HomePage() {
                     min-[430px]:p-3
                     sm:p-3
                   ">
-                <p className="text-lg font-black text-white sm:text-2xl">
+                <p className="text-base font-black text-white sm:text-xl">
                   100%
                 </p>
 
@@ -289,7 +289,7 @@ export default async function HomePage() {
                       min-[430px]:p-3
                       sm:p-4
                     ">
-                <p className="text-lg font-black text-white sm:text-2xl">
+                <p className="text-base font-black text-white sm:text-xl">
                   MX
                 </p>
 
@@ -309,7 +309,7 @@ export default async function HomePage() {
                       min-[430px]:p-3
                       sm:p-3
                     ">
-                <p className="text-lg font-black text-white sm:text-2xl">
+                <p className="text-base font-black text-white sm:text-xl">
                   24/7
                 </p>
 
@@ -323,7 +323,7 @@ export default async function HomePage() {
           <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
             <div className="absolute -inset-8 rounded-full bg-white/[0.025] blur-3xl" />
 
-            <div className="relative aspect-[5/4] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:aspect-[16/10] lg:aspect-[4/5] lg:rounded-[2rem] lg:shadow-[0_40px_120px_rgba(0,0,0,.6)]">
+            <div className="relative aspect-[5/4] overflow-hidden rounded-3xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:aspect-[16/10] lg:aspect-[5/6] lg:rounded-[2rem] lg:shadow-[0_40px_120px_rgba(0,0,0,.6)]">
               <Image
                 src="/images/losBoss.jpg"
                 alt="Los Boss Boutique"
@@ -376,13 +376,13 @@ export default async function HomePage() {
       {/* CATEGORÍAS */}
       {categorias.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
-          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Explora
               </p>
 
-              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
+              <h2 className="mt-2.5 text-[26px] font-black tracking-tight text-white min-[430px]:text-[30px] sm:text-[38px] lg:text-[42px]">
                 Comprar por categoría
               </h2>
 
@@ -406,7 +406,7 @@ export default async function HomePage() {
               <Link
                 key={categoria.id}
                 href={`/productos?categoria=${categoria.slug}`}
-                className="group relative min-h-[190px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 min-[430px]:min-h-[240px] sm:rounded-3xl lg:min-h-[300px]"
+                className="group relative min-h-[180px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 min-[430px]:min-h-[220px] sm:rounded-3xl lg:min-h-[260px]"
               >
                 {categoria.imageUrl ? (
                   <Image
@@ -433,7 +433,7 @@ export default async function HomePage() {
                   </p>
 
                   <div className="mt-2 flex items-end justify-between gap-4">
-                    <h3 className="text-lg font-black text-white sm:text-2xl">
+                    <h3 className="text-lg font-black text-white sm:text-xl lg:text-[22px]">
                       {categoria.name}
                     </h3>
 
@@ -450,14 +450,14 @@ export default async function HomePage() {
 
       {/* PRODUCTOS DESTACADOS */}
       <section className="border-y border-white/10 bg-[#050505]">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:py-18 lg:py-24 sm:px-6 lg:px-8">
-          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14 lg:py-18 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Selección
               </p>
 
-              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
+              <h2 className="mt-2.5 text-[26px] font-black tracking-tight text-white min-[430px]:text-[30px] sm:text-[38px] lg:text-[42px]">
                 Productos destacados
               </h2>
 
@@ -530,14 +530,14 @@ export default async function HomePage() {
 
       {/* NUEVOS INGRESOS */}
       {nuevosProductos.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
-          <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-[72px]">
+          <div className="mb-8 flex flex-col gap-5 md:mb-10 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                 Recién llegados
               </p>
 
-              <h2 className="mt-3 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-5xl">
+              <h2 className="mt-3 text-[26px] font-black tracking-tight text-white min-[430px]:text-[30px] sm:text-[38px] lg:text-[42px]">
                 Nuevos ingresos
               </h2>
 
@@ -584,7 +584,7 @@ export default async function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="relative overflow-hidden border-t border-zinc-200 bg-white py-14 text-black sm:py-18 lg:py-24">
+      <section className="relative overflow-hidden border-t border-zinc-200 bg-white py-12 text-black sm:py-14 lg:py-[72]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,.08),transparent_35%)]" />
 
         <div className="relative mx-auto max-w-3xl px-4 text-center">
@@ -592,7 +592,7 @@ export default async function HomePage() {
             Los Boss Boutique
           </p>
 
-          <h2 className="mt-4 font-display text-[clamp(2.8rem,15vw,6rem)] leading-[0.9] sm:mt-5 sm:text-[clamp(3.5rem,9vw,6rem)]">
+          <h2 className="mt-4 font-display text-[clamp(2.5rem,11vw,5rem)] leading-[0.92] sm:mt-5 sm:text-[clamp(3.5rem,9vw,6rem)]">
             CONSIGUE TU PIEZA
           </h2>
 
@@ -603,7 +603,7 @@ export default async function HomePage() {
 
           <Link
             href="/productos"
-            className="mt-8 inline-flex min-h-13 w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-black px-6 text-xs font-bold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-900 sm:mt-9 sm:min-h-14 sm:w-auto sm:max-w-none sm:px-9 sm:text-sm sm:tracking-[0.15em]"
+            className="mt-8 inline-flex min-h-11 w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-black px-6 text-xs font-bold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-900 sm:mt-9 sm:min-h-12 sm:w-auto sm:max-w-none sm:px-8 sm:text-sm sm:tracking-[0.15em]"
           >
             Explorar catálogo
             <ArrowRight size={17} />

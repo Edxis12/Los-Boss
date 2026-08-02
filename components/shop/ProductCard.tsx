@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion } from "motion/react";
- 
+
 import FavoriteButton from "./FavoriteButton";
 import ProductPrice from "./ProductPriceProps";
 import ProductBadges from "./ProductBadges";
@@ -90,7 +90,7 @@ export default function ProductCard({
         // El retraso evita peticiones cuando el usuario solamente cruza el cursor sobre la tarjeta.
 
         prefetchTimeRef.current = setTimeout(() => {
-           void prefetchQuickView(); 
+            void prefetchQuickView();
         }, 150);
     }
 
@@ -110,7 +110,7 @@ export default function ProductCard({
     return (
         <article className="group block animate-fade-in" onPointerEnter={handlePointEnter} onPointerLeave={handlePointerLeave} onFocus={handleFocus}>
             <motion.div
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -6 }}
                 transition={{
                     duration: 0.18,
                     ease: "easeOut",
@@ -119,15 +119,16 @@ export default function ProductCard({
                     relative
                     aspect-[3/4]
                     overflow-hidden
-                    rounded-3xl
+                    rounded-2xl
+                    lg:rounded-3xl
                     border
                     border-zinc-200
                     ring-1
                     ring-white/70
-                    shadow-[0_12px_35px_rgba(0,0,0,.15)]
+                    shadow-[0_10px_28px_rgba(0,0,0,.14)]
                     transition-shadow
                     duration-500
-                    hover:shadow-[0_20px_50px_rgba(0,0,0,.22)]
+                    hover:shadow-[0_18px_42px_rgba(0,0,0,.18)]
                 "
                 style={{
                     background:
@@ -170,9 +171,9 @@ export default function ProductCard({
                 <div
                     className="
                         absolute
-                        bottom-5
-                        left-4
-                        right-4
+                        bottom-4
+                        left-3
+                        right-3
                         z-30
                         hidden
                         translate-y-10
@@ -191,9 +192,9 @@ export default function ProductCard({
                 </div>
             </motion.div>
 
-            <div className="mt-5 space-y-2 px-1">
+            <div className="mt-4 space-y-1.5 px-1">
                 {brand && (
-                    <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-zinc-500">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500">
                         {brand}
                     </p>
                 )}
@@ -205,15 +206,16 @@ export default function ProductCard({
                     <h3
                         className="
                             line-clamp-2
-                            text-[15px]
+                            text-[14px]
                             font-semibold
-                            leading-6
+                            leading-5
                             tracking-tight
                             text-white
-                            transition-all
+                            transition-colors
                             duration-300
                             group-hover:text-zinc-200
-                            sm:text-base
+                            sm:text-[15px]
+                            lg:text-base
                         "
                     >
                         {name}

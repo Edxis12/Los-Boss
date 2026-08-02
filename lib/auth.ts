@@ -90,12 +90,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role ?? "USER";
+        token.role =
+          (
+            user as {
+              role?: string;
+            }
+          ).role ?? "USER";
       }
-
       return token;
     },
 

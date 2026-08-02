@@ -31,7 +31,11 @@ export default async function AdminDashboardPage() {
                 },
             },
         }),
-        prisma.user.count(),
+        prisma.user.count({
+            where: {
+                role: "USER",
+            },
+        }),
         prisma.favorite.count(),
 
         prisma.order.aggregate({
@@ -107,11 +111,17 @@ export default async function AdminDashboardPage() {
         },
     });
 
+    const productosPorId = new Map(
+        productosVendidos.map((producto) => [
+            producto.id,
+            producto,
+        ])
+    );
+
     const rankingProductos = productosMasVendidos.map(
         (venta: typeof productosMasVendidos[number], index: number) => {
-            const producto = productosVendidos.find(
-                (p: typeof productosVendidos[number]) =>
-                    p.id === venta.productId
+            const producto = productosPorId.get(
+                venta.productId!
             );
 
             return {

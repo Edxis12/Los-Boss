@@ -7,6 +7,7 @@ import OrderStatusBadge, {
     type OrderStatus,
 } from "./OrderStatusBadge";
 import OrderStatusSelect from "@/components/admin/OrderStatusSelect";
+import Image from "next/image";
 
 type Props = {
     pedido: any;
@@ -414,11 +415,12 @@ export default function OrderDetailsModal({ pedido, open, onClose }: Props) {
                                 >
                                     <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900 min-[430px]:w-16">
                                         {imageUrl ? (
-                                            <img
+                                            <Image
                                                 src={imageUrl}
                                                 alt={item.product?.name ?? "Producto"}
-                                                loading="lazy"
-                                                className="h-full w-full object-contain p-1"
+                                                fill
+                                                sizes="64px"
+                                                className="object-contain p-1"
                                             />
                                         ) : (
                                             <div className="flex h-full min-h-40 w-full items-center justify-center text-[10px] text-zinc-600 min-[430px]:min-h-0">

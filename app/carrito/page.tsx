@@ -218,13 +218,13 @@ export default function CarritoPage() {
     }
 
     return (
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
             <div className="mb-6 sm:mb-10">
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600">
                     Tu compra
                 </p>
 
-                <h1 className="mt-2 text-[30px] font-black tracking-tight text-white min-[430px]:text-[36px] sm:text-4xl">                    Tu carrito
+                <h1 className="mt-2 text-[28px] font-black tracking-tight text-white min-[430px]:text-[34px] sm:text-[38px]">                    Tu carrito
                 </h1>
 
                 <p className="mt-2 text-sm text-zinc-500 sm:text-base">
@@ -263,7 +263,7 @@ export default function CarritoPage() {
                                     transition-all
                                     duration-300
                                     hover:border-white/20
-                                    hover:shadow-[0_20px_50px_rgba(0,0,0,.35)]
+                                    hover:shadow-[0_15px_40px_rgba(0,0,0,.28)]
                                     min-[430px]:grid-cols-[110px_minmax(0,1fr)]
                                     min-[430px]:gap-4
                                     min-[430px]:rounded-3xl
@@ -296,7 +296,7 @@ export default function CarritoPage() {
                                             src={item.imageUrl}
                                             alt={item.name}
                                             fill
-                                            className="object-contain p-2 min-[430px]:p-3"
+                                            className="object-contain p-3 md:p-4 min-[430px]:p-3"
                                             sizes="(max-width: 429px) 96px, (max-width: 767px) 110px, 128px"
                                         />
                                     )}
@@ -327,7 +327,7 @@ export default function CarritoPage() {
                                                         item.quantity - 1
                                                     )
                                                 }
-                                                className="flex h-9 w-9 items-center justify-center text-zinc-300 transition hover:bg-white hover:text-black min-[430px]:h-10 min-[430px]:w-10"
+                                                className="flex h-10 w-10 items-center justify-center text-zinc-300 transition hover:bg-white hover:text-black min-[430px]:h-10 min-[430px]:w-10"
                                                 aria-label="Disminuir cantidad"
                                             >
                                                 <Minus size={14} />
@@ -346,8 +346,8 @@ export default function CarritoPage() {
                                                 disabled={validandoStock || llegoAlMaximo}
                                                 className="
                                                     flex
-                                                    h-9
-                                                    w-9
+                                                    h-10
+                                                    w-10
                                                     items-center
                                                     justify-center
                                                     text-zinc-300
@@ -371,7 +371,7 @@ export default function CarritoPage() {
 
                                         <button
                                             onClick={() => removeItem(userKey, item.variantId)}
-                                            className="flex h-9 w-9 items-center justify-center text-zinc-500 transition hover:text-red-400 min-[430px]:h-10 min-[430px]:w-10"
+                                            className="flex h-10 w-10 items-center justify-center text-zinc-500 transition hover:text-red-400 hover:bg-red-500/10 rounded-full min-[430px]:h-10 min-[430px]:w-10"
                                             aria-label="Eliminar producto"
                                         >
                                             <Trash2 size={16} />
@@ -401,7 +401,7 @@ export default function CarritoPage() {
                 </div>
 
                 {/* Resumen */}
-                <div className="h-fit rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6 lg:sticky lg:top-28 lg:p-8">
+                <div className="h-fit rounded-2xl border border-white/10 bg-[#0d0d0d] p-4 shadow-[0_30px_80px_rgba(0,0,0,.3)] min-[430px]:rounded-3xl min-[430px]:p-5 sm:p-6 lg:sticky lg:top-24 lg:p-8">
                     <h2 className="mb-4 text-base font-semibold text-white sm:text-lg">
                         Resumen
                     </h2>

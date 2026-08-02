@@ -14,6 +14,11 @@ type AddressInput = {
     postalCode: string;
 };
 
+async function getUserId() {
+    const session = await auth();
+    return session?.user?.id ?? null;
+}
+
 async function requireUser() {
     const session = await auth();
 
@@ -25,31 +30,69 @@ async function requireUser() {
 }
 
 function validarDireccion(data: AddressInput) {
+    const fullName = data.fullName.trim();
+    const phone = data.phone.trim();
+    const street = data.street.trim();
+    const city = data.city.trim();
+    const state = data.state.trim();
+    const postalCode = data.postalCode.trim();
+    const label = data.label?.trim() ?? "";
+
     if (
-        !data.fullName.trim() ||
-        !data.phone.trim() ||
-        !data.street.trim() ||
-        !data.city.trim() ||
-        !data.state.trim() ||
-        !data.postalCode.trim()
+        !fullName ||
+        !phone ||
+        !street ||
+        !city ||
+        !state ||
+        !postalCode
     ) {
         return "Completa todos los campos requeridos";
     }
 
-    if (!/^\d{10}$/.test(data.phone)) {
+    if (!/^\d{10}$/.test(phone)) {
         return "El teléfono debe contener 10 números";
     }
 
-    if (!/^\d{5}$/.test(data.postalCode)) {
+    if (!/^\d{5}$/.test(postalCode)) {
         return "El código postal debe contener 5 números";
+    }
+
+    if (fullName.length > 100) {
+        return "El nombre es demasiado largo";
+    }
+
+    if (street.length > 200) {
+        return "La dirección es demasiado larga";
+    }
+
+    if (city.length > 100 || state.length > 100) {
+        return "La ciudad o el estado no son válidos";
+    }
+
+    if (label.length > 50) {
+        return "La etiqueta no puede superar 50 caracteres";
     }
 
     return null;
 }
 
+function validarAddressId(addressId: string) {
+    return (
+        typeof addressId === "string" &&
+        addressId.trim().length > 0 &&
+        addressId.length <= 100
+    );
+}
+
 export async function crearDireccion(data: AddressInput) {
-    const userId = await requireUser();
+    const userId = await getUserId();
     const errorValidacion = validarDireccion(data);
+
+    if (!userId) {
+        return {
+            error: "Debes iniciar sesión",
+        };
+    }
 
     if (errorValidacion) {
         return { error: errorValidacion };
@@ -63,6 +106,12 @@ export async function crearDireccion(data: AddressInput) {
                     isSaved: true,
                 },
             });
+
+            if (cantidadDirecciones >= 10) {
+                throw new Error(
+                    "Solo puedes guardar hasta 10 direcciones"
+                );
+            }
 
             await tx.address.create({
                 data: {
@@ -89,17 +138,36 @@ export async function crearDireccion(data: AddressInput) {
     } catch (error) {
         console.error("Error al crear dirección:", error);
 
+        if (
+            error instanceof Error &&
+            error.message ===
+            "Solo puedes guardar hasta 10 direcciones"
+        ) {
+            return {
+                error: error.message,
+            };
+        }
+
         return {
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo guardar la dirección",
+            error: "No se pudo guardar la dirección",
         };
     }
 }
 
 export async function establecerDireccionPrincipal(addressId: string) {
-    const userId = await requireUser();
+    const userId = await getUserId();
+
+    if (!userId) {
+        return {
+            error: "Debes iniciar sesión",
+        };
+    }
+
+    if (!validarAddressId(addressId)) {
+        return {
+            error: "La dirección no es válida",
+        };
+    }
 
     try {
         const direccion = await prisma.address.findFirst({
@@ -127,9 +195,11 @@ export async function establecerDireccionPrincipal(addressId: string) {
                     isDefault: false,
                 },
             }),
-            prisma.address.update({
+            prisma.address.updateMany({
                 where: {
                     id: addressId,
+                    userId,
+                    isSaved: true,
                 },
                 data: {
                     isDefault: true,
@@ -152,7 +222,19 @@ export async function establecerDireccionPrincipal(addressId: string) {
 }
 
 export async function eliminarDireccion(addressId: string) {
-    const userId = await requireUser();
+    const userId = await getUserId();
+
+    if (!userId) {
+        return {
+            error: "Debes iniciar sesión",
+        };
+    }
+
+    if (!validarAddressId(addressId)) {
+        return {
+            error: "La dirección no es válida",
+        };
+    }
 
     try {
         await prisma.$transaction(async (tx) => {
@@ -213,11 +295,17 @@ export async function eliminarDireccion(addressId: string) {
     } catch (error) {
         console.error("Error al eliminar dirección:", error);
 
+        if (
+            error instanceof Error &&
+            error.message === "No encontramos la dirección"
+        ) {
+            return {
+                error: error.message,
+            };
+        }
+
         return {
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo eliminar la dirección",
+            error: "No se pudo eliminar la dirección",
         };
     }
 }
@@ -226,8 +314,20 @@ export async function actualizarDireccion(
     addressId: string,
     data: AddressInput
 ) {
-    const userId = await requireUser();
     const errorValidacion = validarDireccion(data);
+    const userId = await getUserId();
+
+    if (!userId) {
+        return {
+            error: "Debes iniciar sesión",
+        };
+    }
+
+    if (!validarAddressId(addressId)) {
+        return {
+            error: "La dirección no es válida",
+        };
+    }
 
     if (errorValidacion) {
         return { error: errorValidacion };
@@ -251,21 +351,32 @@ export async function actualizarDireccion(
             };
         }
 
-        await prisma.address.update({
-            where: {
-                id: addressId,
-            },
-            data: {
-                label: data.label?.trim() || "Dirección",
-                fullName: data.fullName.trim(),
-                phone: data.phone.trim(),
-                street: data.street.trim(),
-                city: data.city.trim(),
-                state: data.state.trim(),
-                postalCode: data.postalCode.trim(),
-                country: "México",
-            },
-        });
+        const resultado =
+            await prisma.address.updateMany({
+                where: {
+                    id: addressId,
+                    userId,
+                    isSaved: true,
+                },
+                data: {
+                    label:
+                        data.label?.trim() || "Dirección",
+                    fullName: data.fullName.trim(),
+                    phone: data.phone.trim(),
+                    street: data.street.trim(),
+                    city: data.city.trim(),
+                    state: data.state.trim(),
+                    postalCode:
+                        data.postalCode.trim(),
+                    country: "México",
+                },
+            });
+
+        if (resultado.count !== 1) {
+            return {
+                error: "No encontramos la dirección",
+            };
+        }
 
         revalidatePath("/cuenta");
         revalidatePath("/cuenta/direcciones");
@@ -276,13 +387,13 @@ export async function actualizarDireccion(
             success: true,
         };
     } catch (error) {
-        console.error("Error al actualizar dirección:", error);
+        console.error(
+            "Error al actualizar dirección:",
+            error
+        );
 
         return {
-            error:
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo actualizar la dirección",
+            error: "No se pudo actualizar la dirección",
         };
     }
 }
@@ -305,7 +416,13 @@ export async function obtenerDireccionesGuardadas(): Promise<{
     error?: string;
 }> {
     try {
-        const userId = await requireUser();
+        const userId = await getUserId();
+
+        if (!userId) {
+            return {
+                error: "Debes iniciar sesión",
+            };
+        }
 
         const direcciones = await prisma.address.findMany({
             where: {

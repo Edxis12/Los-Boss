@@ -618,7 +618,7 @@ export default function CategoriasManager({
                                 setNombre(event.target.value)
                             }
                             placeholder="Ej. Playeras"
-                            className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10 disabled:opacity-50"
+                            className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition placeholder:text-zinc-700 focus:border-white focus:ring-4 focus:ring-white/10 disabled:opacity-50"
                         />
                     </div>
 
@@ -724,7 +724,7 @@ export default function CategoriasManager({
                                                 : null
                                     )
                                 }
-                                className="mt-2 h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:opacity-50"
+                                className="mt-2 h-12 sm:h-14 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-white outline-none transition focus:border-white focus:ring-4 focus:ring-white/10 disabled:opacity-50"
                             />
                         </div>
 
@@ -838,8 +838,9 @@ export default function CategoriasManager({
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                         {categorias.map((categoria) => {
-                            const eliminando =
-                                eliminandoId === categoria.id;
+                            const eliminando = eliminandoId === categoria.id;
+
+                            const tieneProductos = categoria._count.products > 0;
 
                             return (
                                 <article
@@ -881,37 +882,25 @@ export default function CategoriasManager({
                                                 </p>
 
                                                 <p className="mt-4 text-sm text-zinc-500">
-                                                    {
-                                                        categoria
-                                                            ._count
-                                                            .products
-                                                    }{" "}
-                                                    {categoria
-                                                        ._count
-                                                        .products ===
-                                                        1
-                                                        ? "producto"
-                                                        : "productos"}
+                                                    {categoria._count.products}{" "}
+                                                    {categoria._count.products === 1 ? "producto" : "productos"}
                                                 </p>
+
+                                                {tieneProductos && (
+                                                    <p className="mt-2 text-xs leading-5 text-amber-400">
+                                                        No se puede eliminar mientras tenga productos.
+                                                    </p>
+                                                )}
                                             </div>
 
                                             <div className="mt-auto flex flex-col gap-2 pt-5 sm:flex-row">
                                                 <button
                                                     type="button"
-                                                    disabled={
-                                                        guardando ||
-                                                        eliminando
-                                                    }
-                                                    onClick={() =>
-                                                        iniciarEdicion(
-                                                            categoria
-                                                        )
-                                                    }
+                                                    disabled={guardando || eliminando || tieneProductos}
+                                                    onClick={() => iniciarEdicion(categoria)}
                                                     className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 px-4 text-sm font-semibold text-zinc-300 transition hover:bg-white/[0.05] hover:text-white disabled:opacity-50"
                                                 >
-                                                    <Edit3
-                                                        size={15}
-                                                    />
+                                                    <Edit3 size={15} />
                                                     Editar
                                                 </button>
 
@@ -926,7 +915,16 @@ export default function CategoriasManager({
                                                             categoria
                                                         )
                                                     }
-                                                    aria-label={`Eliminar ${categoria.name}`}
+                                                    aria-label={
+                                                        tieneProductos
+                                                            ? `${categoria.name} no puede eliminarse porque contiene productos`
+                                                            : `Eliminar ${categoria.name}`
+                                                    }
+                                                    title={
+                                                        tieneProductos
+                                                            ? "Primero mueve o elimina los productos de esta categoría"
+                                                            : `Eliminar ${categoria.name}`
+                                                    }
                                                     className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-red-500/20 px-4 text-sm font-semibold text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-12 sm:px-0"
                                                 >
                                                     {eliminando ? (

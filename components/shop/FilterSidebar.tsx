@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import { SlidersHorizontal, X, } from "lucide-react";
+import { motion } from "motion/react";
 
 type Categoria = {
     name: string;
@@ -60,10 +61,18 @@ export default function FilterSidebar({
         setPrecioMax(searchParams.get("precioMax") ?? "");
     }, [searchParams]);
 
-    function navegarConParametros(params: URLSearchParams) {
+    function navegarConParametros(
+        params: URLSearchParams
+    ) {
+        params.delete("page");
+
         const query = params.toString();
 
-        router.push(query ? `/productos?${query}` : "/productos");
+        router.push(
+            query
+                ? `/productos?${query}`
+                : "/productos"
+        );
 
         setFiltrosMovilAbiertos(false);
     }
@@ -114,7 +123,9 @@ export default function FilterSidebar({
     }
 
     function crearHrefCategoria(slug?: string) {
-        const params = new URLSearchParams(searchParams.toString());
+        const params = new URLSearchParams(
+            searchParams.toString()
+        );
 
         if (slug) {
             params.set("categoria", slug);
@@ -122,9 +133,13 @@ export default function FilterSidebar({
             params.delete("categoria");
         }
 
+        params.delete("page");
+
         const query = params.toString();
 
-        return query ? `/productos?${query}` : "/productos";
+        return query
+            ? `/productos?${query}`
+            : "/productos";
     }
 
     function limpiarFiltros() {
@@ -144,7 +159,7 @@ export default function FilterSidebar({
     const contenidoFiltros = (
         <>
             <div className="flex items-center justify-between">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-zinc-500">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-500">
                     Filtros
                 </p>
 
@@ -171,7 +186,7 @@ export default function FilterSidebar({
                         className={`
                             rounded-xl
                             px-4
-                            py-3
+                            py-2.5
                             text-sm
                             transition-all
                             duration-300
@@ -275,7 +290,7 @@ export default function FilterSidebar({
                             rounded-xl
                             border
                             px-4
-                            py-3
+                            py-2.5
                             text-left
                             text-sm
                             transition
@@ -298,7 +313,7 @@ export default function FilterSidebar({
                             rounded-xl
                             border
                             px-4
-                            py-3
+                            py-2.5
                             text-left
                             text-sm
                             transition
@@ -321,7 +336,7 @@ export default function FilterSidebar({
                             rounded-xl
                             border
                             px-4
-                            py-3
+                            py-2.5
                             text-left
                             text-sm
                             transition
@@ -402,7 +417,7 @@ export default function FilterSidebar({
                     type="button"
                     onClick={aplicarFiltrosPrecio}
                     className="
-                        mt-4
+                        mt-3
                         h-12
                         w-full
                         rounded-xl
@@ -412,7 +427,7 @@ export default function FilterSidebar({
                         shadow-[0_10px_30px_rgba(255,255,255,.12)]
                         transition-all
                         duration-300
-                        hover:scale-[1.02]
+                        hover:scale-[1.01]
                         hover:bg-zinc-200
                     "
                 >
@@ -468,17 +483,17 @@ export default function FilterSidebar({
                 className="
                 hidden
                 h-fit
-                w-72
+                w-[300px]
                 shrink-0
-                space-y-8
+                space-y-7
                 rounded-3xl
                 border
                 border-white/10
                 bg-[#111111]
-                p-7
+                p-6
                 shadow-[0_20px_60px_rgba(0,0,0,.35)]
                 lg:sticky
-                lg:top-28
+                lg:top-24
                 lg:block
             "
             >
@@ -497,31 +512,47 @@ export default function FilterSidebar({
                         className="absolute inset-0 bg-black/75 backdrop-blur-sm"
                     />
 
-                    <div
+                    <motion.div
+                        initial={{
+                            y: 40,
+                            opacity: 0,
+                        }}
+                        animate={{
+                            y: 0,
+                            opacity: 1,
+                        }}
+                        exit={{
+                            y: 40,
+                            opacity: 0,
+                        }}
+                        transition={{
+                            duration: 0.25,
+                            ease: "easeOut",
+                        }}
                         className="
-                        absolute
-                        inset-x-0
-                        bottom-0
-                        max-h-[88vh]
-                        overflow-y-auto
-                        rounded-t-[2rem]
-                        border-t
-                        border-white/10
-                        bg-[#0d0d0d]
-                        p-5
-                        shadow-[0_-30px_90px_rgba(0,0,0,.65)]
-                        sm:left-auto
-                        sm:right-0
-                        sm:top-0
-                        sm:h-full
-                        sm:max-h-none
-                        sm:w-[390px]
-                        sm:rounded-none
-                        sm:rounded-l-[2rem]
-                        sm:border-l
-                        sm:border-t-0
-                        sm:p-7
-                    "
+                            absolute
+                            inset-x-0
+                            bottom-0
+                            max-h-[90vh]
+                            overflow-y-auto
+                            rounded-t-[28px]
+                            border-t
+                            border-white/10
+                            bg-[#0d0d0d]
+                            p-5
+                            shadow-[0_-30px_90px_rgba(0,0,0,.65)]
+                            sm:left-auto
+                            sm:right-0
+                            sm:top-0
+                            sm:h-full
+                            sm:max-h-none
+                            sm:w-[390px]
+                            sm:rounded-none
+                            sm:rounded-l-[28px]
+                            sm:border-l
+                            sm:border-t-0
+                            sm:p-7
+                        "
                     >
                         <div className="mb-7 flex items-center justify-between">
                             <div>
@@ -546,10 +577,10 @@ export default function FilterSidebar({
                             </button>
                         </div>
 
-                        <div className="space-y-8">
+                        <div className="space-y-7">
                             {contenidoFiltros}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             )}
         </>
