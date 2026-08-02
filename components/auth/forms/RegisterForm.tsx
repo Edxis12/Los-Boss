@@ -27,13 +27,17 @@ export default function RegisterForm() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(
+        event: FormEvent<HTMLFormElement>
+    ) {
         event.preventDefault();
 
         setError("");
 
         const normalizedName = name.trim();
-        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedEmail = email
+            .trim()
+            .toLowerCase();
 
         if (!normalizedName) {
             setError("Ingresa tu nombre.");
@@ -41,17 +45,23 @@ export default function RegisterForm() {
         }
 
         if (!normalizedEmail) {
-            setError("Ingresa tu correo electrónico.");
+            setError(
+                "Ingresa tu correo electrónico."
+            );
             return;
         }
 
         if (password.length < 8) {
-            setError("La contraseña debe tener al menos 8 caracteres.");
+            setError(
+                "La contraseña debe tener al menos 8 caracteres."
+            );
             return;
         }
 
         if (password !== confirmPassword) {
-            setError("Las contraseñas no coinciden.");
+            setError(
+                "Las contraseñas no coinciden."
+            );
             return;
         }
 
@@ -69,13 +79,45 @@ export default function RegisterForm() {
                 return;
             }
 
-            router.push(
-                `/verificacion-enviada?email=${encodeURIComponent(
-                    normalizedEmail
-                )}`
+            /*
+             * Verificación activada:
+             * enviamos a la pantalla que pide revisar el correo.
+             */
+            if (result.requiresVerification) {
+                router.push(
+                    `/verificacion-enviada?email=${encodeURIComponent(
+                        normalizedEmail
+                    )}`
+                );
+
+                return;
+            }
+
+            /*
+             * Verificación desactivada:
+             * iniciamos sesión automáticamente.
+             */
+            const loginResult = await signIn(
+                "credentials",
+                {
+                    email: normalizedEmail,
+                    password,
+                    redirect: false,
+                }
             );
+
+            if (loginResult?.error) {
+                router.push("/login");
+                return;
+            }
+
+            router.push("/");
+            router.refresh();
         } catch (error) {
-            console.error("Error al registrar usuario:", error);
+            console.error(
+                "Error al registrar usuario:",
+                error
+            );
 
             setError(
                 "Ocurrió un error al crear tu cuenta. Inténtalo nuevamente."

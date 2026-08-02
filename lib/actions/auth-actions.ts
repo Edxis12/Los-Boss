@@ -22,7 +22,10 @@ export async function registerUser(
     formData: RegisterUserInput
 ): Promise<RegisterUserResult> {
     try {
-        // 1. Validar los datos del formulario
+        const emailVerificationEnabled =
+            process.env.EMAIL_VERIFICATION_ENABLED === "true";
+
+        // 1. Validar los datos
         const parsed = registerSchema.safeParse(formData);
 
         if (!parsed.success) {
@@ -37,7 +40,7 @@ export async function registerUser(
         const email = parsed.data.email.trim().toLowerCase();
         const password = parsed.data.password;
 
-        // 2. Comprobar si ya existe una cuenta con ese correo
+        // 2. Comprobar si ya existe una cuenta
         const existingUser = await prisma.user.findUnique({
             where: {
                 email,
@@ -49,7 +52,10 @@ export async function registerUser(
         });
 
         if (existingUser) {
-            if (!existingUser.emailVerified) {
+            if (
+                emailVerificationEnabled &&
+                !existingUser.emailVerified
+            ) {
                 return {
                     error:
                         "Ya existe una cuenta con ese correo, pero todavía no ha sido verificada.",
@@ -63,44 +69,65 @@ export async function registerUser(
             };
         }
 
-        // 3. Comprobar que el servicio de correo esté configurado
-        if (!process.env.RESEND_API_KEY) {
-            console.error("Falta configurar RESEND_API_KEY.");
+        /*
+         * Solo comprobamos Resend cuando la verificación
+         * por correo está activada.
+         */
+        if (emailVerificationEnabled) {
+            if (!process.env.RESEND_API_KEY) {
+                console.error(
+                    "Falta configurar RESEND_API_KEY."
+                );
 
-            return {
-                error:
-                    "El servicio de correo no está configurado correctamente.",
-            };
+                return {
+                    error:
+                        "El servicio de correo no está configurado correctamente.",
+                };
+            }
+
+            if (!process.env.RESEND_FROM_EMAIL) {
+                console.error(
+                    "Falta configurar RESEND_FROM_EMAIL."
+                );
+
+                return {
+                    error:
+                        "El correo remitente no está configurado correctamente.",
+                };
+            }
+
+            if (!process.env.NEXT_PUBLIC_APP_URL) {
+                console.error(
+                    "Falta configurar NEXT_PUBLIC_APP_URL."
+                );
+
+                return {
+                    error:
+                        "La dirección de la aplicación no está configurada correctamente.",
+                };
+            }
         }
 
-        if (!process.env.RESEND_FROM_EMAIL) {
-            console.error("Falta configurar RESEND_FROM_EMAIL.");
+        // 3. Encriptar contraseña
+        const hashedPassword = await bcrypt.hash(
+            password,
+            12
+        );
 
-            return {
-                error:
-                    "El correo remitente no está configurado correctamente.",
-            };
-        }
-
-        if (!process.env.NEXT_PUBLIC_APP_URL) {
-            console.error("Falta configurar NEXT_PUBLIC_APP_URL.");
-
-            return {
-                error:
-                    "La dirección de la aplicación no está configurada correctamente.",
-            };
-        }
-
-        // 4. Encriptar la contraseña
-        const hashedPassword = await bcrypt.hash(password, 12);
-
-        // 5. Crear el usuario
+        // 4. Crear usuario
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
-                emailVerified: null,
+
+                /*
+                 * Si la verificación está desactivada,
+                 * la cuenta queda habilitada inmediatamente.
+                 */
+                emailVerified: emailVerificationEnabled
+                    ? null
+                    : new Date(),
             },
             select: {
                 id: true,
@@ -109,56 +136,57 @@ export async function registerUser(
             },
         });
 
-        // 6. Crear el token y enviar el correo de verificación
-        try {
-            await sendVerificationEmail({
-                name: user.name ?? name,
-                email,
-            });
-        } catch (error) {
-            console.error(
-                "Error al enviar la verificación durante el registro:",
-                error
-            );
-
-            /*
-             * Si no se pudo enviar el correo, eliminamos la cuenta recién
-             * creada para permitir que el usuario vuelva a registrarse.
-             *
-             * Los tokens se eliminan dentro de sendVerificationEmail
-             * cuando falla el envío.
-             */
-            await prisma.user
-                .delete({
-                    where: {
-                        id: user.id,
-                    },
-                })
-                .catch((deleteError) => {
-                    console.error(
-                        "No se pudo eliminar la cuenta después del fallo de correo:",
-                        deleteError
-                    );
+        /*
+         * 5. Enviar correo únicamente cuando
+         * la verificación esté activada.
+         */
+        if (emailVerificationEnabled) {
+            try {
+                await sendVerificationEmail({
+                    name: user.name ?? name,
+                    email,
                 });
+            } catch (error) {
+                console.error(
+                    "Error al enviar la verificación durante el registro:",
+                    error
+                );
 
-            return {
-                error:
-                    "No pudimos enviar el correo de verificación. Inténtalo nuevamente.",
-            };
+                await prisma.user
+                    .delete({
+                        where: {
+                            id: user.id,
+                        },
+                    })
+                    .catch((deleteError) => {
+                        console.error(
+                            "No se pudo eliminar la cuenta después del fallo de correo:",
+                            deleteError
+                        );
+                    });
+
+                return {
+                    error:
+                        "No pudimos enviar el correo de verificación. Inténtalo nuevamente.",
+                };
+            }
         }
 
-        // 7. Registro completado correctamente
         return {
             success: true,
-            requiresVerification: true,
+            requiresVerification:
+                emailVerificationEnabled,
             email,
         };
     } catch (error) {
-        console.error("Error al registrar usuario:", error);
+        console.error(
+            "Error al registrar usuario:",
+            error
+        );
 
         return {
             error:
-                "Ocurrió un error al crear la cuenta. Por favor inténtalo nuevamente.",
+                "Ocurrió un error al crear la cuenta. Inténtalo nuevamente.",
         };
     }
 }

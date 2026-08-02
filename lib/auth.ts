@@ -73,7 +73,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        if (!user.emailVerified) {
+        const emailVerificationEnabled =
+          process.env.EMAIL_VERIFICATION_ENABLED === "true";
+
+        if (
+          emailVerificationEnabled &&
+          !user.emailVerified
+        ) {
           throw new EmailNotVerifiedError();
         }
 
