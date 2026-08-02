@@ -158,7 +158,7 @@ export async function registerUser(
 
         return {
             error:
-                "Ocurrió un error al crear la cuenta. Inténtalo nuevamente.",
+                "Ocurrió un error al crear la cuenta. Por favor inténtalo nuevamente.",
         };
     }
 }
